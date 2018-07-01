@@ -14,4 +14,6 @@ class ExampleView(APIView):
         """
         example = Example('field_a', 'field_b')
         exampleSerializer = ExampleSerializer(example)
+        example = Example(**exampleSerializer.data)
+        print(example.a)
         return Response(exampleSerializer.data)
