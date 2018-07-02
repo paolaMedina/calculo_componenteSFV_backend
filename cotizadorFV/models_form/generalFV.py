@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class GeneralFV(models.Model):
+class GeneralFVForm(models.Model):
     power_of_plant_fv = models.IntegerField()
     total_panels_fv = models.IntegerField()
     power_of_panel_fv = models.IntegerField()
