@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .serializers import ExampleSerializer, Example
 # Create your views here.
 class ExampleView(APIView):
-	def post(self, request):
+	def patch(self, request):
 		exampleSerializer = ExampleSerializer(data=request.data)
 		if (exampleSerializer.is_valid()):
 			example = Example(a=exampleSerializer.data['a'], b=exampleSerializer.data['b'])
