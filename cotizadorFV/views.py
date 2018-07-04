@@ -18,6 +18,7 @@ def lowercase_keys(d):
         lower_case = key.lower()
         result[lower_case] = value
     return result
+
 # Create your views here.
 class ExampleView(APIView):
 	def patch(self, request):
