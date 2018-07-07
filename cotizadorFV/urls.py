@@ -2,5 +2,5 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url('', views.ExampleView.as_view(), name='index'),
+    url('', views.InterruptorManualSerializerView.as_view(), name='index'),
 ]

@@ -5,6 +5,8 @@ from django.db import models
 # Create your models here.
 
 
+
+#modelo de del formulario principal 
 class GeneralFV(models.Model):
     power_of_plant_fv = models.IntegerField()
     total_panels_fv = models.IntegerField()
@@ -17,3 +19,7 @@ class GeneralFV(models.Model):
     instalation_place = models.CharField(max_length = 40)
     class Meta:
         managed = False
+        
+        
+
+        

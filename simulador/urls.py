@@ -16,6 +16,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+
+from cotizadorFV.models import *
+from cotizadorFV.views import *
+importcsv('InterruptorManual', 'archivo/interruptores_manuales_DC.csv')
+
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^cotizadorFV/', include('cotizadorFV.urls', namespace="cotizadorFv"))
