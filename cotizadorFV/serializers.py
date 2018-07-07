@@ -1,7 +1,18 @@
 from rest_framework import serializers
 from models_form.generalFV import GeneralFVForm
+class DecimalField(serializers.DecimalField):
+    def to_representation(self, value):
+        """
+        Validate that the input is a decimal number and return a Decimal
+        instance.
+        """
 
-
+        """
+        Replace comma separated values for point separated values
+        
+        """
+        value = str(value).replace(',','.')
+        return super(DecimalField, self).to_representation(value)
 
 class GeneralFVSerializer(serializers.ModelSerializer):
     class Meta:
@@ -147,20 +158,20 @@ class PanelSolarSerializer(serializers.Serializer):
     no_de_celdas= serializers.IntegerField()
     pmax= serializers.IntegerField()
     eficiencia= serializers.CharField(max_length=100)
-    vmpp= serializers.DecimalField(max_digits=50, decimal_places=25)
-    impp= serializers.CharField(max_length=100)
-    voc= serializers.DecimalField(max_digits=50, decimal_places=25)
-    isc= serializers.CharField(max_length=100)
+    vmpp= DecimalField(max_digits=50, decimal_places=25, localize=True)
+    impp= DecimalField(max_digits=50, decimal_places=25)
+    voc= DecimalField(max_digits=50, decimal_places=25)
+    isc= DecimalField(max_digits=50, decimal_places=25)
     coef_voc= serializers.CharField(max_length=100)
     
     
 
 class DataSerializer(serializers.Serializer):
-    dpsAC =  DpsACSerializer(many=True, required = True)
-    dpsDC = DpsDCSerializer(many=True, required = True)
-    fusible = FusibleSerializer(many=True, required = True)
-    interruptorAuto= InteAutoSerializer(many=True, required = True)
-    interruptorManual = InteManualSerializer(many=True, required = True)
-    inversor =InversorSerializer(many=True, required = True)
-    microInversor = MicroInversorSerializer(many=True, required = True)
-    panelSolar = PanelSolarSerializer(many=True, required = True)    
+    #dpssAC =  DpsACSerializer(many=True, required = True)
+    #dpssDC = DpsDCSerializer(many=True, required = True)
+    #fusibles = FusibleSerializer(many=True, required = True)
+    #interruptoresAuto= InteAutoSerializer(many=True, required = True)
+    interruptoresManuales = InteManualSerializer(many=True, required = True)
+    #inversores =InversorSerializer(many=True, required = True)
+    #microInversores = MicroInversorSerializer(many=True, required = True)
+    panelesSolares = PanelSolarSerializer(many=True, required = True)    
