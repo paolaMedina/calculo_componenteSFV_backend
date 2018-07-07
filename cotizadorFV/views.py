@@ -4,7 +4,7 @@ from main_info import *
 from cotizadorFV.modelsCVS import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import ExampleSerializer, Example, InteManualSerializer
+from .serializers import InteManualSerializer
 
 """
 # Create your views here.
