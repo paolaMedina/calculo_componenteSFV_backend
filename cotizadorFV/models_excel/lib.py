@@ -31,11 +31,21 @@ def importarDpsAC():
     
     
 def importarDpsDC():
-    dpssDC = importcsv(DpsDC, 'archivo/DPS_AC.csv')
+    dpssDC = importcsv(DpsDC, 'archivo/DPS_DC.csv')
     inicial.setDpsDC(dpssDC)
     
+def importarFusible():
+    fusibles = importcsv(Fusible, 'archivo/fusibles.csv')
+    inicial.setFusibles(fusibles)
+
+def importarInterruptoresAuto():
+    interruptoresAuto = importcsv(InteAuto, 'archivo/interruptores_automaticos.csv')
+    inicial.setInterruptoresAutomaticos(interruptoresAuto)
     
 def importarCsvs():
     importarInterruptoresManuales()
     importarPanelesSolares()
     importarDpsAC()
+    importarDpsDC()
+    importarFusible()
+    importarInterruptoresAuto()

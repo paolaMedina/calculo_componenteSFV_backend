@@ -59,7 +59,7 @@ class DpsDC(CsvModel):
      forma_constructiva= CharField()
      no_polos= CharField()
      uc= IntegerField()
-     in_in= IntegerField()
+     in_in= DecimalField()
      imax= IntegerField()
      precio= IntegerField()
      class Meta:
