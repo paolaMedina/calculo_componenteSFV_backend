@@ -45,6 +45,9 @@ def importarInterruptoresAuto():
     interruptoresAuto = importcsv(InteAuto, 'archivo/interruptores_automaticos.csv')
     inicial.setInterruptoresAutomaticos(interruptoresAuto)
     
+def importarInversores():
+    inversores = importcsv(Inversor, 'archivo/inversor.csv')
+    inicial.setInversores(inversores)
 def importarCsvs():
     importarInterruptoresManuales()
     importarPanelesSolares()
@@ -53,6 +56,7 @@ def importarCsvs():
     importarFusible()
     importarInterruptoresAuto()
     importarMicroInversores()
+    importarInversores()
 def getData():
     return inicial
 
