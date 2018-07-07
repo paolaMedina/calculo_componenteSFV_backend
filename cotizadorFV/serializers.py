@@ -17,9 +17,7 @@ class DecimalField(serializers.DecimalField):
         return super(DecimalField, self).to_representation(value)
 class CharField(serializers.CharField):
     def to_representation(self, value):
-        print(value)
-        utf8_value = unicode(value)
-        print(utf8_value)
+        utf8_value = value.decode('utf-8')
         return super(CharField, self).to_representation(utf8_value)
 class GeneralFVSerializer(serializers.ModelSerializer):
     class Meta:
@@ -153,8 +151,8 @@ class MicroInversorSerializer(serializers.Serializer):
     tipo_conex= CharField(max_length=100)
     v_nom1= serializers.IntegerField()
     v_nom2= serializers.IntegerField()
-    i_nom1= CharField(max_length=100)
-    i_nom2= CharField(max_length=100)
+    i_nom1= DecimalField(max_digits=50, decimal_places=25)
+    i_nom2= DecimalField(max_digits=50, decimal_places=25)
     
 class PanelSolarSerializer(serializers.Serializer):
     
@@ -165,7 +163,7 @@ class PanelSolarSerializer(serializers.Serializer):
     no_de_celdas= serializers.IntegerField()
     pmax= serializers.IntegerField()
     eficiencia= CharField(max_length=100)
-    vmpp= DecimalField(max_digits=50, decimal_places=25, localize=True)
+    vmpp= DecimalField(max_digits=50, decimal_places=25)
     impp= DecimalField(max_digits=50, decimal_places=25)
     voc= DecimalField(max_digits=50, decimal_places=25)
     isc= DecimalField(max_digits=50, decimal_places=25)
