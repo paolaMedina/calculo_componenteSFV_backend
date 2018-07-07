@@ -155,7 +155,7 @@ class PanelSolarSerializer(serializers.Serializer):
     
     
 
-class Data(serializers.Serializer):
+class DataSerializer(serializers.Serializer):
     dpsAC =  DpsACSerializer()
     dpsDC = DpsDCSerializer
     fusible = FusibleSerializer
