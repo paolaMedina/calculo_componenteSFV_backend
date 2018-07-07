@@ -49,27 +49,29 @@ class DpsDC(CsvModel):
      aplicacion= CharField()
      forma_constructiva= CharField()
      no_polos= CharField()
-     uc= CharField()
-     in_in= CharField()
-     imax= CharField()
-     precio= CharField()
+     uc= IntegerField()
+     in_in= IntegerField()
+     imax= IntegerField()
+     precio= IntegerField()
      class Meta:
          delimiter = ";"
+         has_header=True
 
 class Fusible(CsvModel):
     descripcion=  CharField()
     marca= CharField()
     referencia= CharField()
     aplicacion= CharField()
-    in_in = CharField()
-    tension = CharField()
-    ir= CharField()
+    in_in = IntegerField()
+    tension = IntegerField()
+    ir= IntegerField()
     dimensiones= CharField()
     tipo= CharField()
     clase= CharField()
-    precio= CharField()
+    precio= IntegerField()
     class Meta:
-        delimiter = ";"    
+        delimiter = ";"  
+        has_header=True
     
     
 class InteAuto(CsvModel):
@@ -78,87 +80,94 @@ class InteAuto(CsvModel):
     referencia= CharField()
     aplicacion= CharField()
     tipo_tam= CharField()
-    no_polos= CharField()
+    no_polos= IntegerField()
     no_polos_letras= CharField()
-    tension= CharField()
-    tension_2= CharField()
-    in_in= CharField()
-    icn= CharField()
+    tension= IntegerField()
+    tension_2= IntegerField()
+    in_in= IntegerField()
+    icn= IntegerField()
     icn_2= CharField()
-    precio= CharField()
+    precio= IntegerField()
     class Meta:
         delimiter = ";"    
+        has_header=True
+        
+        
 class Inversor(CsvModel):
     descripcion= CharField()
     modelo= CharField()
     fabricante= CharField()
-    no_mppt= CharField()
-    pot_nom= CharField()
-    pot_fv_in_min= CharField()
-    pot_fv_in_max= CharField()
-    imax_in_mppt1= CharField()
-    imax_in_mppt2= CharField()
+    no_mppt= IntegerField()
+    pot_nom= DecimalField()
+    pot_fv_in_min= DecimalField()
+    pot_fv_in_max= DecimalField()
+    imax_in_mppt1= DecimalField()
+    imax_in_mppt2= DecimalField()
     imax_in_mpptCombinado= CharField()
-    iscmax_mppt1= CharField()
-    iscmax_mppt2= CharField()
+    iscmax_mppt1= DecimalField()
+    iscmax_mppt2= DecimalField()
     iscmax_mppt3= CharField()
     iscmax_mpptCombinado= CharField()
-    vin_min= CharField()
-    vin_max= CharField()
-    vop_min= CharField()
-    vop_max= CharField()
-    vsal_1= CharField()
+    vin_min= IntegerField()
+    vin_max= IntegerField()
+    vop_min= IntegerField()
+    vop_max= IntegerField()
+    vsal_1= IntegerField()
     vsal_2= CharField()
     vsal_3= CharField()
     tipo_conex= CharField()
-    psal_1= CharField()
+    psal_1= IntegerField()
     psal_2= CharField()
     pot_sal_3= CharField()
-    isal_max_1= CharField()
+    isal_max_1= DecimalField()
     isal_max_2= CharField()
     isal_max_3= CharField()
-    i_int_sal_1= CharField()
+    i_int_sal_1= DecimalField()
     i_int_sal_2= CharField()
     i_int_sal_3= CharField()
     class Meta:
         delimiter = ";"   
+        has_header=True
 
 class MicroInversor(CsvModel):
     descripcion= CharField()
     modelo= CharField()
     fabricante= CharField()
-    pot_fv_in_min= CharField()
-    pot_fv_in_max= CharField()
-    vin_min= CharField()
-    vin_max= CharField()
-    vop_min= CharField()
-    vop_max= CharField()
-    vreg_min= CharField()
-    vreg_max= CharField()
-    isc_max= CharField()
-    psal_max= CharField()
-    psal_nom= CharField()
+    pot_fv_in_min= IntegerField()
+    pot_fv_in_max= IntegerField()
+    vin_min= IntegerField()
+    vin_max= IntegerField()
+    vop_min= IntegerField()
+    vop_max= IntegerField()
+    vreg_min= IntegerField()
+    vreg_max= IntegerField()
+    isc_max= IntegerField()
+    psal_max= IntegerField()
+    psal_nom= IntegerField()
     tipo_conex= CharField()
-    v_nom1= CharField()
-    v_nom2= CharField()
-    i_nom1= CharField()
-    i_nom2= CharField()
+    v_nom1= IntegerField()
+    v_nom2= IntegerField()
+    i_nom1= DecimalField()
+    i_nom2= DecimalField()
     class Meta:
         delimiter = ";"   
+        has_header=True
+        
+        
 class PanelSolar(CsvModel):
     
     descripcion= CharField()
     modelo= CharField()
     fabricante= CharField()
     tipo_celda= CharField()
-    no_de_celdas= CharField()
-    pmax= CharField()
-    eficiencia= CharField()
-    vmpp= CharField()
-    impp= CharField()
-    voc= CharField()
-    isc= CharField()
-    coef_voc= CharField()
+    no_de_celdas= IntegerField()
+    pmax= IntegerField()
+    eficiencia= DecimalField()
+    vmpp= DecimalField()
+    impp= DecimalField()
+    voc= DecimalField()
+    isc= DecimalField()
+    coef_voc= DecimalField()
     class Meta:
         delimiter = ";"
         has_header=True
