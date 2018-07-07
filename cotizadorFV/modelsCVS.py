@@ -1,9 +1,12 @@
 
 from adaptor.model import CsvModel
 from adaptor.fields import CharField, IntegerField, DecimalField, DateField,FloatField
-
+from decimal import Decimal
 #Modelos de los excel
-
+class DecimalField(DecimalField):
+    def to_python(self, value):
+        point_separated_decimal = value.replace(',','.')
+        return Decimal(point_separated_decimal)    
 class InterruptorManual(CsvModel):
     descripcion= CharField()
     marca= CharField()
@@ -160,14 +163,14 @@ class PanelSolar(CsvModel):
     modelo= CharField()
     fabricante= CharField()
     tipo_celda= CharField()
-    no_de_celdas= IntegerField()
-    pmax= IntegerField()
-    eficiencia= DecimalField()
-    vmpp= DecimalField()
+    no_de_celdas= CharField()
+    pmax= CharField()
+    eficiencia= CharField()
+    vmpp= CharField()
     impp= DecimalField()
     voc= DecimalField()
     isc= DecimalField()
-    coef_voc= DecimalField()
+    coef_voc= CharField()
     class Meta:
         delimiter = ";"
-        has_header=True
+        has_header = True
