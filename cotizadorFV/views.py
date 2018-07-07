@@ -5,6 +5,7 @@ from cotizadorFV.modelsCVS import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
+from cotizadorFV.models_excel import lib as mainInfoLib
 
 """
 # Create your views here.
@@ -23,5 +24,5 @@ class InterruptorManualSerializerView(APIView):
         
 class DataCsvView(APIView):
     def get(self, request, format=None):
-        serializer = DataSerializer(inicial)
+        serializer = DataSerializer(mainInfoLib.getData())
         return Response(serializer.data)

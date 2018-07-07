@@ -1,6 +1,6 @@
 class MainInfo():
     def __init__(self, interruptoresManuales=[], panelesSolares=[], dpssAC=[], dpssDC=[],
-                fusibles=[], interruptoresAutomaticos=[],inversores=[], microInversor=[]):
+                fusibles=[], interruptoresAutomaticos=[],inversores=[], microInversores=[]):
         """Init main info
         
         Keyword Arguments:
@@ -8,6 +8,7 @@ class MainInfo():
             panelesSolares {list of PanelesSolares} -- [description] (default: {[]})
             dpssAC {list of DpsAC} -- [description] (default: {[]})
             dpssDC {list of DpsDC} -- [description] (default: {[]})
+            microInversores {list of MicroInversores} -- [description] (default: {[]})
         """
         self.interruptoresManuales = interruptoresManuales
         self.panelesSolares = panelesSolares
@@ -16,7 +17,7 @@ class MainInfo():
         self.fusibles = fusibles
         self.interruptoresAutomaticos = interruptoresAutomaticos
         self.inversores = inversores
-        self.microInversor = microInversor
+        self.microInversores = microInversores
         
         
         
@@ -36,7 +37,7 @@ class MainInfo():
         self.interruptoresAutomaticos = interruptoresAutomaticos
     def setInversores(self, inversores):
         self.inversores = inversores
-    def setMicroInversor(self, microInversor):
-        self.microInversor = microInversor
+    def setMicroInversores(self, microInversores):
+        self.microInversores = microInversores
         
 inicial=MainInfo()

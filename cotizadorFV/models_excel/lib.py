@@ -24,7 +24,10 @@ def importarInterruptoresManuales():
 def importarPanelesSolares():
     panelesSolares = importcsv(PanelSolar, 'archivo/panelesSolares.csv')
     inicial.setPanelesSolares(panelesSolares)
-
+def importarMicroInversores():
+    microInversores = importcsv(MicroInversor, 'archivo/microinversor.csv')
+    inicial.setMicroInversores(microInversores)
+    print(inicial.microInversores[0])
 def importarDpsAC():
     dpssAC = importcsv(DpsAC, 'archivo/DPS_AC.csv')
     inicial.setDpsAC(dpssAC)
@@ -49,3 +52,7 @@ def importarCsvs():
     importarDpsDC()
     importarFusible()
     importarInterruptoresAuto()
+    importarMicroInversores()
+def getData():
+    return inicial
+

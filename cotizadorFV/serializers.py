@@ -175,5 +175,5 @@ class DataSerializer(serializers.Serializer):
     interruptoresAutomaticos= InteAutoSerializer(many=True, required = True)
     interruptoresManuales = InteManualSerializer(many=True, required = True)
     #inversores =InversorSerializer(many=True, required = True)
-    #microInversores = MicroInversorSerializer(many=True, required = True)
+    microInversores = MicroInversorSerializer(many=True, required = True)
     panelesSolares = PanelSolarSerializer(many=True, required = True)    
