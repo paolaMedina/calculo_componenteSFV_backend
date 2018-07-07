@@ -156,11 +156,11 @@ class PanelSolarSerializer(serializers.Serializer):
     
 
 class DataSerializer(serializers.Serializer):
-    dpsAC =  DpsACSerializer()
-    dpsDC = DpsDCSerializer
-    fusible = FusibleSerializer
-    interruptorAuto= InteAutoSerializer
-    interruptorManual = InteManualSerializer
-    inversor =InversorSerializer
-    microInversor = MicroInversorSerializer
-    panelSolar = PanelSolarSerializer
+    dpsAC =  DpsACSerializer(many=True, required = True)
+    dpsDC = DpsDCSerializer(many=True, required = True)
+    fusible = FusibleSerializer(many=True, required = True)
+    interruptorAuto= InteAutoSerializer(many=True, required = True)
+    interruptorManual = InteManualSerializer(many=True, required = True)
+    inversor =InversorSerializer(many=True, required = True)
+    microInversor = MicroInversorSerializer(many=True, required = True)
+    panelSolar = PanelSolarSerializer(many=True, required = True)
