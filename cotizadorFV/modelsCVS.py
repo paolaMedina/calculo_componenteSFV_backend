@@ -19,7 +19,7 @@ class InterruptorManual(CsvModel):
         
         
 
-class DpsACSerializer(CsvModel):
+class DpsACCsv(CsvModel):
     
     descripcion= CharField
     marca= CharField
@@ -38,7 +38,7 @@ class DpsACSerializer(CsvModel):
     
 
         
-class DpsDCSerializer(CsvModel):
+class DpsDCCsv(CsvModel):
      descripcion= CharField
      marca= CharField
      referencia= CharField
@@ -52,7 +52,7 @@ class DpsDCSerializer(CsvModel):
      precio= CharField
 
 
-class FusibleSerializer(CsvModel):
+class FusibleCsv(CsvModel):
     descripcion=  CharField
     marca= CharField
     referencia= CharField
@@ -66,7 +66,7 @@ class FusibleSerializer(CsvModel):
     precio= CharField
     
     
-class InteAutoSerializer(CsvModel):
+class InteAutoCsv(CsvModel):
     descripcion= CharField
     marca= CharField
     referencia= CharField
@@ -81,7 +81,7 @@ class InteAutoSerializer(CsvModel):
     icn_2= CharField
     precio= CharField
     
-class InversorSerializer(CsvModel):
+class InversorCsv(CsvModel):
     descripcion= CharField
     modelo= CharField
     fabricante= CharField
@@ -115,7 +115,7 @@ class InversorSerializer(CsvModel):
     i_int_sal_3= CharField
     
 
-class MicroInversorSerializer(CsvModel):
+class MicroInversorCsv(CsvModel):
     descripcion= CharField
     modelo= CharField
     fabricante= CharField
@@ -136,7 +136,7 @@ class MicroInversorSerializer(CsvModel):
     i_nom1= CharField
     i_nom2= CharField
     
-class PanelSolarSerializer(CsvModel):
+class PanelSolarCsv(CsvModel):
     
     descripcion= CharField
     modelo= CharField
