@@ -19,8 +19,8 @@ from django.contrib import admin
 
 from cotizadorFV.models import *
 from cotizadorFV.views import *
-importcsv('InterruptorManual', 'archivo/interruptores_manuales_DC.csv')
-
+from cotizadorFV.models_excel.lib import importarCsvs
+importarCsvs()
 
 
 urlpatterns = [
