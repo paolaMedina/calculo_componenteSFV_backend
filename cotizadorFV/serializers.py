@@ -25,7 +25,7 @@ class DpsACSerializer(serializers.Serializer):
     iimp_por_polo= serializers.CharField(max_length=100)
     up=serializers.DecimalField(max_digits=50, decimal_places=25)
     telesenal= serializers.CharField(max_length=100)
-    precio= serializers.CharField(max_length=100)
+    precio= serializers.IntegerField()
     
 
         
@@ -40,7 +40,7 @@ class DpsDCSerializer(serializers.Serializer):
      uc= serializers.IntegerField()
      in_in= serializers.DecimalField(max_digits=50, decimal_places=25)
      imax= serializers.IntegerField()
-     precio= serializers.CharField(max_length=100)
+     precio= serializers.IntegerField()
 
 
 class FusibleSerializer(serializers.Serializer):
@@ -54,7 +54,7 @@ class FusibleSerializer(serializers.Serializer):
     dimensiones= serializers.CharField(max_length=100)
     tipo= serializers.CharField(max_length=100)
     clase= serializers.CharField(max_length=100)
-    precio= serializers.CharField(max_length=100)
+    precio= serializers.IntegerField()
     
     
 class InteAutoSerializer(serializers.Serializer):
