@@ -9,13 +9,14 @@ class InterruptorManual(CsvModel):
     marca= CharField()
     referencia= CharField()
     aplicacion= CharField()
-    ith= CharField()
-    tension= CharField()
-    no_contactos= CharField()
+    ith= IntegerField()
+    tension= IntegerField()
+    no_contactos= IntegerField()
     tipo_montaje= CharField()
-    precio= CharField()
+    precio= IntegerField()
     class Meta:
         delimiter = ";"
+        has_header=True
         
         
 
@@ -24,19 +25,20 @@ class DpsAC(CsvModel):
     descripcion= CharField()
     marca= CharField()
     referencia= CharField()
-    tipo= CharField()
+    tipo= IntegerField()
     clase_prueba= CharField()
     forma_constructiva= CharField()
-    no_polos= CharField()
-    uc= CharField()
-    in_in= CharField()
+    no_polos= IntegerField()
+    uc= IntegerField()
+    in_in= IntegerField()
     imax_por_polo= CharField()
     iimp_por_polo= CharField()
-    up=CharField()
+    up=DecimalField()
     telesenal= CharField()
-    precio= CharField()
+    precio= IntegerField()
     class Meta:
-        delimiter = ";"    
+        delimiter = ";"
+        has_header=True
 
         
 class DpsDC(CsvModel):
@@ -159,3 +161,4 @@ class PanelSolar(CsvModel):
     coef_voc= CharField()
     class Meta:
         delimiter = ";"
+        has_header=True

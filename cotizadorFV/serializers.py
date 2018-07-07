@@ -81,7 +81,7 @@ class InteManualSerializer(serializers.Serializer):
     tension= serializers.IntegerField()
     no_contactos= serializers.IntegerField()
     tipo_montaje= serializers.CharField(max_length=100)
-    precio= serializers.CharField(max_length=100)
+    precio= serializers.IntegerField()
     
 class InversorSerializer(serializers.Serializer):
     descripcion= serializers.CharField(max_length=100)
