@@ -1,17 +1,42 @@
 class MainInfo():
-    def __init__(self, interruptores_manuales=[], paneles_solares=[]):
-        """[summary]
+    def __init__(self, interruptoresManuales=[], panelesSolares=[], dpssAC=[], dpssDC=[],
+                fusibles=[], interruptoresAutomaticos=[],inversores=[], microInversor=[]):
+        """Init main info
         
         Keyword Arguments:
-            interruptores_manuales {list of InterruptoresManuales} -- [description] (default: {[]})
-            paneles_solares {list of PanelesSolares} -- [description] (default: {[]})
+            interruptoresManuales {list of InterruptoresManuales} -- [description] (default: {[]})
+            panelesSolares {list of PanelesSolares} -- [description] (default: {[]})
+            dpssAC {list of DpsAC} -- [description] (default: {[]})
+            dpssDC {list of DpsDC} -- [description] (default: {[]})
         """
-        self.interruptores_manuales = interruptores_manuales
-        self.paneles_solares = paneles_solares
-    def setInterruptoresManuales(self, interruptores_manuales):
-        self.interruptores_manuales = interruptores_manuales
-    def setPanelesSolares(self, paneles_solares):
-        self.paneles_solares = paneles_solares
-
-
+        self.interruptoresManuales = interruptoresManuales
+        self.panelesSolares = panelesSolares
+        self.dpssAC = dpssAC
+        self.dpssDC = dpssDC
+        self.fusibles = fusibles
+        self.interruptoresAutomaticos = interruptoresAutomaticos
+        self.inversores = inversores
+        self.microInversor = microInversor
+        
+        
+        
+        
+        
+    def setInterruptoresManuales(self, interruptoresManuales):
+        self.interruptoresManuales = interruptoresManuales
+    def setPanelesSolares(self, panelesSolares):
+        self.panelesSolares = panelesSolares
+    def setDpsAC(self, dpssAC):
+        self.dpssAC = dpssAC
+    def setDpsDC(self, dpssDC):
+        self.dpssDC = dpssDC
+    def setFusibles(self, fusibles):
+        self.fusibles = fusibles
+    def setInterruptoresAutomaticos(self, interruptoresAutomaticos):
+        self.interruptoresAutomaticos = interruptoresAutomaticos
+    def setInversores(self, inversores):
+        self.inversores = inversores
+    def setMicroInversor(self, microInversor):
+        self.microInversor = microInversor
+        
 inicial=MainInfo()
