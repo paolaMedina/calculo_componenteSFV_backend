@@ -163,4 +163,4 @@ class DataSerializer(serializers.Serializer):
     interruptorManual = InteManualSerializer(many=True, required = True)
     inversor =InversorSerializer(many=True, required = True)
     microInversor = MicroInversorSerializer(many=True, required = True)
-    panelSolar = PanelSolarSerializer(many=True, required = True)
+    panelSolar = PanelSolarSerializer(many=True, required = True)    
