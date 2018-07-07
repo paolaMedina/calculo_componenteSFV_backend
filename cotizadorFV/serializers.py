@@ -17,6 +17,7 @@ class DecimalField(serializers.DecimalField):
         return super(DecimalField, self).to_representation(value)
 class CharField(serializers.CharField):
     def to_representation(self, value):
+        print(value)
         utf8_value = value.decode('utf-8')
         return super(CharField, self).to_representation(utf8_value)
 class GeneralFVSerializer(serializers.ModelSerializer):
@@ -86,7 +87,7 @@ class InteAutoSerializer(serializers.Serializer):
     in_in= serializers.IntegerField()
     icn= serializers.IntegerField()
     icn_2= CharField(max_length=100)
-    precio= CharField(max_length=100)
+    precio= serializers.IntegerField()
     
 class InteManualSerializer(serializers.Serializer):
     descripcion= CharField(max_length=100)
