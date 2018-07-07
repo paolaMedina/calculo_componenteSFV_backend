@@ -3,19 +3,6 @@ from models_form.generalFV import GeneralFVForm
 
 
 
-class Example:
-    def __init__(self, a, b):
-        self.a = a
-        "attribute Example.a doc-string (1)"
-        self.b = b
-        "attribute Example.b doc-string (2)"
-        
-        
-class ExampleSerializer(serializers.Serializer):
-    a = serializers.CharField()
-    b = serializers.CharField()
-
-
 class GeneralFVSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralFVForm
@@ -165,3 +152,15 @@ class PanelSolarSerializer(serializers.Serializer):
     voc= serializers.DecimalField(max_digits=50, decimal_places=25)
     isc= serializers.CharField(max_length=100)
     coef_voc= serializers.CharField(max_length=100)
+    
+    
+
+class DataSerializer(serializers.Serializer):
+    dpsAC =  DpsACSerializer(many=True, required = True)
+    dpsDC = DpsDCSerializer(many=True, required = True)
+    fusible = FusibleSerializer(many=True, required = True)
+    interruptorAuto= InteAutoSerializer(many=True, required = True)
+    interruptorManual = InteManualSerializer(many=True, required = True)
+    inversor =InversorSerializer(many=True, required = True)
+    microInversor = MicroInversorSerializer(many=True, required = True)
+    panelSolar = PanelSolarSerializer(many=True, required = True)    
