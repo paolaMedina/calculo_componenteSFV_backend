@@ -1,4 +1,4 @@
-from cotizadorFV.modelsCVS import InterruptorManual, PanelSolar
+from cotizadorFV.modelsCVS import *
 from cotizadorFV.main_info import inicial
 
 def importcsv(modelo_csv, nombre_archivo):
@@ -10,19 +10,27 @@ def importcsv(modelo_csv, nombre_archivo):
         lista_objetivo {[list]} -- [description]
         nombre_archivo {[string]} -- [description]
     """
-    my_csv_list = modelo_csv.import_data(data = open(nombre_archivo))
-    return [my_csv_list[i] for i in range(1, len(my_csv_list))]
+    data = open(nombre_archivo).readlines()
+    if( hasattr(modelo_csv, 'Meta') and hasattr(modelo_csv.Meta, 'has_header') and modelo_csv.Meta.has_header ):
+        data = data[1:]
+    my_csv_list = modelo_csv.import_data(data = data)
+    return [my_csv_list[i] for i in range(0, len(my_csv_list))]
     
 
 def importarInterruptoresManuales():
     interruptores_manuales = importcsv(InterruptorManual, 'archivo/interruptores_manuales_DC.csv')
     inicial.setInterruptoresManuales(interruptores_manuales)
-    print(interruptores_manuales)
 
 def importarPanelesSolares():
     panelesSolares = importcsv(PanelSolar, 'archivo/panelesSolares.csv')
     inicial.setPanelesSolares(panelesSolares)
 
+def importarDpsAC():
+    dpssAC = importcsv(DpsAC, 'archivo/DPS_AC.csv')
+    inicial.setDpsAC(dpssAC)
+def importarDpsDC():
+    dpssDC = importcsv(DpsDC, 'archivo/DPS_AC.csv')
+    inicial.setDpsDC(dpssDC)
 def importarCsvs():
     importarInterruptoresManuales()
     importarPanelesSolares()
