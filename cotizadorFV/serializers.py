@@ -1,14 +1,22 @@
-
-
 from rest_framework import serializers
-from models_form.generalFV import GeneralFV
-from models_excel.dps_ac import DpsAC
-from models_excel.dps_dc import DpsDC
+from models_form.generalFV import GeneralFVForm
+class DecimalField(serializers.DecimalField):
+    def to_representation(self, value):
+        """
+        Validate that the input is a decimal number and return a Decimal
+        instance.
+        """
 
+        """
+        Replace comma separated values for point separated values
+        
+        """
+        value = str(value).replace(',','.')
+        return super(DecimalField, self).to_representation(value)
 
 class GeneralFVSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GeneralFV
+        model = GeneralFVForm
         fields = ('power_of_plant_fv', 'total_panels_fv', 'power_of_panel_fv', 'ambient_temperature', 'lowest_ambient_temperature_expected',
         'investment_type', 'service_type', 'service_voltage', 'instalation_place')
 
@@ -26,43 +34,11 @@ class DpsACSerializer(serializers.Serializer):
     in_in= serializers.IntegerField()
     imax_por_polo= serializers.CharField(max_length=100)
     iimp_por_polo= serializers.CharField(max_length=100)
-    up=serializers.DecimalField()
+    up=serializers.DecimalField(max_digits=50, decimal_places=25)
     telesenal= serializers.CharField(max_length=100)
-    precio= serializers.CharField(max_length=100)
+    precio= serializers.IntegerField()
     
 
-    def create(self, validated_data):
-        """
-        Crea y devuelve una nueva instancia de 'DpsAC', dados los datos validados.
-        """
-        return DpsAC.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Actualiza y devuelva una instancia existente de 'DpsAC', dados los datos validados..
-        """
-        instance.title = validated_data.get('title', instance.title)
-        instance.code = validated_data.get('code', instance.code)
-        instance.linenos = validated_data.get('linenos', instance.linenos)
-        instance.language = validated_data.get('language', instance.language)
-        instance.style = validated_data.get('style', instance.style)
-        
-        instance.descripcion = validated_data.get('descripcion', instance.descripcion )
-        instance.marca = validated_data.get('marca', instance.marca )
-        instance.referencia = validated_data.get('referencia', instance.referencia)
-        instance.tipo = validated_data.get('tipo', instance.tipo)
-        instance.clase_prueba = validated_data.get('clase_prueba', instance.clase_prueba)
-        instance.forma_constructiva = validated_data.get('forma_constructiva', instance.forma_constructiva)
-        instance.no_polos = validated_data.get('no_polos', instance.no_polos)
-        instance.uc = validated_data.get('uc', instance.uc)
-        instance.in_in = validated_data.get('in_in', instance.in_in)
-        instance.imax_por_polo = validated_data.get('imax_por_polo', instance.imax_por_polo)
-        instance.iimp_por_polo = validated_data.get('iimp_por_polo', instance.iimp_por_polo)
-        instance.up = validated_data.get('up', instance.up)
-        instance.telesenal = validated_data.get('telesenal', instance.telesenal)
-        instance.precio = validated_data.get('precio', instance.precio)
-        instance.save()
-        return instance
         
 class DpsDCSerializer(serializers.Serializer):
      descripcion= serializers.CharField(max_length=100)
@@ -73,9 +49,129 @@ class DpsDCSerializer(serializers.Serializer):
      forma_constructiva= serializers.CharField(max_length=100)
      no_polos= serializers.CharField(max_length=100)
      uc= serializers.IntegerField()
-     in_in= serializers.DecimalField()
+     in_in= serializers.DecimalField(max_digits=50, decimal_places=25)
      imax= serializers.IntegerField()
-     precio= serializers.CharField(max_length=100)
-     
-     def create(self, validated_data):
-         return DpsDC.objects.create(**validated_data)
+     precio= serializers.IntegerField()
+
+
+class FusibleSerializer(serializers.Serializer):
+    descripcion=  serializers.CharField(max_length=100)
+    marca= serializers.CharField(max_length=100)
+    referencia= serializers.CharField(max_length=100)
+    aplicacion= serializers.CharField(max_length=100)
+    in_in = serializers.IntegerField()
+    tension = serializers.IntegerField()
+    ir= serializers.IntegerField()
+    dimensiones= serializers.CharField(max_length=100)
+    tipo= serializers.CharField(max_length=100)
+    clase= serializers.CharField(max_length=100)
+    precio= serializers.IntegerField()
+    
+    
+class InteAutoSerializer(serializers.Serializer):
+    descripcion= serializers.CharField(max_length=100)
+    marca= serializers.CharField(max_length=100)
+    referencia= serializers.CharField(max_length=100)
+    aplicacion= serializers.CharField(max_length=100)
+    tipo_tam= serializers.CharField(max_length=100)
+    no_polos= serializers.IntegerField()
+    no_polos_letras= serializers.CharField(max_length=100)
+    tension= serializers.IntegerField()
+    tension_2= serializers.IntegerField()
+    in_in= serializers.IntegerField()
+    icn= serializers.IntegerField()
+    icn_2= serializers.CharField(max_length=100)
+    precio= serializers.CharField(max_length=100)
+    
+class InteManualSerializer(serializers.Serializer):
+    descripcion= serializers.CharField(max_length=100)
+    marca= serializers.CharField(max_length=100)
+    referencia= serializers.CharField(max_length=100)
+    aplicacion= serializers.CharField(max_length=100)
+    ith= serializers.IntegerField()
+    tension= serializers.IntegerField()
+    no_contactos= serializers.IntegerField()
+    tipo_montaje= serializers.CharField(max_length=100)
+    precio= serializers.IntegerField()
+    
+class InversorSerializer(serializers.Serializer):
+    descripcion= serializers.CharField(max_length=100)
+    modelo= serializers.CharField(max_length=100)
+    fabricante= serializers.CharField(max_length=100)
+    no_mppt= serializers.IntegerField()
+    pot_nom= serializers.DecimalField(max_digits=50, decimal_places=25)
+    pot_fv_in_min= serializers.DecimalField(max_digits=50, decimal_places=25)
+    pot_fv_in_max= serializers.DecimalField(max_digits=50, decimal_places=25)
+    imax_in_mppt1= serializers.IntegerField()
+    imax_in_mppt2= serializers.DecimalField(max_digits=50, decimal_places=25)
+    imax_in_mpptCombinado= serializers.CharField(max_length=100)
+    iscmax_mppt1= serializers.DecimalField(max_digits=50, decimal_places=25)
+    iscmax_mppt2= serializers.DecimalField(max_digits=50, decimal_places=25)
+    iscmax_mppt3= serializers.CharField(max_length=100)
+    iscmax_mpptCombinado= serializers.CharField(max_length=100)
+    vin_min= serializers.IntegerField()
+    vin_max= serializers.IntegerField()
+    vop_min= serializers.IntegerField()
+    vop_max= serializers.IntegerField()
+    vsal_1= serializers.IntegerField()
+    vsal_2= serializers.CharField(max_length=100)
+    vsal_3= serializers.CharField(max_length=100)
+    tipo_conex= serializers.CharField(max_length=100)
+    psal_1= serializers.IntegerField()
+    psal_2= serializers.CharField(max_length=100)
+    pot_sal_3= serializers.CharField(max_length=100)
+    isal_max_1= serializers.DecimalField(max_digits=50, decimal_places=25)
+    isal_max_2= serializers.CharField(max_length=100)
+    isal_max_3= serializers.CharField(max_length=100)
+    i_int_sal_1= serializers.IntegerField()
+    i_int_sal_2= serializers.CharField(max_length=100)
+    i_int_sal_3= serializers.CharField(max_length=100)
+    
+
+class MicroInversorSerializer(serializers.Serializer):
+    descripcion= serializers.CharField(max_length=100)
+    modelo= serializers.CharField(max_length=100)
+    fabricante= serializers.CharField(max_length=100)
+    pot_fv_in_min= serializers.IntegerField()
+    pot_fv_in_max= serializers.IntegerField()
+    vin_min= serializers.IntegerField()
+    vin_max= serializers.IntegerField()
+    vop_min= serializers.IntegerField()
+    vop_max= serializers.IntegerField()
+    vreg_min= serializers.IntegerField()
+    vreg_max= serializers.IntegerField()
+    isc_max= serializers.IntegerField()
+    psal_max= serializers.IntegerField()
+    psal_nom= serializers.IntegerField()
+    tipo_conex= serializers.CharField(max_length=100)
+    v_nom1= serializers.IntegerField()
+    v_nom2= serializers.IntegerField()
+    i_nom1= serializers.CharField(max_length=100)
+    i_nom2= serializers.CharField(max_length=100)
+    
+class PanelSolarSerializer(serializers.Serializer):
+    
+    descripcion= serializers.CharField(max_length=100)
+    modelo= serializers.CharField(max_length=100)
+    fabricante= serializers.CharField(max_length=100)
+    tipo_celda= serializers.CharField(max_length=100)
+    no_de_celdas= serializers.IntegerField()
+    pmax= serializers.IntegerField()
+    eficiencia= serializers.CharField(max_length=100)
+    vmpp= DecimalField(max_digits=50, decimal_places=25, localize=True)
+    impp= DecimalField(max_digits=50, decimal_places=25)
+    voc= DecimalField(max_digits=50, decimal_places=25)
+    isc= DecimalField(max_digits=50, decimal_places=25)
+    coef_voc= serializers.CharField(max_length=100)
+    
+    
+
+class DataSerializer(serializers.Serializer):
+    #dpssAC =  DpsACSerializer(many=True, required = True)
+    #dpssDC = DpsDCSerializer(many=True, required = True)
+    #fusibles = FusibleSerializer(many=True, required = True)
+    #interruptoresAuto= InteAutoSerializer(many=True, required = True)
+    interruptoresManuales = InteManualSerializer(many=True, required = True)
+    #inversores =InversorSerializer(many=True, required = True)
+    #microInversores = MicroInversorSerializer(many=True, required = True)
+    panelesSolares = PanelSolarSerializer(many=True, required = True)    

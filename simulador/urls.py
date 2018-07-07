@@ -14,9 +14,16 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+
+from cotizadorFV.models import *
+from cotizadorFV.views import *
+from cotizadorFV.models_excel.lib import importarCsvs
+importarCsvs()
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^cotizadorFV/', include('cotizadorFV.urls', namespace="cotizadorFv"))
 ]
