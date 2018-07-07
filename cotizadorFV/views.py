@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models_excel import *
-from main_info import *
+from .main_info import *
 from cotizadorFV.modelsCVS import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
