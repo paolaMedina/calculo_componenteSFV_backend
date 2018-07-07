@@ -3,10 +3,16 @@ from adaptor.model import CsvModel
 from adaptor.fields import CharField, IntegerField, DecimalField, DateField,FloatField
 from decimal import Decimal
 #Modelos de los excel
+
 class DecimalField(DecimalField):
     def to_python(self, value):
-        point_separated_decimal = value.replace(',','.')
+        if (value==''):
+            point_separated_decimal = 0
+        else:
+            point_separated_decimal = value.replace(',','.')
         return Decimal(point_separated_decimal)    
+        
+        
 class InterruptorManual(CsvModel):
     descripcion= CharField()
     marca= CharField()
@@ -53,7 +59,7 @@ class DpsDC(CsvModel):
      forma_constructiva= CharField()
      no_polos= CharField()
      uc= IntegerField()
-     in_in= IntegerField()
+     in_in= DecimalField()
      imax= IntegerField()
      precio= IntegerField()
      class Meta:

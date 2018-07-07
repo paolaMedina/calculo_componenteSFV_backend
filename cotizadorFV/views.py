@@ -4,8 +4,9 @@ from main_info import *
 from cotizadorFV.modelsCVS import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import InteManualSerializer, DataSerializer
+from .serializers import *
 from cotizadorFV.models_excel import lib as mainInfoLib
+
 """
 # Create your views here.
 """
@@ -14,11 +15,13 @@ from cotizadorFV.models_excel import lib as mainInfoLib
 class InterruptorManualSerializerView(APIView):
     def get(self, request, format=None):
         serializer=[]
-        interruptoresM=inicial.interruptoresManuales
+        interruptoresM=inicial.dpssAC
         for interruptor in interruptoresM:
-            serializer.append(InteManualSerializer(interruptor).data)
+            serializer.append(DpsACSerializer(interruptor).data)
             #example = InterruptorManual(**exampleSerializer.data)
         return Response(serializer)
+        
+        
 class DataCsvView(APIView):
     def get(self, request, format=None):
         serializer = DataSerializer(mainInfoLib.getData())

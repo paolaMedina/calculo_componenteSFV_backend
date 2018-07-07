@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from models_form.generalFV import GeneralFVForm
+
+
 class DecimalField(serializers.DecimalField):
     def to_representation(self, value):
         """
@@ -167,10 +169,10 @@ class PanelSolarSerializer(serializers.Serializer):
     
 
 class DataSerializer(serializers.Serializer):
-    #dpssAC =  DpsACSerializer(many=True, required = True)
-    #dpssDC = DpsDCSerializer(many=True, required = True)
-    #fusibles = FusibleSerializer(many=True, required = True)
-    #interruptoresAuto= InteAutoSerializer(many=True, required = True)
+    dpssAC =  DpsACSerializer(many=True, required = True)
+    dpssDC = DpsDCSerializer(many=True, required = True)
+    fusibles = FusibleSerializer(many=True, required = True)
+    interruptoresAutomaticos= InteAutoSerializer(many=True, required = True)
     interruptoresManuales = InteManualSerializer(many=True, required = True)
     #inversores =InversorSerializer(many=True, required = True)
     microInversores = MicroInversorSerializer(many=True, required = True)
