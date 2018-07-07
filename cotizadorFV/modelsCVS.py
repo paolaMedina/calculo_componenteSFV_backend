@@ -19,7 +19,7 @@ class InterruptorManual(CsvModel):
         
         
 
-class DpsACCsv(CsvModel):
+class DpsAC(CsvModel):
     
     descripcion= CharField
     marca= CharField
@@ -38,7 +38,7 @@ class DpsACCsv(CsvModel):
     
 
         
-class DpsDCCsv(CsvModel):
+class DpsDC(CsvModel):
      descripcion= CharField
      marca= CharField
      referencia= CharField
@@ -52,7 +52,7 @@ class DpsDCCsv(CsvModel):
      precio= CharField
 
 
-class FusibleCsv(CsvModel):
+class Fusible(CsvModel):
     descripcion=  CharField
     marca= CharField
     referencia= CharField
@@ -66,7 +66,7 @@ class FusibleCsv(CsvModel):
     precio= CharField
     
     
-class InteAutoCsv(CsvModel):
+class InteAuto(CsvModel):
     descripcion= CharField
     marca= CharField
     referencia= CharField
@@ -81,7 +81,7 @@ class InteAutoCsv(CsvModel):
     icn_2= CharField
     precio= CharField
     
-class InversorCsv(CsvModel):
+class Inversor(CsvModel):
     descripcion= CharField
     modelo= CharField
     fabricante= CharField
@@ -115,7 +115,7 @@ class InversorCsv(CsvModel):
     i_int_sal_3= CharField
     
 
-class MicroInversorCsv(CsvModel):
+class MicroInversor(CsvModel):
     descripcion= CharField
     modelo= CharField
     fabricante= CharField
@@ -136,7 +136,7 @@ class MicroInversorCsv(CsvModel):
     i_nom1= CharField
     i_nom2= CharField
     
-class PanelSolarCsv(CsvModel):
+class PanelSolar(CsvModel):
     
     descripcion= CharField
     modelo= CharField
@@ -150,3 +150,4 @@ class PanelSolarCsv(CsvModel):
     voc= CharField
     isc= CharField
     coef_voc= CharField
+
