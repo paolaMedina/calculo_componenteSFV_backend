@@ -28,9 +28,14 @@ def importarPanelesSolares():
 def importarDpsAC():
     dpssAC = importcsv(DpsAC, 'archivo/DPS_AC.csv')
     inicial.setDpsAC(dpssAC)
+    
+    
 def importarDpsDC():
     dpssDC = importcsv(DpsDC, 'archivo/DPS_AC.csv')
     inicial.setDpsDC(dpssDC)
+    
+    
 def importarCsvs():
     importarInterruptoresManuales()
     importarPanelesSolares()
+    importarDpsAC()
