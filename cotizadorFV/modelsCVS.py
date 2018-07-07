@@ -35,7 +35,8 @@ class DpsAC(CsvModel):
     up=CharField
     telesenal= CharField
     precio= CharField
-    
+    class Meta:
+        delimiter = ";"    
 
         
 class DpsDC(CsvModel):
@@ -50,7 +51,8 @@ class DpsDC(CsvModel):
      in_in= CharField
      imax= CharField
      precio= CharField
-
+     class Meta:
+         delimiter = ";"
 
 class Fusible(CsvModel):
     descripcion=  CharField
@@ -64,6 +66,8 @@ class Fusible(CsvModel):
     tipo= CharField
     clase= CharField
     precio= CharField
+    class Meta:
+        delimiter = ";"    
     
     
 class InteAuto(CsvModel):
@@ -80,7 +84,8 @@ class InteAuto(CsvModel):
     icn= CharField
     icn_2= CharField
     precio= CharField
-    
+    class Meta:
+        delimiter = ";"    
 class Inversor(CsvModel):
     descripcion= CharField
     modelo= CharField
@@ -113,7 +118,8 @@ class Inversor(CsvModel):
     i_int_sal_1= CharField
     i_int_sal_2= CharField
     i_int_sal_3= CharField
-    
+    class Meta:
+        delimiter = ";"   
 
 class MicroInversor(CsvModel):
     descripcion= CharField
@@ -135,7 +141,8 @@ class MicroInversor(CsvModel):
     v_nom2= CharField
     i_nom1= CharField
     i_nom2= CharField
-    
+    class Meta:
+        delimiter = ";"   
 class PanelSolar(CsvModel):
     
     descripcion= CharField
@@ -150,4 +157,5 @@ class PanelSolar(CsvModel):
     voc= CharField
     isc= CharField
     coef_voc= CharField
-
+    class Meta:
+        delimiter = ";"
