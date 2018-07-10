@@ -1,24 +1,12 @@
 from rest_framework import serializers
 from models_form.generalFV import GeneralFVForm
 
-
-class DecimalField(serializers.DecimalField):
-    def to_representation(self, value):
-        """
-        Validate that the input is a decimal number and return a Decimal
-        instance.
-        """
-
-        """
-        Replace comma separated values for point separated values
         
-        """
-        value = str(value).replace(',','.')
-        return super(DecimalField, self).to_representation(value)
 class CharField(serializers.CharField):
     def to_representation(self, value):
         utf8_value = value.decode('utf-8')
         return super(CharField, self).to_representation(utf8_value)
+        
 class GeneralFVSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralFVForm
@@ -39,7 +27,7 @@ class DpsACSerializer(serializers.Serializer):
     in_in= serializers.IntegerField()
     imax_por_polo= CharField(max_length=100)
     iimp_por_polo= CharField(max_length=100)
-    up=serializers.DecimalField(max_digits=50, decimal_places=25)
+    up=serializers.DecimalField(max_digits=50, decimal_places=2)
     telesenal= CharField(max_length=100)
     precio= serializers.IntegerField()
     
@@ -54,7 +42,7 @@ class DpsDCSerializer(serializers.Serializer):
      forma_constructiva= CharField(max_length=100)
      no_polos= CharField(max_length=100)
      uc= serializers.IntegerField()
-     in_in= serializers.DecimalField(max_digits=50, decimal_places=25)
+     in_in= serializers.DecimalField(max_digits=50, decimal_places=2)
      imax= serializers.IntegerField()
      precio= serializers.IntegerField()
 
@@ -104,16 +92,27 @@ class InversorSerializer(serializers.Serializer):
     modelo= CharField(max_length=100)
     fabricante= CharField(max_length=100)
     no_mppt= serializers.IntegerField()
-    pot_nom= serializers.DecimalField(max_digits=50, decimal_places=25)
-    pot_fv_in_min= serializers.DecimalField(max_digits=50, decimal_places=25)
-    pot_fv_in_max= serializers.DecimalField(max_digits=50, decimal_places=25)
-    imax_in_mppt1= serializers.IntegerField()
-    imax_in_mppt2= serializers.DecimalField(max_digits=50, decimal_places=25)
-    imax_in_mpptCombinado= serializers.DecimalField(max_digits=50, decimal_places=25)
-    iscmax_mppt1= serializers.DecimalField(max_digits=50, decimal_places=25)
-    iscmax_mppt2= serializers.DecimalField(max_digits=50, decimal_places=25)
+    pot_nom= serializers.DecimalField(max_digits=50, decimal_places=2)
+    pot_fv_in_min= serializers.DecimalField(max_digits=50, decimal_places=2)
+    pot_fv_in_max= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt1= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt2= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt3= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt4= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt5= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt6= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt1_2= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt3_4= serializers.DecimalField(max_digits=50, decimal_places=2)
+    imax_in_mppt5_6= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt1= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt2= serializers.DecimalField(max_digits=50, decimal_places=2)
     iscmax_mppt3= serializers.DecimalField(max_digits=50, decimal_places=2)
-    iscmax_mpptCombinado= serializers.DecimalField(max_digits=50, decimal_places=25)
+    iscmax_mppt4= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt5= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt6= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt1_2= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt3_4= serializers.DecimalField(max_digits=50, decimal_places=2)
+    iscmax_mppt5_6= serializers.DecimalField(max_digits=50, decimal_places=2)
     vin_min= serializers.IntegerField()
     vin_max= serializers.IntegerField()
     vop_min= serializers.IntegerField()
@@ -125,12 +124,13 @@ class InversorSerializer(serializers.Serializer):
     psal_1= serializers.IntegerField()
     psal_2= CharField(max_length=100)
     pot_sal_3= CharField(max_length=100)
-    isal_max_1= serializers.DecimalField(max_digits=50, decimal_places=25)
+    isal_max_1= serializers.DecimalField(max_digits=50, decimal_places=2)
     isal_max_2= CharField(max_length=100)
     isal_max_3= CharField(max_length=100)
     i_int_sal_1= serializers.IntegerField()
     i_int_sal_2= CharField(max_length=100)
     i_int_sal_3= CharField(max_length=100)
+    precio= serializers.IntegerField()
     
 
 class MicroInversorSerializer(serializers.Serializer):
@@ -151,8 +151,9 @@ class MicroInversorSerializer(serializers.Serializer):
     tipo_conex= CharField(max_length=100)
     v_nom1= serializers.IntegerField()
     v_nom2= serializers.IntegerField()
-    i_nom1= DecimalField(max_digits=50, decimal_places=25)
-    i_nom2= DecimalField(max_digits=50, decimal_places=25)
+    i_nom1= serializers.DecimalField(max_digits=50, decimal_places=2)
+    i_nom2= serializers.DecimalField(max_digits=50, decimal_places=2)
+    precio= serializers.IntegerField()
     
 class PanelSolarSerializer(serializers.Serializer):
     
@@ -163,11 +164,12 @@ class PanelSolarSerializer(serializers.Serializer):
     no_de_celdas= serializers.IntegerField()
     pmax= serializers.IntegerField()
     eficiencia= CharField(max_length=100)
-    vmpp= DecimalField(max_digits=50, decimal_places=25)
-    impp= DecimalField(max_digits=50, decimal_places=25)
-    voc= DecimalField(max_digits=50, decimal_places=25)
-    isc= DecimalField(max_digits=50, decimal_places=25)
+    vmpp= serializers.DecimalField(max_digits=50, decimal_places=2)
+    impp= serializers.DecimalField(max_digits=50, decimal_places=2)
+    voc= serializers.DecimalField(max_digits=50, decimal_places=2)
+    isc= serializers.DecimalField(max_digits=50, decimal_places=2)
     coef_voc= CharField(max_length=100)
+    precio= serializers.IntegerField()
     
     
 
