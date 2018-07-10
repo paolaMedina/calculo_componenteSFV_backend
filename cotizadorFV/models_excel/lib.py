@@ -1,4 +1,4 @@
-from cotizadorFV.modelsCVS import *
+from cotizadorFV.modelsCSV import *
 from cotizadorFV.main_info import inicial
 
 def importcsv(modelo_csv, nombre_archivo):

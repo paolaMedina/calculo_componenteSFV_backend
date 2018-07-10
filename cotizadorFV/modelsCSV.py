@@ -2,6 +2,7 @@
 from adaptor.model import CsvModel
 from adaptor.fields import CharField, IntegerField, DecimalField, DateField,FloatField
 from decimal import Decimal
+import decimal
 #Modelos de los excel
 
 class DecimalField(DecimalField):
@@ -10,7 +11,7 @@ class DecimalField(DecimalField):
             point_separated_decimal = 0
         else:
             point_separated_decimal = value.replace(',','.')
-        return Decimal(point_separated_decimal)    
+        return Decimal(point_separated_decimal).quantize(Decimal("0.01"), decimal.ROUND_HALF_DOWN)   
         
         
 class InterruptorManual(CsvModel):
@@ -112,12 +113,22 @@ class Inversor(CsvModel):
     pot_fv_in_max= DecimalField()
     imax_in_mppt1= DecimalField()
     imax_in_mppt2= DecimalField()
-    imax_in_mpptCombinado= DecimalField()
     imax_in_mppt3 = DecimalField()
+    imax_in_mppt4= DecimalField()
+    imax_in_mppt5= DecimalField()
+    imax_in_mppt6 = DecimalField()
+    imax_in_mppt1_2= DecimalField()
+    imax_in_mppt3_4= DecimalField()
+    imax_in_mppt5_6= DecimalField()
     iscmax_mppt1= DecimalField()
     iscmax_mppt2= DecimalField()
     iscmax_mppt3= DecimalField()
-    iscmax_mpptCombinado= DecimalField()
+    iscmax_mppt4= DecimalField()
+    iscmax_mppt5= DecimalField()
+    iscmax_mppt6= DecimalField()
+    iscmax_mppt1_2= DecimalField()
+    iscmax_mppt3_4= DecimalField()
+    iscmax_mppt5_6= DecimalField()
     vin_min= IntegerField()
     vin_max= IntegerField()
     vop_min= IntegerField()
@@ -135,6 +146,7 @@ class Inversor(CsvModel):
     i_int_sal_1= DecimalField()
     i_int_sal_2= CharField()
     i_int_sal_3= CharField()
+    precio=IntegerField()
     class Meta:
         delimiter = ";"   
         has_header=True
@@ -159,6 +171,7 @@ class MicroInversor(CsvModel):
     v_nom2= IntegerField()
     i_nom1= DecimalField()
     i_nom2= DecimalField()
+    precio=IntegerField()
     class Meta:
         delimiter = ";"   
         has_header=True
@@ -173,11 +186,12 @@ class PanelSolar(CsvModel):
     no_de_celdas= CharField()
     pmax= CharField()
     eficiencia= CharField()
-    vmpp= CharField()
+    vmpp= DecimalField()
     impp= DecimalField()
     voc= DecimalField()
     isc= DecimalField()
     coef_voc= CharField()
+    precio=IntegerField()
     class Meta:
         delimiter = ";"
         has_header = True
