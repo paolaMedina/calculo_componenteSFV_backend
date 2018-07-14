@@ -1,0 +1,111 @@
+Descripcion;Marca;Referencia;Aplicaci¢n;Tipo_Tam;No_polos;No_polos_letras;Tension;Tension_2;In;Icn;Icn_2; Precio 
+Mini Interruptor Automatico Monopolar AC 1X1A 220V 6kA;CHINT;NB1-63 1P 1A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;1;6;0;16400
+Mini Interruptor Automatico Monopolar AC 1X2A 220V 6kA;CHINT;NB1-63 1P 2A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;2;6;0;16400
+Mini Interruptor Automatico Monopolar AC 1X3A 220V 6kA;CHINT;NB1-63 1P 3A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;3;6;0;16400
+Mini Interruptor Automatico Monopolar AC 1X4A 220V 6kA;CHINT;NB1-63 1P 4A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;4;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X6A 220V 6kA;CHINT;NB1-63 1P 6A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;6;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X10A 220V 6kA;CHINT;NB1-63 1P 10A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;10;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X16A 220V 6kA;CHINT;NB1-63 1P 16A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;16;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X20A 220V 6kA;CHINT;NB1-63 1P 20A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;20;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X25A 220V 6kA;CHINT;NB1-63 1P 25A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;25;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X32A 220V 6kA;CHINT;NB1-63 1P 32A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;32;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X40A 220V 6kA;CHINT;NB1-63 1P 40A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;40;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X50A 220V 6kA;CHINT;NB1-63 1P 50A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;50;6;0;16000
+Mini Interruptor Automatico Monopolar AC 1X63A 220V 6kA;CHINT;NB1-63 1P 63A;AC;Mini Interruptor Automatico;1;Monopolar;220;400;63;6;0;16000
+Mini Interruptor Automatico Bipolar AC 2X1A 240V 6kA;CHINT;NB1-63 2P 1A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;1;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X2A 240V 6kA;CHINT;NB1-63 2P 2A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;2;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X3A 240V 6kA;CHINT;NB1-63 2P 3A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;3;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X4A 240V 6kA;CHINT;NB1-63 2P 4A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;4;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X6A 240V 6kA;CHINT;NB1-63 2P 6A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;6;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X10A 240V 6kA;CHINT;NB1-63 2P 10A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;10;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X16A 240V 6kA;CHINT;NB1-63 2P 16A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;16;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X20A 240V 6kA;CHINT;NB1-63 2P 20A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;20;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X25A 240V 6kA;CHINT;NB1-63 2P 25A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;25;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X32A 240V 6kA;CHINT;NB1-63 2P 32A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;32;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X40A 240V 6kA;CHINT;NB1-63 2P 40A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;40;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X50A 240V 6kA;CHINT;NB1-63 2P 50A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;50;6;0;38000
+Mini Interruptor Automatico Bipolar AC 2X63A 240V 6kA;CHINT;NB1-63 2P 63A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;63;6;0;38000
+Mini Interruptor Automatico Tripolar AC 3X1A 240V 6kA;CHINT;NB1-63 3P 1A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;1;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X2A 240V 6kA;CHINT;NB1-63 3P 2A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;2;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X3A 240V 6kA;CHINT;NB1-63 3P 3A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;3;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X4A 240V 6kA;CHINT;NB1-63 3P 4A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;4;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X6A 240V 6kA;CHINT;NB1-63 3P 6A ;AC;Mini Interruptor Automatico;3;Tripolar;240;415;6;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X10A 240V 6kA;CHINT;NB1-63 3P 10A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;10;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X16A 240V 6kA;CHINT;NB1-63 3P 16A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;16;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X20A 240V 6kA;CHINT;NB1-63 3P 20A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;20;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X25A 240V 6kA;CHINT;NB1-63 3P 25A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;25;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X32A 240V 6kA;CHINT;NB1-63 3P 32A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;32;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X40A 240V 6kA;CHINT;NB1-63 3P 40A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;40;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X50A 240V 6kA;CHINT;NB1-63 3P 50A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;50;6;0;54400
+Mini Interruptor Automatico Tripolar AC 3X63A 240V 6kA;CHINT;NB1-63 3P 63A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;63;6;0;54400
+Mini Interruptor Automatico Monopolar AC 1X1A 230V 10kA;CHINT;NB1-63H 1P 1A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;1;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X2A 230V 10kA;CHINT;NB1-63H 1P 2A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;2;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X3A 230V 10kA;CHINT;NB1-63H 1P 3A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;3;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X4A 230V 10kA;CHINT;NB1-63H 1P 4A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;4;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X6A 230V 10kA;CHINT;NB1-63H 1P 6A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;6;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X10A 230V 10kA;CHINT;NB1-63H 1P 10A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;10;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X16A 230V 10kA;CHINT;NB1-63H 1P 16A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;16;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X20A 230V 10kA;CHINT;NB1-63H 1P 20A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;20;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X25A 230V 10kA;CHINT;NB1-63H 1P 25A ;AC;Mini Interruptor Automatico;1;Monopolar;230;400;25;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X32A 230V 10kA;CHINT;NB1-63H 1P 32A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;32;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X40A 230V 10kA;CHINT;NB1-63H 1P 40A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;40;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X50A 230V 10kA;CHINT;NB1-63H 1P 50A;AC;Mini Interruptor Automatico;1;Monopolar;230;400;50;10;0;22400
+Mini Interruptor Automatico Monopolar AC 1X63A 230V 10kA;CHINT;NB1-63H 1P 63A ;AC;Mini Interruptor Automatico;1;Monopolar;230;400;63;10;0;22400
+Mini Interruptor Automatico Bipolar AC 2X1A 240V 10kA;CHINT;NB1-63H 2P 1A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;1;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X2A 240V 10kA;CHINT;NB1-63H 2P 2A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;2;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X3A 240V 10kA;CHINT;NB1-63H 2P 3A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;3;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X4A 240V 10kA;CHINT;NB1-63H 2P 4A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;4;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X6A 240V 10kA;CHINT;NB1-63H 2P 6A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;6;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X10A 240V 10kA;CHINT;NB1-63H 2P 10A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;10;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X16A 240V 10kA;CHINT;NB1-63H 2P 16A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;16;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X20A 240V 10kA;CHINT;NB1-63H 2P 20A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;20;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X25A 240V 10kA;CHINT;NB1-63H 2P 25A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;25;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X32A 240V 10kA;CHINT;NB1-63H 2P 32A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;32;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X40A 240V 10kA;CHINT;NB1-63H 2P 40A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;40;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X50A 240V 10kA;CHINT;NB1-63H 2P 50A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;50;10;0;52000
+Mini Interruptor Automatico Bipolar AC 2X63A 240V 10kA;CHINT;NB1-63H 2P 63A;AC;Mini Interruptor Automatico;2;Bipolar;240;415;63;10;0;52000
+Mini Interruptor Automatico Tripolar AC 3X1A 240V 10kA;CHINT;NB1-63H 3P 1A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;1;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X2A 240V 10kA;CHINT;NB1-63H 3P 2A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;2;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X3A 240V 10kA;CHINT;NB1-63H 3P 3A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;3;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X4A 240V 10kA;CHINT;NB1-63H 3P 4A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;4;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X6A 240V 10kA;CHINT;NB1-63H 3P 6A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;6;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X10A 240V 10kA;CHINT;NB1-63H 3P 10A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;10;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X16A 240V 10kA;CHINT;NB1-63H 3P 16A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;16;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X20A 240V 10kA;CHINT;NB1-63H 3P 20A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;20;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X25A 240V 10kA;CHINT;NB1-63H 3P 25A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;25;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X32A 240V 10kA;CHINT;NB1-63H 3P 32A ;AC;Mini Interruptor Automatico;3;Tripolar;240;415;32;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X40A 240V 10kA;CHINT;NB1-63H 3P 40A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;40;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X50A 240V 10kA;CHINT;NB1-63H 3P 50A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;50;10;0;71500
+Mini Interruptor Automatico Tripolar AC 3X63A 240V 10kA;CHINT;NB1-63H 3P 63A;AC;Mini Interruptor Automatico;3;Tripolar;240;415;63;10;0;71500
+interruptores automaticos Tripolar AC 3X16A 220V 20kA;CHINT;NM1-63S-16;AC;interruptores automaticos;3;Tripolar;220;440;16;20;12,5;215000
+interruptores automaticos Tripolar AC 3X20A 220V 20kA;CHINT;NM1-63S-20;AC;interruptores automaticos;3;Tripolar;220;440;20;20;12,5;215000
+interruptores automaticos Tripolar AC 3X32A 220V 20kA;CHINT;NM1-63S-32;AC;interruptores automaticos;3;Tripolar;220;440;32;20;12,5;215000
+interruptores automaticos Tripolar AC 3X40A 220V 20kA;CHINT;NM1-63S-40;AC;interruptores automaticos;3;Tripolar;220;440;40;20;12,5;215000
+interruptores automaticos Tripolar AC 3X50A 220V 20kA;CHINT;NM1-63S-50;AC;interruptores automaticos;3;Tripolar;220;440;50;20;12,5;215000
+interruptores automaticos Tripolar AC 3X63A 220V 20kA;CHINT;NM1-63S-63;AC;interruptores automaticos;3;Tripolar;220;440;63;20;12,5;215000
+interruptores automaticos Tripolar AC 3X32A 220V 42kA;CHINT;NM1-125S-32;AC;interruptores automaticos;3;Tripolar;220;440;32;42;32;194000
+interruptores automaticos Tripolar AC 3X40A 220V 42kA;CHINT;NM1-125S-40;AC;interruptores automaticos;3;Tripolar;220;440;40;42;32;194000
+interruptores automaticos Tripolar AC 3X50A 220V 42kA;CHINT;NM1-125S-50;AC;interruptores automaticos;3;Tripolar;220;440;50;42;32;194000
+interruptores automaticos Tripolar AC 3X63A 220V 42kA;CHINT;NM1-125S-63;AC;interruptores automaticos;3;Tripolar;220;440;63;42;32;194000
+interruptores automaticos Tripolar AC 3X70A 220V 42kA;CHINT;NM1-125S-70;AC;interruptores automaticos;3;Tripolar;220;440;70;42;32;194000
+interruptores automaticos Tripolar AC 3X80A 220V 42kA;CHINT;NM1-125S-80;AC;interruptores automaticos;3;Tripolar;220;440;80;42;32;194000
+interruptores automaticos Tripolar AC 3X100A 220V 42kA;CHINT;NM1-125S-100;AC;interruptores automaticos;3;Tripolar;220;440;100;42;32;194000
+interruptores automaticos Tripolar AC 3X125A 220V 42kA;CHINT;NM1-125S-125;AC;interruptores automaticos;3;Tripolar;220;440;125;42;32;194000
+interruptores automaticos Tripolar AC 3X125A 220V 42kA;CHINT;NM1-250S-125;AC;interruptores automaticos;3;Tripolar;220;440;125;42;20;290000
+interruptores automaticos Tripolar AC 3X160A 220V 42kA;CHINT;NM1-250S-160;AC;interruptores automaticos;3;Tripolar;220;440;160;42;20;290000
+interruptores automaticos Tripolar AC 3X180A 220V 42kA;CHINT;NM1-250S-180;AC;interruptores automaticos;3;Tripolar;220;440;180;42;20;290000
+interruptores automaticos Tripolar AC 3X200A 220V 42kA;CHINT;NM1-250S-200;AC;interruptores automaticos;3;Tripolar;220;440;200;42;20;290000
+interruptores automaticos Tripolar AC 3X225A 220V 42kA;CHINT;NM1-250S-225;AC;interruptores automaticos;3;Tripolar;220;440;225;42;20;290000
+interruptores automaticos Tripolar AC 3X250A 220V 42kA;CHINT;NM1-250S-250;AC;interruptores automaticos;3;Tripolar;220;440;250;42;20;290000
+interruptores automaticos Tripolar AC 3X250A 220V 50kA;CHINT;NM1-400S-250;AC;interruptores automaticos;3;Tripolar;220;440;250;50;30;900000
+interruptores automaticos Tripolar AC 3X315A 220V 50kA;CHINT;NM1-400S-315;AC;interruptores automaticos;3;Tripolar;220;440;315;50;30;900000
+interruptores automaticos Tripolar AC 3X350A 220V 50kA;CHINT;NM1-400S-350;AC;interruptores automaticos;3;Tripolar;220;440;350;50;30;900000
+interruptores automaticos Tripolar AC 3X400A 220V 50kA;CHINT;NM1-400S-400;AC;interruptores automaticos;3;Tripolar;220;440;400;50;30;900000
+interruptores automaticos Tripolar AC 3X500A 220V 50kA;CHINT;NM1-630S-500;AC;interruptores automaticos;3;Tripolar;220;440;500;50;30;1460000
+interruptores automaticos Tripolar AC 3X630A 220V 50kA;CHINT;NM1-630S-630;AC;interruptores automaticos;3;Tripolar;220;440;630;50;30;1460000
+interruptores automaticos Tripolar AC 3X700A 220V 85kA;CHINT;NM1-800H-700;AC;interruptores automaticos;3;Tripolar;220;440;700;85;55;2825000
+interruptores automaticos Tripolar AC 3X800A 220V 85kA;CHINT;NM1-800H-800;AC;interruptores automaticos;3;Tripolar;220;440;800;85;55;2825000
+interruptores automaticos Tripolar AC 3X1000A 220V 85kA;CHINT;NM1-1250H-1000;AC;interruptores automaticos;3;Tripolar;220;440;1000;85;55;4500000
+interruptores automaticos Tripolar AC 3X1250A 220V 85kA;CHINT;NM1-1250H-1250;AC;interruptores automaticos;3;Tripolar;220;440;1250;85;55;4500000
+interruptores automaticos Bipolar AC 2X80A 220V 65kA;CHINT;NM1-125H-80;AC;interruptores automaticos;2;Bipolar;220;440;80;65;42;142000
+interruptores automaticos Bipolar AC 2X100A 220V 65kA;CHINT;NM1-125H-100;AC;interruptores automaticos;2;Bipolar;220;440;100;65;42;142000

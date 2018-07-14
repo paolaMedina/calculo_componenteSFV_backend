@@ -1,0 +1,3 @@
+Descripcion;Modelo;Fabricante;Pot_FV_in_min;Pot_FV_in_max;Vin_min;Vin_max;Vop_min;Vop_max;Vreg_min;Vreg_max;Isc_max;Psal_max;Psal_nom;Tipo_conex;V_nom1;V_nom2;I_nom1;I_nom2;precio
+Microinversores Enphase IQ 6 240/280V ;IQ6-60-2-US;Enphase;195;330;22;48;16;48;27;37;15;240;23;Monofásico;240;208;0,96;1,11;0
+Microinversores Enphase IQ 6+ 240/280V ;IQ6PLUS-72-2-US;Enphase;235;400;22;62;16;62;27;48;15;290;280;Monofásico;240;208;1,17;1,35;0

@@ -20,10 +20,11 @@ from django.contrib import admin
 from cotizadorFV.models import *
 from cotizadorFV.views import *
 from cotizadorFV.models_excel.lib import importarCsvs
-importarCsvs()
+importarCsvs() #carga inicial de los archivos csv
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^cotizadorFV/', include('cotizadorFV.urls', namespace="cotizadorFv"))
+    url(r'^cotizadorFV/', include('cotizadorFV.urls', namespace="cotizadorFv")),
+    url(r'^fileupload/', include('cargaArchivos.urls', namespace="cargarArchivos"))
 ]
