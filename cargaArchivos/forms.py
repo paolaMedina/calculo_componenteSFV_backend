@@ -8,7 +8,8 @@ class FormUpload(forms.Form):
     '''
     Form principal
     '''
-    file = forms.FileField(widget= KrajeeFileInputWidget )
+    #file = forms.FileField(widget= KrajeeFileInputWidget )
+    file = forms.FileField( )
     def handle_uploaded_file(self, f):
         print f.name
         with open('archivos/' + f.name, 'w') as destination:

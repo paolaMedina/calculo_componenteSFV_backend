@@ -6,13 +6,13 @@ from django.shortcuts import render
 from django.views.generic.edit import FormView
 from .forms import FormUpload
 from django.core.urlresolvers import reverse_lazy
- 
+from django.contrib import messages
  
 class UploadFileView(FormView):
     '''
     Esta vista sube un archivo al servidor
     '''
-    template_name = "index.html"
+    template_name = "upload.html"
     form_class = FormUpload
     success_url = reverse_lazy("cargarArchivos:index")
  
@@ -35,6 +35,7 @@ class UploadFileView(FormView):
             if 'file' in request.FILES:
                 file = request.FILES['file']
                 form.handle_uploaded_file(file)
+                messages.success(self.request, 'Se agrego el usuario con EXITO')
                 return self.form_valid(form, **kwargs)
                 
             else:
