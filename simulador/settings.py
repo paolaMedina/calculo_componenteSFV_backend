@@ -131,3 +131,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticbase'),]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+
+#permite enviar mensajes de alerta al usuario
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

@@ -13,6 +13,8 @@ class KrajeeFileInputWidget(FileInput):
         scriptKrajeeFileInput = self.getScriptKrajeeFileInputString(myid)
         return mark_safe(widgets_html + ' ' + scriptKrajeeFileInput)
     def getScriptKrajeeFileInputString(self, elementId):
+        
+        #fileActionSettings: {showUpload: false}-->quitar upload de miniatura
         return """
          <script>
          $('#%s').fileinput({
@@ -24,7 +26,9 @@ class KrajeeFileInputWidget(FileInput):
             showUpload: false, 
             showUploadedThumbs: false,  
             dropZoneEnabled: false,
+            fileActionSettings: {showUpload: false}, 
              
          });
          </script>
         """ % elementId
+
