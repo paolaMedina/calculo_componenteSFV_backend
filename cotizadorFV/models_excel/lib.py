@@ -18,7 +18,7 @@ def importcsv(modelo_csv, nombre_archivos):
     
 
 def importarInterruptoresManuales():
-    interruptores_manuales = importcsv(InterruptorManual, 'archivos/interruptores_manuales_DC.csv')
+    interruptores_manuales = importcsv(InterruptorManual, 'archivos/interruptores_manuales.csv')
     inicial.setInterruptoresManuales(interruptores_manuales)
 
 def importarPanelesSolares():
