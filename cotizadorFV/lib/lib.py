@@ -48,6 +48,8 @@ def importarInterruptoresAuto():
 def importarInversores():
     inversores = importcsv(Inversor, 'archivos/inversor.csv')
     inicial.setInversores(inversores)
+    
+    
 def importarCsvs():
     importarInterruptoresManuales()
     importarPanelesSolares()
@@ -57,6 +59,18 @@ def importarCsvs():
     importarInterruptoresAuto()
     importarMicroInversores()
     importarInversores()
+    makeDic()
+    
+    
 def getData():
     return inicial
 
+def makeDic():
+    interruptoresManuales_dict = {x.referencia: x for x in inicial.interruptoresManuales}
+    panelesSolares_dict= {x.descripcion: x for x in inicial.panelesSolares}
+    dpsAC_dict= {x.referencia: x for x in inicial.dpssAC}
+    dpsDC_dict= {x.referencia: x for x in inicial.dpssDC}
+    fusible_dict= {x.referencia: x for x in inicial.fusibles}
+    
+    print (dpsAC_dict["DS250E-120"].precio)
+    

@@ -12,4 +12,9 @@ urlpatterns = [
     url(r'^InteAutoView/$', views.InteAutoView.as_view(), name='InteAutoView'),
     
     url(r'^csvData/$', views.DataCsvView.as_view(), name='csvData'),
+    
+    url(r'^r/$', views.deserializacion.as_view(), name='r'),
+    
+     url(r'^l/$', views.calculos, name='l'),
+    
 ]
