@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models_form.generalFV import GeneralFVForm
+from models import *
 
         
 class CharField(serializers.CharField):
@@ -7,12 +7,6 @@ class CharField(serializers.CharField):
         utf8_value = value.decode('utf-8')
         return super(CharField, self).to_representation(utf8_value)
         
-class GeneralFVSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GeneralFVForm
-        fields = ('power_of_plant_fv', 'total_panels_fv', 'power_of_panel_fv', 'ambient_temperature', 'lowest_ambient_temperature_expected',
-        'investment_type', 'service_type', 'service_voltage', 'instalation_place')
-
 
 class DpsACSerializer(serializers.Serializer):
     
@@ -125,8 +119,8 @@ class InversorSerializer(serializers.Serializer):
     psal_2= CharField(max_length=100)
     pot_sal_3= CharField(max_length=100)
     isal_max_1= serializers.DecimalField(max_digits=50, decimal_places=2)
-    isal_max_2= CharField(max_length=100)
-    isal_max_3= CharField(max_length=100)
+    isal_max_2= serializers.DecimalField(max_digits=50, decimal_places=2)
+    isal_max_3= serializers.DecimalField(max_digits=50, decimal_places=2)
     i_int_sal_1= serializers.IntegerField()
     i_int_sal_2= CharField(max_length=100)
     i_int_sal_3= CharField(max_length=100)
@@ -182,3 +176,54 @@ class DataSerializer(serializers.Serializer):
     inversores =InversorSerializer(many=True, required = True)
     microInversores = MicroInversorSerializer(many=True, required = True)
     panelesSolares = PanelSolarSerializer(many=True, required = True)    
+    
+ 
+ 
+#______________________________Serializadores de interfaz______________________________________________  
+    
+class BaseCableadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseCableado
+        fields='__all__'
+        
+class CableadoSerializer(serializers.ModelSerializer):
+    input= BaseCableadoSerializer(required=False)
+    output=BaseCableadoSerializer(required=False)
+    class Meta:
+        model = Cableado
+        fields='__all__'
+    
+    
+class MpptSerializer(serializers.ModelSerializer):
+    cableado=CableadoSerializer(required=False)
+    class Meta:
+        model = Mppt
+        fields=('_id','nombre','numero_de_cadenas_en_paralelo','numero_de_paneles_en_serie_por_cadena','cableado')
+
+       
+class PanelFVSerializer(serializers.ModelSerializer):
+    mttps=MpptSerializer(many=True, required=False)
+    salida_inversor=CableadoSerializer(required=False)
+    
+    class Meta:
+        model = PanelFV
+        fields=('_id','nombre','fabricante_1','model_panel_solar_1','modelo_panel_solar_2','fabricante_2','salida_inversor','mttps')
+
+        
+class GeneralFVSerializer(serializers.ModelSerializer):
+    fvs=PanelFVSerializer(many=True, required=False)
+    """
+    def getGeneralFV(self):
+        generalFV = None
+        if self.is_valid():
+            panelesFV = validated_data.pop('fvs')
+            generalFV = GeneralFV(**validated_data)
+            print(generalFV)
+            return generalFV
+    """        
+    class Meta:
+        model = GeneralFV
+        fields=('potencia_de_planta_fv','nombre_proyecto','temperatura_ambiente','minima_temperatura_ambiente_esperada',
+        'tipo_de_inversor','lugar_instalacion_opcion_techo_cubierta', 'tipo_servicio','voltage_servicio','lugar_instalacion','fvs')
+
+  

@@ -50,7 +50,7 @@ class UploadFileView(FormView):
                     
                 
                 handle_uploaded_file(file,name)
-                messages.success(self.request, 'Se agrego el usuario con EXITO')
+                messages.success(self.request, 'Se actualizo el archivo '+ file.name +' con EXITO')
                 return self.form_valid(form, **kwargs)
                 
             else:

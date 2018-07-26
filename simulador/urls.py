@@ -19,7 +19,7 @@ from django.contrib import admin
 
 from cotizadorFV.models import *
 from cotizadorFV.views import *
-from cotizadorFV.models_excel.lib import importarCsvs
+from cotizadorFV.lib.lib import importarCsvs
 importarCsvs() #carga inicial de los archivos csv
 
 
