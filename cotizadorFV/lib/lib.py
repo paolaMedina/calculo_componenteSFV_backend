@@ -1,5 +1,6 @@
 from cotizadorFV.modelsCSV import *
 from cotizadorFV.main_info import inicial
+from cotizadorFV.dic_data import dic_inicial
 
 def importcsv(modelo_csv, nombre_archivos):
     """Funcion generica para cargar archivoss csv usando modelos de `django-adaptor` 
@@ -65,12 +66,21 @@ def importarCsvs():
 def getData():
     return inicial
 
+
+
 def makeDic():
     interruptoresManuales_dict = {x.referencia: x for x in inicial.interruptoresManuales}
+    dic_inicial.setInterruptoresManuales_dict(interruptoresManuales_dict)
     panelesSolares_dict= {x.descripcion: x for x in inicial.panelesSolares}
+    dic_inicial.setPanelesSolares_dict(panelesSolares_dict)
     dpsAC_dict= {x.referencia: x for x in inicial.dpssAC}
+    dic_inicial.setDpsAC_dict(dpsAC_dict)
     dpsDC_dict= {x.referencia: x for x in inicial.dpssDC}
+    dic_inicial.setDpsDC_dict(dpsDC_dict)
     fusible_dict= {x.referencia: x for x in inicial.fusibles}
-    
+    dic_inicial.setFusible_dict(fusible_dict)
     print (dpsAC_dict["DS250E-120"].precio)
     
+    
+def getDic():
+    return dic_inicial
