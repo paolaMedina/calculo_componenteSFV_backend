@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-
+from .views import  cotizador
 urlpatterns = [
     url(r'^interruptoresManuales/$', views.InterruptorManualSerializerView.as_view(), name='interruptoresManuales'),
     url(r'^DpsACView/$', views.DpsACView.as_view(), name='DpsACView'),
@@ -15,6 +15,8 @@ urlpatterns = [
     
     url(r'^r/$', views.deserializacion.as_view(), name='r'),
     
-     url(r'^l/$', views.calculos, name='l'),
+    url(r'^l/$', views.calculos, name='l'),
+    
+    url (r'^cotizacion/$', cotizador, name='cotizacion' )
     
 ]
