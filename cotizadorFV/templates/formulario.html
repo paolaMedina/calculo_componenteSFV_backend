@@ -7,7 +7,7 @@
   <style type="text/css"> 
       .embed-container {
         position: relative;
-        padding-bottom: 85%;
+        padding-bottom: 75%;
         height: 0;
         overflow: hidden;
         }
@@ -32,7 +32,15 @@
           <div class="x_panel">
             <div class="x_content">
                 <div class="embed-container">
-                  <iframe width="560" height="315" src=" https://paolamedina.github.io/calculo_componenteSFV_frontend/" frameborder="0" allowfullscreen></iframe>
+                  <style>
+                  @media only screen and (max-width: 1058px){
+                    iframe {
+                      
+                        height: 780px;
+                      }
+                    }
+                  </style>
+                  <iframe width="560" height="315" src="{% static 'cotizador_frontend/index.html' %}" frameborder="0" allowfullscreen></iframe>
                 </div>
             </div>
           </div>

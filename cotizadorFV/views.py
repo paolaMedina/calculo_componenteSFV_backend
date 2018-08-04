@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from rest_framework import status
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 
-from django.shortcuts import render
 from .main_info import *
 from cotizadorFV.modelsCSV import *
 from rest_framework.views import APIView
@@ -101,11 +104,14 @@ class deserializacion (APIView):
     def post(self, request, format=None):
         serializer = GeneralFVSerializer(data=request.data)
         if serializer.is_valid():
-            #print  serializer.validated_data
+            print  serializer.validated_data
             generalFv=getGeneralFvNativeObject(serializer.data)
             lectura(generalFv)
             
-            return Response(serializer.data)
+            return  HttpResponseRedirect(redirect_to='https://simulador-fv-paolamedina.c9users.io/cotizadorFV/cotizacion/')
+
+        else:
+            return Response(serializer.errors,  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
 
 
