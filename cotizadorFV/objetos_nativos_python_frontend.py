@@ -22,12 +22,12 @@ class PanelFV():
     def __init__(self,_id,nombre,fabricante_1,model_panel_solar_1,modelo_panel_solar_2,fabricante_2,salida_inversor,mttps=[]):
         self._id = _id
         self.nombre = nombre
-        self.fabricante_1 = fabricante_1
-        self.model_panel_solar_1 = model_panel_solar_1
-        self.modelo_panel_solar_2 = modelo_panel_solar_2
-        self.fabricante_2 = fabricante_2
+        self.fabricante_1 = fabricante_1#fabricante panel
+        self.model_panel_solar_1 = model_panel_solar_1#modelo panel
+        self.modelo_panel_solar_2 = modelo_panel_solar_2#modelo inversor
+        self.fabricante_2 = fabricante_2#fabricante inversor
         self.mttps  =  [Mttp(**mttp) for mttp in mttps]
-        self.salida_inversor =salida_inversor
+        self.salida_inversor =Cableado (**salida_inversor)
     
     
     
