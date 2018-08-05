@@ -13,7 +13,7 @@ urlpatterns = [
     
     url(r'^csvData/$', views.DataCsvView.as_view(), name='csvData'),
     
-    url(r'^r/$', views.deserializacion.as_view(), name='r'),
+    url(r'^postData/$', views.deserializacion.as_view(), name='postData'),
     
     url(r'^l/$', views.calculos, name='l'),
     

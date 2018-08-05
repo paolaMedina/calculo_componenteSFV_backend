@@ -19,12 +19,14 @@ from django.contrib import admin
 
 from cotizadorFV.models import *
 from cotizadorFV.views import *
+from .views import Home
 from cotizadorFV.lib.lib import importarCsvs
 importarCsvs() #carga inicial de los archivos csv
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', Home, name='inicio'), 
     url(r'^cotizadorFV/', include('cotizadorFV.urls', namespace="cotizadorFv")),
     url(r'^fileupload/', include('cargaArchivos.urls', namespace="cargarArchivos"))
 ]

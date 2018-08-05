@@ -57,7 +57,6 @@ def posicionCalibre(corr_nominal,tipo_alambrado):
                 posicion=i
                 break
     else: 
-        print "soy aire"
         for i in range(len(calibreAire)):
             if (corr_nominal<=calibreAire[i][1]):
                 posicion=i
@@ -117,12 +116,11 @@ def caidaTensionSalida(posicionCalibre,distanciaConductor,corrienteMPP,tension_M
     
 
     
-#__________________________________________________________   
     
-#seleccionar el calibre que cumple con la tension ingresada por el usuario
-def seleccionCalibre(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,impp_panel,cadenas_paralelo,distanciaConductorFuente,
+#Seleccionar el calibre que cumple con la tension ingresada por el usuario
+def CalculoConductores(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,impp_panel,cadenas_paralelo,distanciaConductorFuente,
                     distanciaConductorSalida,corrienteMPP,tension_Mpp,tensionFuenteDiseno,tensionSalidaDiseno,tipo_alambradoEntrada,tipo_alambradoSalida):
-                         
+                        
     #caida de tension fuente inicial                    
     posCalibreFuente=posicionCalibreFuente(tem_amb,max_conductoresFuente,isc_panel,tipo_alambradoEntrada)
     caidaTensionF=caidaTensionFuente(posCalibreFuente,tension_Mpp,impp_panel,distanciaConductorFuente)
@@ -140,7 +138,6 @@ def seleccionCalibre(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_pan
         if (suma_caida_tension>suma_caida_tension_diseno):
             if (caidaTensionF>caidaTensionS):
                 posCalibreFuente +=1
-                print posCalibreFuente
                 caidaTensionF=caidaTensionFuente(posCalibreFuente,tension_Mpp,impp_panel,distanciaConductorFuente)
             else:
                 posCalibreSalida +=1
@@ -149,10 +146,12 @@ def seleccionCalibre(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_pan
             break
                 
     
-    print ("calibre fuente ")
-    print (calibre[posCalibreFuente][0])
-    print ("calibre salida ")
-    print (calibre[posCalibreSalida][0])
+    #print ("calibre fuente ")
+    #print (calibre[posCalibreFuente][0])
+    #print ("calibre salida ")
+    #print (calibre[posCalibreSalida][0])
+    calibresES=[calibre[posCalibreFuente][0],calibre[posCalibreSalida][0]] 
+    return calibresES
     
     #falta retornar array
     
@@ -186,9 +185,28 @@ def caidaTensionInversor(posicionCalibre,isal,tem_amb,max_conductores,isc_panel,
     
     
     return caida_tension
-    
-#def seleccionCalibreInversor(isal,tem_amb,max_conductores,isc_panel,l,v,caidaTensionUsuario)
 
+#funcion que entrega los calibres de entrada y salida para el inversor  
+def CalculoConductoresInversor(isalFuente,isalSalida,tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio,caidaTensionUsuarioSalida):
+    conductoresInversor=[]
+    
+    posicionCalibreFuente=posicionCalibreInversor(isalFuente,tem_amb,max_conductoresFuente,isc_panel)
+    calibreFuente=calibre[posicionCalibreFuente][0] 
+    
+    posicionCalibreSalida=posicionCalibreInversor(isalSalida,tem_amb,max_conductoresSalida,isc_panel)
+    caidaTensionSalida=caidaTensionInversor(posicionCalibreSalida,isalSalida,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
+    
+    for i in range(len(calibre)):
+        if (caidaTensionSalida>caidaTensionUsuarioSalida):
+                posicionCalibreSalida +=1
+                caidaTensionSalida=caidaTensionInversor(posicionCalibreSalida,isalSalida,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
+        else: 
+            break
+    conductoresInversor=[calibre[posicionCalibreFuente][0],calibre[posicionCalibreSalida][0]] 
+    return conductoresInversor
+                
+    
+#____________________Calibre conductores puesto a Tierra
 
 #funcion aux para seleccionar el calibre segun la tabla calibreConductor para conductores
 def buscarCalibreCondutor(corrienteNominal):
@@ -213,12 +231,13 @@ def calibreconductorDC(mttps,Isc_panel):
     
 
 #Calibre de conductor puesta a tierra AC
-def calibreconductorAC(isal,sumIsal,tem_amb,max_conductores,isc_panel): 
-    corrienteNominalEntrada=corrienteNominalInversor(isal,tem_amb,max_conductores,isc_panel)
-    corrienteNominalSalida=corrienteNominalInversor(sumIsal,tem_amb,max_conductores,isc_panel)
+def calibreconductorAC(isal,sumIsal,tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel): 
+    corrienteNominalEntrada=corrienteNominalInversor(isal,tem_amb,max_conductoresFuente,isc_panel)
+    corrienteNominalSalida=corrienteNominalInversor(sumIsal,tem_amb,max_conductoresSalida,isc_panel)
     
     calibreEntrada=buscarCalibreCondutor(corrienteNominalEntrada)
     calibreSalida=buscarCalibreCondutor(corrienteNominalSalida)
+    return [calibreEntrada,calibreSalida]
     
     ##falta retornar array
     

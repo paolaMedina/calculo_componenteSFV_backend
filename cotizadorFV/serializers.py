@@ -187,23 +187,23 @@ class BaseCableadoSerializer(serializers.ModelSerializer):
         fields='__all__'
         
 class CableadoSerializer(serializers.ModelSerializer):
-    input= BaseCableadoSerializer(required=False)
-    output=BaseCableadoSerializer(required=False)
+    input= BaseCableadoSerializer(required=True)
+    output=BaseCableadoSerializer(required=True)
     class Meta:
         model = Cableado
         fields='__all__'
     
     
 class MpptSerializer(serializers.ModelSerializer):
-    cableado=CableadoSerializer(required=False)
+    cableado=CableadoSerializer(required=True)
     class Meta:
         model = Mppt
         fields=('_id','nombre','numero_de_cadenas_en_paralelo','numero_de_paneles_en_serie_por_cadena','cableado')
 
        
 class PanelFVSerializer(serializers.ModelSerializer):
-    mttps=MpptSerializer(many=True, required=False)
-    salida_inversor=CableadoSerializer(required=False)
+    mttps=MpptSerializer(many=True, required=True)
+    salida_inversor=CableadoSerializer(required=True)
     
     class Meta:
         model = PanelFV
@@ -211,7 +211,7 @@ class PanelFVSerializer(serializers.ModelSerializer):
 
         
 class GeneralFVSerializer(serializers.ModelSerializer):
-    fvs=PanelFVSerializer(many=True, required=False)
+    fvs=PanelFVSerializer(many=True, required=True)
     """
     def getGeneralFV(self):
         generalFV = None

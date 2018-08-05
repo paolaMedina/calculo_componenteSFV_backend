@@ -79,6 +79,8 @@ def makeDic():
     dic_inicial.setDpsDC_dict(dpsDC_dict)
     fusible_dict= {x.referencia: x for x in inicial.fusibles}
     dic_inicial.setFusible_dict(fusible_dict)
+    inversor_dict= {x.descripcion: x for x in inicial.inversores}
+    dic_inicial.setInversores_dict(inversor_dict)
     print (dpsAC_dict["DS250E-120"].precio)
     
     

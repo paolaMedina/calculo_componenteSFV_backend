@@ -14,7 +14,7 @@ class UploadFileView(FormView):
     '''
     template_name = "upload.html"
     form_class = FormUpload
-    success_url = reverse_lazy("cargarArchivos:index")
+    success_url = reverse_lazy("cargarArchivos:uploadFile")
  
     def get(self, request, *args, **kwargs):
         data = {'form': self.form_class}
