@@ -75,7 +75,7 @@ def makeDic():
     dic_inicial.setPanelesSolares_dict(panelesSolares_dict)
     dpsAC_dict= {x.referencia: x for x in inicial.dpssAC}
     dic_inicial.setDpsAC_dict(dpsAC_dict)
-    dpsDC_dict= {x.referencia: x for x in inicial.dpssDC}
+    dpsDC_dict= {x.descripcion: x for x in inicial.dpssDC}
     dic_inicial.setDpsDC_dict(dpsDC_dict)
     fusible_dict= {x.referencia: x for x in inicial.fusibles}
     dic_inicial.setFusible_dict(fusible_dict)

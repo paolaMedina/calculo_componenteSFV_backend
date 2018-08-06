@@ -1,4 +1,6 @@
 from . import constants
+from cotizadorFV.modelsCSV import *
+from cotizadorFV.lib import lib as mainInfoLib
 
 correcion_tem_amb= constants.correcion_tem_amb
 factorAjusteConductores=constants.factorAjusteConductores
@@ -239,5 +241,76 @@ def calibreconductorAC(isal,sumIsal,tem_amb,max_conductoresFuente,max_conductore
     calibreSalida=buscarCalibreCondutor(corrienteNominalSalida)
     return [calibreEntrada,calibreSalida]
     
-    ##falta retornar array
+
+#__________________________________DPS FV______________________
+
+def cantidadMppt(distanciaConductorSalida):
+    cantidad=0
+    if (distanciaConductorSalida<=10):
+        cantidad=1
+    else:
+        cantidad=2
+    return cantidad
     
+def tipoDps(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta):
+    tipo=""
+    if lugar_instalacion=='Suelo':
+        tipo="2"
+    else:
+        if (lugar_instalacion_opcion_techo_cubierta=="Caso A") or lugar_instalacion_opcion_techo_cubierta=="Caso B":
+            tipo="2"
+        else: tipo="1+2"
+        
+    return tipo
+
+
+def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida):
+    dic_main=mainInfoLib.getDic()
+    items=[]
+    numItems=cantidadMppt(distanciaConductorSalida)
+    tipo=tipoDps(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
+    
+    filtroDps = { clave: valor for clave, valor in dic_main.dpsDC_dict.items() if valor.tipo == tipo}
+    dpsDC_list_sorted =  sorted(filtroDps.values(), key=DpsDC.getSortKey)
+    for dps in dpsDC_list_sorted:
+        if (tensionMaximaMppt<dps.uc):
+            item=dps.descripcion
+            if (numItems==2):
+                items=[item,item]
+            else:items=[item]
+            break
+    return items
+
+        
+            
+  
+
+#Calculo Interruptor manual DC (IMDC)
+def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
+    interruptorTension=None
+    interruptorIth=None
+    dic_main=mainInfoLib.getDic()
+    filtroInterruptores = { clave: valor for clave, valor in dic_main.interruptoresManuales_dict.items() if valor.no_contactos == 2}
+    interruptores_list_sortedTension =  sorted(filtroInterruptores.values(), key=InterruptorManual.getSortTension)
+    for interruptor in interruptores_list_sortedTension:
+        if (tensionMaximaMppt<interruptor.tension)and (corrienteMpp<interruptor.ith):
+            interruptorTension=interruptor
+            break
+          
+            
+    interruptores_list_sortedIth =  sorted(filtroInterruptores.values(), key=InterruptorManual.getSortIth)    
+    for interruptor in interruptores_list_sortedIth:
+        if (corrienteMpp<interruptor.ith) and (tensionMaximaMppt<interruptor.tension):
+            interruptorIth=interruptor
+            break
+        
+    if (interruptorTension!=None and interruptorIth !=None):        
+        diferenciaTension=(interruptorTension.tension-tensionMaximaMppt)+(interruptorTension.ith-corrienteMpp)
+        diferenciaIth=(interruptorIth.tension-tensionMaximaMppt)+(interruptorIth.ith-corrienteMpp)
+        if (diferenciaTension<diferenciaIth):
+            item=interruptorTension.descripcion
+        else:
+            item=interruptorIth.descripcion
+    else: item=None
+    
+    return item

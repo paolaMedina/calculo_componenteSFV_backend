@@ -130,24 +130,27 @@ def lectura(generalFv):
     conductoresMttp=[]#matriz de los calibres de entrada y salida de los mppts
     conductoresInversor=[] #matriz de los calibres de entrada y salida de los inversores de campos fv
     conductoresAC=[]#matriz de los calibres de entrada y salida de los inversores de campos fv para coductores AC
+    itemsDpsDC=[]
+    itemInterruptorDC=[]
+    
     tem_amb=generalFv.temperatura_ambiente
+    temp_ambiente_mas_baja_esperada=generalFv.minima_temperatura_ambiente_esperada
     tensionServicio=float(generalFv.voltage_servicio)
-    #print tensionServicio
+    lugar_instalacion=generalFv.lugar_instalacion
+    lugar_instalacion_opcion_techo_cubierta=generalFv.lugar_instalacion_opcion_techo_cubierta
    
     #print "tem_amb "+ str(tem_amb)
     for panelfv in  generalFv.fvs:
         isc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].isc)
-        #print "isc_panel "+ str(isc_panel)
         vmmp_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].vmpp)
-        #print "vmmp_panel "+ str(vmmp_panel)
         impp_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].impp)
-        #print "impp_panel "+ str(impp_panel)
+        voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].voc)
+        coef_voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].coef_voc.replace("%","").replace(',','.'))
+    
         max_conductInInversor=panelfv.salida_inversor.input.maximo_numero_de_conductores
         max_conductOutInversor=panelfv.salida_inversor.output.maximo_numero_de_conductores
         distanciaConductOutInversor=panelfv.salida_inversor.output.distancia_del_conductor_mas_largo
-        #print distanciaConductOutInversor
         caidaTensionUsuarioSalida=panelfv.salida_inversor.output.caida_de_tension_de_diseno
-        #print caidaTensionUsuarioSalida
         
         #calculo de conductores para salida inversor
         inversor=panelfv.modelo_panel_solar_2#modelo del inversor
@@ -166,38 +169,31 @@ def lectura(generalFv):
         
         for mppt in panelfv.mttps:
             cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
-            #print "cadenas_paralelo " + str(cadenas_paralelo)
-            max_conductoresFuente= mppt.cableado.input.maximo_numero_de_conductores
-            #print "max_conductoresFuente " + str(max_conductoresFuente)
-            max_conductoresSalida=mppt.cableado.output.maximo_numero_de_conductores
-            #print "max_conductoresSalida " + str(max_conductoresSalida)
-            distanciaConductorFuente= mppt.cableado.input.distancia_del_conductor_mas_largo
-            #print "distanciaConductorFuente " + str(distanciaConductorFuente)
-            distanciaConductorSalida= mppt.cableado.output.distancia_del_conductor_mas_largo
-            #print "distanciaConductorSalida " + str(distanciaConductorSalida)
+            cadenas_serie=mppt.numero_de_paneles_en_serie_por_cadena
+            ##Datos nominales de mppt***************
+            tension_Mpp= cadenas_serie  * vmmp_panel
             corrienteMPP= cadenas_paralelo * impp_panel
-            #print "corrienteMPP " + str(corrienteMPP)
-            tension_Mpp= mppt.numero_de_paneles_en_serie_por_cadena  * vmmp_panel
-            #print "tension_Mpp " + str(tension_Mpp)
+            tensionMaximaMppt= cadenas_serie * voc_panel * coef_voc_panel * (temp_ambiente_mas_baja_esperada - 25  )
+            ##***************************************
+            max_conductoresFuente= mppt.cableado.input.maximo_numero_de_conductores
+            max_conductoresSalida=mppt.cableado.output.maximo_numero_de_conductores
+            distanciaConductorFuente= mppt.cableado.input.distancia_del_conductor_mas_largo
+            distanciaConductorSalida= mppt.cableado.output.distancia_del_conductor_mas_largo
             tensionFuenteDiseno= mppt.cableado.input.caida_de_tension_de_diseno
-            #print "tensionFuenteDiseno " + str(tensionFuenteDiseno)
             tensionSalidaDiseno= mppt.cableado.output.caida_de_tension_de_diseno
-            #print "tensionSalidaDiseno " + str(tensionSalidaDiseno)
             tipo_alambradoEntrada=mppt.cableado.input.tipo_alambrado
-            #print "tipo_alambradoEntrada "+ tipo_alambradoEntrada
             tipo_alambradoSalida=mppt.cableado.output.tipo_alambrado
-            #print "tipo_alambradoSalida "+ tipo_alambradoSalida
             
             condutor=CalculoConductores(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,impp_panel,
                             cadenas_paralelo,distanciaConductorFuente,distanciaConductorSalida,corrienteMPP,tension_Mpp,
                             tensionFuenteDiseno,tensionSalidaDiseno,tipo_alambradoEntrada,tipo_alambradoSalida)
             conductoresMttp.append(condutor)    
             
-            
+            itemsDpsDC.append(seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida))
+            itemInterruptorDC.append(seleccionIMDC(corrienteMPP,tensionMaximaMppt))
  
     
     #print dic_main.panelesSolares_dict[panel].isc
-    #print "temperatura "+ str(tem_amb)
     print "conductores mppt"
     print conductoresMttp
     print "conductores inversor"
@@ -205,6 +201,10 @@ def lectura(generalFv):
     print "conductorDC " + str(conductorDC)
     print "conductorAC "
     print conductoresAC
+    print "itemsDpsDC"
+    print itemsDpsDC
+    print "itemInterruptorDC"
+    print itemInterruptorDC
     
 
 #funcion que determina el Isal_max de la base de datos inversores dependiendo inversor y el Vsal seleccionado en la cotización  
