@@ -24,6 +24,15 @@ class InterruptorManual(CsvModel):
     no_contactos= IntegerField()
     tipo_montaje= CharField()
     precio= IntegerField()
+    
+    @staticmethod
+    def getSortIth(inversor):
+         return inversor.ith
+    @staticmethod
+    def getSortTension(inversor):
+         return inversor.tension
+         
+        
     class Meta:
         delimiter = ";"
         has_header=True
@@ -63,6 +72,11 @@ class DpsDC(CsvModel):
      in_in= DecimalField()
      imax= IntegerField()
      precio= IntegerField()
+     
+     @staticmethod
+     def getSortKey(dpsDC):
+         return dpsDC.uc
+         
      class Meta:
          delimiter = ";"
          has_header=True

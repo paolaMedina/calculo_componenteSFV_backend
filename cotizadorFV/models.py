@@ -6,13 +6,11 @@ from django.db import models
 
 
 
-#modelo cableado
-
 
     
 #modelo de del formulario principal 
 class GeneralFV(models.Model):
-    potencia_de_planta_fv = models.IntegerField()
+    potencia_de_planta_fv = models.DecimalField(max_digits=50, decimal_places=2)
     nombre_proyecto = models.CharField(max_length= 255)
     temperatura_ambiente =  models.IntegerField()
     minima_temperatura_ambiente_esperada = models.IntegerField()
