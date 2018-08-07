@@ -55,6 +55,11 @@ class DpsAC(CsvModel):
     up=DecimalField()
     telesenal= CharField()
     precio= IntegerField()
+    
+    @staticmethod
+    def getSortUc(dpsAC):
+        return dpsAC.uc
+        
     class Meta:
         delimiter = ";"
         has_header=True
@@ -93,6 +98,11 @@ class Fusible(CsvModel):
     tipo= CharField()
     clase= CharField()
     precio= IntegerField()
+    
+    @staticmethod
+    def getSortKeyIn(fusible):
+        return fusible.in_in
+         
     class Meta:
         delimiter = ";"  
         has_header=True

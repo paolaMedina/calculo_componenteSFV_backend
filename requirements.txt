@@ -1,3 +1,4 @@
 django-cors-headers==2.3.0
 django==1.11
 django-rest-framework==3.8.2
+django-adaptors==0.2.5

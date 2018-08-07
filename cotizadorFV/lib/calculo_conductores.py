@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from . import constants
 from cotizadorFV.modelsCSV import *
 from cotizadorFV.lib import lib as mainInfoLib
+import math
 
 correcion_tem_amb= constants.correcion_tem_amb
 factorAjusteConductores=constants.factorAjusteConductores
@@ -252,14 +255,16 @@ def cantidadMppt(distanciaConductorSalida):
         cantidad=2
     return cantidad
     
-def tipoDps(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta):
+def tipoDps(tipoDps,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta):
     tipo=""
     if lugar_instalacion=='Suelo':
         tipo="2"
     else:
-        if (lugar_instalacion_opcion_techo_cubierta=="Caso A") or lugar_instalacion_opcion_techo_cubierta=="Caso B":
+        if (lugar_instalacion_opcion_techo_cubierta=="Caso A") or (lugar_instalacion_opcion_techo_cubierta=="Caso B"):
             tipo="2"
-        else: tipo="1+2"
+        else: 
+            if (tipoDps=="dpsDC"): tipo="1+2"
+            elif(tipoDps=="dpsAC"): tipo="1"
         
     return tipo
 
@@ -268,7 +273,7 @@ def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_op
     dic_main=mainInfoLib.getDic()
     items=[]
     numItems=cantidadMppt(distanciaConductorSalida)
-    tipo=tipoDps(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
+    tipo=tipoDps("dpsDC",lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
     
     filtroDps = { clave: valor for clave, valor in dic_main.dpsDC_dict.items() if valor.tipo == tipo}
     dpsDC_list_sorted =  sorted(filtroDps.values(), key=DpsDC.getSortKey)
@@ -281,8 +286,6 @@ def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_op
             break
     return items
 
-        
-            
   
 
 #Calculo Interruptor manual DC (IMDC)
@@ -296,7 +299,6 @@ def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
         if (tensionMaximaMppt<interruptor.tension)and (corrienteMpp<interruptor.ith):
             interruptorTension=interruptor
             break
-          
             
     interruptores_list_sortedIth =  sorted(filtroInterruptores.values(), key=InterruptorManual.getSortIth)    
     for interruptor in interruptores_list_sortedIth:
@@ -314,3 +316,102 @@ def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
     else: item=None
     
     return item
+   
+def cantPolos(tipoServicio):
+    polos=None
+    if (tipoServicio.encode('utf8')==u"Monofásica".encode('utf8')):
+        polos=2
+    else: 
+        polos=4
+    return polos
+    
+def nivelTension(tipoServicio,tensionServicio):
+    nivel_tension=None
+    if (tipoServicio.encode('utf8')==u"Monofásica".encode('utf8')):
+        nivel_tension= tensionServicio
+    else: 
+        nivel_tension= tensionServicio/math.sqrt(3)
+    return nivel_tension   
+    
+def tipoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta):
+    tipo=None
+    if lugar_instalacion=='Suelo':
+        tipo="1"
+    else:
+        if (lugar_instalacion_opcion_techo_cubierta=="Caso C") or (lugar_instalacion_opcion_techo_cubierta=="Caso B"):
+            tipo="1"
+        else: tipo="2"
+        
+    return tipo
+
+#calculo de DPS AC generico 
+def calculoDpsACGeneral(tipo,polos,nivel_tension):
+    dic_main=mainInfoLib.getDic()
+    dpsAC=None
+    
+    filtroTipo = { clave: valor for clave, valor in dic_main.dpsAC_dict.items() if valor.tipo == int(tipo)}
+    filtroPolo= { clave: valor for clave, valor in filtroTipo.items() if valor.no_polos == polos}
+    DpsAC_list_sortedUc =  sorted(filtroPolo.values(), key=DpsAC.getSortUc)
+    listResultante=[]
+    for i in range(0,len(DpsAC_list_sortedUc)) :
+        if (nivel_tension<DpsAC_list_sortedUc[i].uc):
+            dpsAC=DpsAC_list_sortedUc[i].descripcion
+            listResultante=DpsAC_list_sortedUc[i:]
+            break
+            
+            
+    for i in range(0,len(listResultante)-1) :
+        if DpsAC_list_sortedUc[i].uc==DpsAC_list_sortedUc[i+1].uc:
+            if DpsAC_list_sortedUc[i].in_in < DpsAC_list_sortedUc[i+1].in_in:
+                dpsAC=DpsAC_list_sortedUc[i+1].descripcion
+        else: break
+    
+    return dpsAC
+    
+    
+#Calculo DPS AC (Salida inversores)
+def calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio):
+    
+    tipo=tipoDps("dpsAC",lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
+    polos=cantPolos(tipoServicio)
+    nivel_tension=nivelTension(tipoServicio,tensionServicio)
+    dpsAC=calculoDpsACGeneral(tipo,polos,nivel_tension)
+        
+    return dpsAC
+
+
+
+#Calculo  DPS AC (Inyección)
+def calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio):
+    tipo=tipoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
+    polos=cantPolos(tipoServicio)
+    nivel_tension=nivelTension(tipoServicio,tensionServicio)
+    dpsAC=calculoDpsACGeneral(tipo,polos,nivel_tension)
+        
+    return dpsAC
+
+
+#Calculo fusibles de cadena FV
+def calculoFusibles(cadenas_paralelo,iscPanel):
+    dic_main=mainInfoLib.getDic()
+    fusible=None
+    fusibles=[]
+    corrienteIn=In=1.5625*iscPanel
+    cantidadMPPT= 0
+    if cadenas_paralelo > 2 :
+       
+        cantidadMPPT=cadenas_paralelo*2
+    
+    
+    fusibles_list_sortedUc =  sorted(dic_main.fusible_dict.values(), key=Fusible.getSortKeyIn)
+    for fusible in fusibles_list_sortedUc:
+        if (corrienteIn<fusible.in_in):
+            fusible=fusible.descripcion
+            break
+            
+    if cantidadMPPT !=0 and fusible !=None:
+        for i in range(0,cantidadMPPT):
+            fusibles.append(fusible)
+    return fusibles
+
+
