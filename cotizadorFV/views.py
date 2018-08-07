@@ -132,14 +132,17 @@ def lectura(generalFv):
     conductoresAC=[]#matriz de los calibres de entrada y salida de los inversores de campos fv para coductores AC
     itemsDpsDC=[]
     itemInterruptorDC=[]
+    itemsDpsACSalida=[]
+    fusibles=[]
     
     tem_amb=generalFv.temperatura_ambiente
     temp_ambiente_mas_baja_esperada=generalFv.minima_temperatura_ambiente_esperada
     tensionServicio=float(generalFv.voltage_servicio)
+    tipoServicio=generalFv.tipo_servicio
     lugar_instalacion=generalFv.lugar_instalacion
     lugar_instalacion_opcion_techo_cubierta=generalFv.lugar_instalacion_opcion_techo_cubierta
+    itemDpsACInyeccion=calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio)
    
-    #print "tem_amb "+ str(tem_amb)
     for panelfv in  generalFv.fvs:
         isc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].isc)
         vmmp_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].vmpp)
@@ -167,6 +170,9 @@ def lectura(generalFv):
         conductorAC=calibreconductorAC(isalFuente,isalSalida,tem_amb,max_conductInInversor,max_conductOutInversor,isc_panel)
         conductoresAC.append(conductorAC)
         
+        #Calculo DPS AC (Salida inversores)
+        itemsDpsACSalida.append(calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio))
+        
         for mppt in panelfv.mttps:
             cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
             cadenas_serie=mppt.numero_de_paneles_en_serie_por_cadena
@@ -188,9 +194,12 @@ def lectura(generalFv):
                             cadenas_paralelo,distanciaConductorFuente,distanciaConductorSalida,corrienteMPP,tension_Mpp,
                             tensionFuenteDiseno,tensionSalidaDiseno,tipo_alambradoEntrada,tipo_alambradoSalida)
             conductoresMttp.append(condutor)    
-            
+            #Calculo de DPS DC FV.
             itemsDpsDC.append(seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida))
+            #Calculo Interruptor manual DC (IMDC)
             itemInterruptorDC.append(seleccionIMDC(corrienteMPP,tensionMaximaMppt))
+            #Calculo fusibles de cadena FV
+            fusibles.append(calculoFusibles(cadenas_paralelo,isc_panel))
  
     
     #print dic_main.panelesSolares_dict[panel].isc
@@ -205,6 +214,11 @@ def lectura(generalFv):
     print itemsDpsDC
     print "itemInterruptorDC"
     print itemInterruptorDC
+    print "itemsDpsACSalida"
+    print itemsDpsACSalida
+    print "itemDpsACInyeccion "+itemDpsACInyeccion
+    print "fusibles"
+    print fusibles
     
 
 #funcion que determina el Isal_max de la base de datos inversores dependiendo inversor y el Vsal seleccionado en la cotización  
