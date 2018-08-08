@@ -69,16 +69,25 @@ def getData():
 
 
 def makeDic():
+    #interurptores manuales
     interruptoresManuales_dict = {x.referencia: x for x in inicial.interruptoresManuales}
     dic_inicial.setInterruptoresManuales_dict(interruptoresManuales_dict)
+    #interruptorres automaticos
+    interruptoresAuto_dict = {x.referencia: x for x in inicial.interruptoresAutomaticos}
+    dic_inicial.setInterruptoresAuto_dict(interruptoresAuto_dict)
+    #paneles solares
     panelesSolares_dict= {x.descripcion: x for x in inicial.panelesSolares}
     dic_inicial.setPanelesSolares_dict(panelesSolares_dict)
+    #dps AC
     dpsAC_dict= {x.referencia: x for x in inicial.dpssAC}
     dic_inicial.setDpsAC_dict(dpsAC_dict)
+    #dps DC
     dpsDC_dict= {x.descripcion: x for x in inicial.dpssDC}
     dic_inicial.setDpsDC_dict(dpsDC_dict)
+    #fusibles
     fusible_dict= {x.referencia: x for x in inicial.fusibles}
     dic_inicial.setFusible_dict(fusible_dict)
+    #inversores
     inversor_dict= {x.descripcion: x for x in inicial.inversores}
     dic_inicial.setInversores_dict(inversor_dict)
     print (dpsAC_dict["DS250E-120"].precio)

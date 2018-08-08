@@ -1,7 +1,8 @@
 class Dic_data():
-    def __init__(self,interruptoresManuales_dict ={},panelesSolares_dict={},dpsAC_dict={},dpsDC_dict={},fusible_dict={}, inversores_dict={}):
+    def __init__(self,interruptoresManuales_dict ={},interruptoresAuto_dict={},panelesSolares_dict={},dpsAC_dict={},dpsDC_dict={},fusible_dict={}, inversores_dict={}):
         
         self.interruptoresManuales_dict=interruptoresManuales_dict
+        self.interruptoresAuto_dict=interruptoresAuto_dict
         self.panelesSolares_dict=panelesSolares_dict
         self.dpsAC_dict=dpsAC_dict
         self.dpsDC_dict=dpsDC_dict
@@ -11,6 +12,9 @@ class Dic_data():
         
     def setInterruptoresManuales_dict(self,interruptoresManuales_dict):
         self.interruptoresManuales_dict=interruptoresManuales_dict
+    
+    def setInterruptoresAuto_dict(self,interruptoresAuto_dict):
+        self.interruptoresAuto_dict=interruptoresAuto_dict
         
     def setPanelesSolares_dict(self,panelesSolares_dict):
         self.panelesSolares_dict=panelesSolares_dict
