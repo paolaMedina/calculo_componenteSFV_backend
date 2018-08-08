@@ -3,6 +3,8 @@ from rest_framework import status
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy
+from django.contrib import messages
 
 from .main_info import *
 from cotizadorFV.modelsCSV import *
@@ -107,7 +109,7 @@ class deserializacion (APIView):
             #print  serializer.validated_data
             generalFv=getGeneralFvNativeObject(serializer.data)
             lectura(generalFv)
-            
+            messages.success(self.request, "Cotizacion")
             return  HttpResponseRedirect(redirect_to='https://simulador-fv-paolamedina.c9users.io/cotizadorFV/cotizacion/')
 
         else:
