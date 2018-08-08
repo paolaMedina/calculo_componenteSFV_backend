@@ -317,12 +317,13 @@ def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
     
     return item
    
-def cantPolos(tipoServicio):
+def cantPolos(tipo,tipoServicio):
     polos=None
     if (tipoServicio.encode('utf8')==u"Monofásica".encode('utf8')):
         polos=2
     else: 
-        polos=4
+        if (tipo=="dps"): polos=4
+        else: polos=3
     return polos
     
 def nivelTension(tipoServicio,tensionServicio):
@@ -359,11 +360,11 @@ def calculoDpsACGeneral(tipo,polos,nivel_tension):
             listResultante=DpsAC_list_sortedUc[i:]
             break
             
-            
+     #probar si hay empate (si hay otro item con el mismo uc)       
     for i in range(0,len(listResultante)-1) :
-        if DpsAC_list_sortedUc[i].uc==DpsAC_list_sortedUc[i+1].uc:
-            if DpsAC_list_sortedUc[i].in_in < DpsAC_list_sortedUc[i+1].in_in:
-                dpsAC=DpsAC_list_sortedUc[i+1].descripcion
+        if listResultante[i].uc==listResultante[i+1].uc:
+            if listResultante[i].in_in < listResultante[i+1].in_in:
+                dpsAC=listResultante[i+1].descripcion
         else: break
     
     return dpsAC
@@ -373,7 +374,7 @@ def calculoDpsACGeneral(tipo,polos,nivel_tension):
 def calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio):
     
     tipo=tipoDps("dpsAC",lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
-    polos=cantPolos(tipoServicio)
+    polos=cantPolos("dps",tipoServicio)
     nivel_tension=nivelTension(tipoServicio,tensionServicio)
     dpsAC=calculoDpsACGeneral(tipo,polos,nivel_tension)
         
@@ -384,7 +385,7 @@ def calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubiert
 #Calculo  DPS AC (Inyección)
 def calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio):
     tipo=tipoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta)
-    polos=cantPolos(tipoServicio)
+    polos=cantPolos("dps",tipoServicio)
     nivel_tension=nivelTension(tipoServicio,tensionServicio)
     dpsAC=calculoDpsACGeneral(tipo,polos,nivel_tension)
         
@@ -415,3 +416,61 @@ def calculoFusibles(cadenas_paralelo,iscPanel):
     return fusibles
 
 
+def calculoCorriente_Int(tensionServicio,inversor):
+    dic_main=mainInfoLib.getDic()
+    corriente=None
+    i_int_sal_1=float(dic_main.inversores_dict[inversor].i_int_sal_1)
+    i_int_sal_2=float(dic_main.inversores_dict[inversor].i_int_sal_2)
+    i_int_sal_3=float(dic_main.inversores_dict[inversor].i_int_sal_3)
+    if tensionServicio==float(dic_main.inversores_dict[inversor].vsal_1):
+        corriente=i_int_sal_1
+    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_2):
+        corriente=i_int_sal_2
+    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_3):
+        corriente=i_int_sal_3
+        
+    return corriente
+
+def calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio):
+    interruptor=None
+    listResultante=[]
+    dic_main=mainInfoLib.getDic()
+    filtroPolo= { clave: valor for clave, valor in dic_main.interruptoresAuto_dict.items() if valor.no_polos == polos}
+    filtroTension= { clave: valor for clave, valor in filtroPolo.items() if  tensionServicio >valor.tension or tensionServicio >valor.tension_2 }
+    interruptor_list_sortedIn =  sorted(filtroTension.values(), key=InteAuto.getSortKeyIn)
+    
+            
+    for i in range(0,len(interruptor_list_sortedIn)) :
+        if (corriente_Int<interruptor_list_sortedIn[i].in_in):
+              
+            interruptor=interruptor_list_sortedIn[i].descripcion
+            listResultante=interruptor_list_sortedIn[i:]
+            
+            break
+    ##comparar si hay empate        
+    for i in range(0,len(listResultante)-1) :
+        if listResultante[i].in_in==listResultante[i+1].in_in:
+            if listResultante[i].icn < listResultante[i+1].icn:
+                interruptor=listResultante[i+1].descripcion
+        else: break
+    return interruptor
+    
+
+
+def calculoInterruptoresAutoCombinados(tensionServicio,tipoServicio,inversor):
+    polos=cantPolos("interruptores",tipoServicio)
+    corriente_Int = calculoCorriente_Int(tensionServicio,inversor)
+    interruptor=calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio)
+    return interruptor
+    
+
+def calculoInterruptoresAutoSalidaInversor(tensionServicio,tipoServicio,inversor):
+    polos=cantPolos("interruptores",tipoServicio)
+    corriente_Int = calculoCorriente_Int(tensionServicio,inversor)
+    interruptor=calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio)
+    return interruptor
+    
+def calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,corriente_Int):
+    polos=cantPolos("interruptores",tipoServicio)
+    interruptor=calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio)
+    return interruptor

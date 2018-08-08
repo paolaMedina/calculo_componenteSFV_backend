@@ -107,7 +107,7 @@ class Fusible(CsvModel):
         delimiter = ";"  
         has_header=True
     
-    
+#interruptores automaticos    
 class InteAuto(CsvModel):
     descripcion= CharField()
     marca= CharField()
@@ -122,6 +122,10 @@ class InteAuto(CsvModel):
     icn= IntegerField()
     icn_2= CharField()
     precio= IntegerField()
+    
+    @staticmethod
+    def getSortKeyIn(interruptorAuto):
+        return interruptorAuto.in_in
     class Meta:
         delimiter = ";"    
         has_header=True

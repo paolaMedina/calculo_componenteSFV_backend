@@ -104,7 +104,7 @@ class deserializacion (APIView):
     def post(self, request, format=None):
         serializer = GeneralFVSerializer(data=request.data)
         if serializer.is_valid():
-            print  serializer.validated_data
+            #print  serializer.validated_data
             generalFv=getGeneralFvNativeObject(serializer.data)
             lectura(generalFv)
             
@@ -134,6 +134,8 @@ def lectura(generalFv):
     itemInterruptorDC=[]
     itemsDpsACSalida=[]
     fusibles=[]
+    interruptoresAutoSalidaInversor=[]
+    sumCorriente_Int=0
     
     tem_amb=generalFv.temperatura_ambiente
     temp_ambiente_mas_baja_esperada=generalFv.minima_temperatura_ambiente_esperada
@@ -165,14 +167,15 @@ def lectura(generalFv):
         
         #calculo de conductores puesto a tierra DC
         conductorDC=calibreconductorDC(panelfv.mttps,isc_panel)
-        
         #calculo de conductores puesto a tierra AC
         conductorAC=calibreconductorAC(isalFuente,isalSalida,tem_amb,max_conductInInversor,max_conductOutInversor,isc_panel)
         conductoresAC.append(conductorAC)
-        
         #Calculo DPS AC (Salida inversores)
         itemsDpsACSalida.append(calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio))
-        
+        #Calculo Interruptores automáticos AC (IAAC) (Circuito de salida inversor)
+        interruptoresAutoSalidaInversor.append(calculoInterruptoresAutoSalidaInversor(tensionServicio,tipoServicio,inversor))
+        #suma de las Corriente_Int de todos los campos FV, para Calculo Interruptores automáticos AC (IAAC) (Combinador AC )
+        sumCorriente_Int += calculoCorriente_Int(tensionServicio,inversor)
         for mppt in panelfv.mttps:
             cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
             cadenas_serie=mppt.numero_de_paneles_en_serie_por_cadena
@@ -200,6 +203,9 @@ def lectura(generalFv):
             itemInterruptorDC.append(seleccionIMDC(corrienteMPP,tensionMaximaMppt))
             #Calculo fusibles de cadena FV
             fusibles.append(calculoFusibles(cadenas_paralelo,isc_panel))
+            
+    #Calculo Interruptores automáticos AC (IAAC) (Combinador AC )
+    interruptoresAutoCombinador=calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,sumCorriente_Int)
  
     
     #print dic_main.panelesSolares_dict[panel].isc
@@ -219,7 +225,10 @@ def lectura(generalFv):
     print "itemDpsACInyeccion "+itemDpsACInyeccion
     print "fusibles"
     print fusibles
-    
+    print "calculoInterruptoresAutoSalidaInversor"
+    print interruptoresAutoSalidaInversor
+    print "calculoInterruptoresAutoCombinador"
+    print interruptoresAutoCombinador
 
 #funcion que determina el Isal_max de la base de datos inversores dependiendo inversor y el Vsal seleccionado en la cotización  
 def isalN(inversor,tensionServicio):
@@ -228,13 +237,12 @@ def isalN(inversor,tensionServicio):
     isal_max_1=float(dic_main.inversores_dict[inversor].isal_max_1)
     isal_max_2=float(dic_main.inversores_dict[inversor].isal_max_2)
     isal_max_3=float(dic_main.inversores_dict[inversor].isal_max_3)
-    if (tensionServicio==dic_main.inversores_dict[inversor].vsal_1):
+    if tensionServicio==float(dic_main.inversores_dict[inversor].vsal_1):
         isal=isal_max_1
-    elif(tensionServicio==dic_main.inversores_dict[inversor].vsal_2):
+    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_2):
         isal=isal_max_2
-    elif (tensionServicio==dic_main.inversores_dict[inversor].vsal_3):
+    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_3):
         isal=isal_max_3
-        
     return isal
  
 #funcion que suma todos los Isal_max de la base de datos del inversor segun el inversor seleccionado  
