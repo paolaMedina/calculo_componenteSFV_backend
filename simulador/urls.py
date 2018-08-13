@@ -19,14 +19,34 @@ from django.contrib import admin
 
 from cotizadorFV.models import *
 from cotizadorFV.views import *
-from .views import Home
+from .views import Home,loginPage
 from cotizadorFV.lib.lib import importarCsvs
+from django.contrib.auth.views import logout, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+
+
 importarCsvs() #carga inicial de los archivos csv
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', Home, name='inicio'), 
+    url(r'^login', loginPage, name='loginPage'), 
+    url(r'^Home', Home, name='inicio'), 
     url(r'^cotizadorFV/', include('cotizadorFV.urls', namespace="cotizadorFv")),
-    url(r'^fileupload/', include('cargaArchivos.urls', namespace="cargarArchivos"))
+    url(r'^fileupload/', include('cargaArchivos.urls', namespace="cargarArchivos")),
+    url(r'^usuario/', include('usuario.urls', namespace="usuario")),
+    
+    
+    
+    url(r'^reset/password_reset/$',password_reset,{'template_name':'password_reset.html',
+    'email_template_name':'password_reset_email.html'},name="password_reset"),
+    url(r'^password_reset_done/$', password_reset_done, {'template_name':'password_reset_done.html'},name="password_reset_done"),
+   
+    url(r'^reset/(?P<uidb64>[0-94-Za-z_\-]+)/(?P<token>.+)/$',password_reset_confirm,{'template_name':'password_reset_confirm.html'},name="password_reset_confirm"), 
+    url(r'^reset/done',password_reset_complete,{'template_name':'password_reset_complete.html'},name="password_reset_complete"),
+ 
 ]
+
+#para descargar archivos
+from django.conf.urls.static import  static
+from django.conf import settings
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

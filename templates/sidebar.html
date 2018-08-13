@@ -26,7 +26,13 @@
         </li>
         <li><a href="{% url 'cotizadorFv:cotizacion' %}"><i class="fa fa-calculator"></i> Cotizador Paneles FV</span></a></li>
         <li><a href="{% url 'cargarArchivos:uploadFile' %}"><i class="fa fa-upload"></i> Subir Archivo </a></li>
-        <li><a><i class="fa fa-user"></i> Cuenta</a></li>
+        <li><a><i class="fa fa-user"></i> Cuenta</a>
+          <ul class="nav child_menu">
+            <li><a href= "{% url 'usuario:registrar_usuario' %}">Crear usuario</a></li>
+            <li><a href= "{% url 'usuario:listar_usuario' %}">Listar usuarios</a></li>
+            <li><a href="">Configurar Cuenta</a></li>
+          </ul>
+        </li>
        </ul>
     </div>
   </div>

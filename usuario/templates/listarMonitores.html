@@ -1,0 +1,113 @@
+{% extends "base1.html" %}
+{% load static %}
+
+
+
+{% block titulo %}
+Listar Monitores
+{% endblock %}
+
+{% block extrahead %}
+<link href="{% static 'plantilla-backend/css/plugins/dataTables/datatables.min.css" rel="stylesheet' %}">
+{% endblock %}
+
+{% block content %} 
+
+ <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                <div class="ibox float-e-margins ">
+                    <div class="ibox-title">
+                        <h5>Lista de monitores registrados</h5>
+                    </div>
+                    <div class="ibox-content">
+
+                        <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover dataTables-example" >
+                    <thead>
+                    <tr>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Correo Electronico</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% if monitores %}
+                        {% for monitor in monitores %}
+                        
+                        <tr>
+                            <td>{{monitor.first_name}}</td>
+                            <td>{{monitor.last_name}}</td>
+                            <td>{{monitor.email}}</td>
+                            <td>{{monitor.rol}}</td>
+                            <td>
+                              <a class="btn btn-primary" href="{% url 'usuario:editar_usuario' pk=monitor.pk %}" ><span class="glyphicon glyphicon-pencil" aria-hidden="true"></a>
+                              <a class="btn btn-danger" href="{% url 'usuario:eliminar_usuario' pk=monitor.pk %}" onclick="return confirm('Desea eliminar el registro {{usuario.first_name }} {{usuario.last_name }}?')"
+                              ><span class="glyphicon glyphicon-trash" aria-hidden="true"></a>
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                        
+                    
+                    
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Correo Electronico</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </tfoot>
+                    </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block plugins %}
+
+<script src="{% static 'plantilla-backend/js/plugins/dataTables/datatables.min.js' %}"></script>
+
+ <!-- Page-Level Scripts -->
+    <script>
+        $(document).ready(function(){
+            $('.dataTables-example').DataTable({
+                pageLength: 25,
+                responsive: true,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    {extend: 'copy'},
+                    {extend: 'csv'},
+                    {extend: 'excel', title: 'ExampleFile'},
+                    {extend: 'pdf', title: 'ExampleFile'},
+
+                    {extend: 'print',
+                     customize: function (win){
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                    .addClass('compact')
+                                    .css('font-size', 'inherit');
+                    }
+                    }
+                ]
+
+            });
+
+        });
+
+    </script>
+    
+{% endblock %}

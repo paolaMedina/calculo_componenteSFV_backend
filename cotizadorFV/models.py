@@ -34,7 +34,7 @@ class PanelFV(models.Model):
     model_panel_solar_1 = models.CharField(max_length = 40)
     modelo_panel_solar_2 = models.CharField(max_length = 40)
     fabricante_2 = models.CharField(max_length = 40)
-    salida_inversor= models.ForeignKey('Cableado')
+    salida_inversor= models.ForeignKey('Cableado')#models.ForeignKey('BaseCableado')
     class Meta:
         managed = False
         

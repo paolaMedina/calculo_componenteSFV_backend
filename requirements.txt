@@ -1,4 +1,11 @@
 django-cors-headers==2.3.0
 django==1.11
-django-rest-framework==3.8.2
+djangorestframework==3.8.2
 django-adaptors==0.2.5
+django-adaptors==0.2.5
+--upgrade lxml
+django-datetime-widget==0.9.3
+django-bootstrap3==10.0.1 
+django-floppyforms==1.7.0 
+django-crispy-forms==1.7.2
+easy-thumbnails==2.5

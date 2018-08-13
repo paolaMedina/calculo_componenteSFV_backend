@@ -101,7 +101,9 @@ def caidaTensionFuente(posicionCalibre,tension_Mpp,impp_panel,distanciaConductor
 
 def corrienteNominalSalida(tem_amb,max_conductores,isc_panel,cadenas_paralelo):
     kt=correcionTemp(tem_amb)
+    print "kt salida"+str(kt)
     kr=factorLlenado(max_conductores)
+    print "kr salida"+str(kr)
     i=cadenas_paralelo*isc_panel*1.56
     corrienteNom=i/(kt*kr)
     return  corrienteNom
@@ -459,12 +461,12 @@ def calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio):
     listResultante=[]
     dic_main=mainInfoLib.getDic()
     filtroPolo= { clave: valor for clave, valor in dic_main.interruptoresAuto_dict.items() if valor.no_polos == polos}
-    filtroTension= { clave: valor for clave, valor in filtroPolo.items() if  tensionServicio >valor.tension or tensionServicio >valor.tension_2 }
+    filtroTension= { clave: valor for clave, valor in filtroPolo.items() if  tensionServicio <=valor.tension or tensionServicio <=valor.tension_2 }
     interruptor_list_sortedIn =  sorted(filtroTension.values(), key=InteAuto.getSortKeyIn)
     
             
     for i in range(0,len(interruptor_list_sortedIn)) :
-        if (corriente_Int<interruptor_list_sortedIn[i].in_in):
+        if (corriente_Int<=interruptor_list_sortedIn[i].in_in):
               
             interruptor=interruptor_list_sortedIn[i].descripcion
             listResultante=interruptor_list_sortedIn[i:]

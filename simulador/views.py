@@ -8,3 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 
 def Home(request):
     return render(request, 'index2.html')
+    
+    
+def loginPage(request):
+    return  redirect('usuario:login')

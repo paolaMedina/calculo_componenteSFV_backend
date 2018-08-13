@@ -36,7 +36,16 @@
                     {{form.tipo_archivo}}
                   </div>
                 </div>
-                
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" >Descargar Archivo
+                  </label>
+                  <div class="col-md-7 col-sm-7 col-xs-12"> 
+                    <div class="fa-hover col-md-6 col-sm-4 col-xs-12"><a  id="download_csv" href="this_does_not_matter"><i class="fa fa-cloud-download"></i> Descargar del servidor</a>
+                        </div>
+
+                  </div>
+                </div>
+                 
                 <div class="form-group">
                   <label class="control-label col-md-3 col-sm-3 col-xs-12" for={{form.file.name}}>Subir archivo <span class="required">*</span>
                   </label>
@@ -88,6 +97,41 @@
        
    });
  </script>
+ 
+ <script >
+ 
+  $("#download_csv").click(
+    function() {
+      var file_to_download_name = getSelectedFileName();
+      this.href = "/media/archivosCSV/"+file_to_download_name;
+    });
+  function getSelectedFileName() {
+     var archivo = document.getElementById('tipoArchivo').value;
+     var file_name = '';
+     if (archivo == 'dps_ac'){
+       file_name='DPS_AC.csv'
+     }else if (archivo == 'dps_dc'){
+       file_name='DPS_DC.csv'
+     }else if (archivo == 'fusible'){
+       file_name='fusibles.csv'
+     }else if (archivo == 'inte_auto'){
+       file_name='interruptores_automaticos.csv'
+     }else if (archivo == 'inte_man'){
+       file_name='interruptores_manuales.csv'
+     }else if(archivo == 'inversor'){
+       file_name='inversor.csv'
+     }else if(archivo == 'microInve'){
+       file_name='microinversor.csv'
+     }else if (archivo == 'panelSolar'){
+       file_name='panelesSolares.csv'
+     }
+     return file_name;
+  }
+   
+ </script>
+ 
+ 
+ 
 {% endblock scripts%}
 
 
