@@ -15,6 +15,12 @@ class UploadFileView(FormView):
     template_name = "upload.html"
     form_class = FormUpload
     success_url = reverse_lazy("cargarArchivos:uploadFile")
+    
+    """
+    @verificar_rol(roles_permitidos=["administrador","ingeniero"])
+    def dispatch(self, request, *args, **kwargs):
+        return super(UploadFileView, self).dispatch(request, *args, **kwargs)
+    """  
  
     def get(self, request, *args, **kwargs):
         data = {'form': self.form_class}
@@ -24,7 +30,7 @@ class UploadFileView(FormView):
         form = FormUpload(request.POST, request.FILES)
         
         if form.is_valid():
-            # se convierte el form a un diccionario, y se obtiene el atributo
+            # se convierte el form a un diccionario, y se obtiene el atributo tipo_archivo
             type = form.cleaned_data.get('tipo_archivo')
             name=''
             file = request.FILES['file']
@@ -61,7 +67,7 @@ class UploadFileView(FormView):
             return self.form_invalid(form, **kwargs)
             
             
-            
+#Para guardar la iniformacion en los archivos ya existentes o crear uno nuevo y guardar             
 def handle_uploaded_file(file,name):
         with open('archivos/' + name, 'w') as destination:
             for chunk in file.chunks():

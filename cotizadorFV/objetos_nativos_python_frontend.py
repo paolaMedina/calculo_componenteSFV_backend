@@ -27,7 +27,7 @@ class PanelFV():
         self.modelo_panel_solar_2 = modelo_panel_solar_2#modelo inversor
         self.fabricante_2 = fabricante_2#fabricante inversor
         self.mttps  =  [Mttp(**mttp) for mttp in mttps]
-        self.salida_inversor =Cableado (**salida_inversor)
+        self.salida_inversor =Cableado (**salida_inversor)#BaseCableado(**salida_inversor)
     
     
     

@@ -9,8 +9,8 @@ class FormUpload(forms.Form):
     ('dps_ac', 'DPS_AC'),
     ('dps_dc', 'DPS.DC'),
     ('fusible', 'Fusibles'),
-    ('inte_auto', 'Interrupturos Automaticos'),
-    ('inte_man',  'Interrupturos Manuales'),
+    ('inte_auto', 'Interrupturos Automaticos AC'),
+    ('inte_man',  'Interrupturos Manuales DC'),
     ('inversor', 'Inversores'),
     ('microInve', 'MicroInversores'),
     ('panelSolar', 'Paneles Solares'),
@@ -18,8 +18,7 @@ class FormUpload(forms.Form):
     '''
     Form principal
     '''
-    #file = forms.FileField(widget= KrajeeFileInputWidget )
-    tipo_archivo=forms.ChoiceField(choices=archivos,label='Tipo de archivo',widget=forms.Select(attrs={'class':'form-control', 'required':'required'}))
+    tipo_archivo=forms.ChoiceField(choices=archivos,label='Tipo de archivo',widget=forms.Select(attrs={'class':'form-control', 'id':'tipoArchivo','required':'required'}))
     file = forms.FileField( )
     
     

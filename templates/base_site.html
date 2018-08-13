@@ -117,20 +117,22 @@
       <!-- toastr -->
       <script src="{% static 'static/vendors/toastr/toastr.min.js' %}"> </script>
       
-      <script>
-        {% for msg in messages %}
-            $(document).ready(function(){
-                setTimeout(function() {
-                    toastr.options = {
-                        "closeButton": true,
-                        "progressBar": true,
-                        showMethod: 'slideDown',
-                    }
-                    toastr["{{ msg.tags }}"]("{{msg}}")
-                },500);
-            });
-        {% endfor %}
-      </script>
+      
+      
+      <script type="text/javascript">
+    	{% for msg in messages %}
+                $(document).ready(function(){
+                    setTimeout(function() {
+                        toastr.options = {
+                            "closeButton": true,
+                            "progressBar": true,
+                            "showEasing": "swing"
+                        }
+                        toastr["{{ msg.tags }}"]("{{msg}}")
+                    },500);
+                });
+            {% endfor %}
+    </script>
     
       {% block scripts %}
           

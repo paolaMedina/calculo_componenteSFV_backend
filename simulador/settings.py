@@ -32,16 +32,21 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    'corsheaders',#angular
+    'rest_framework',#django rest frammework
     'cotizadorFV',
-    'cargaArchivos'
+    'cargaArchivos',
+    'usuario',
+    'bootstrap3',#permite tags de boostrap
+    'floppyforms',#para previsualizacion imagen de usuario en form crear usuario
+    'easy_thumbnails',#para previsualizacion imagen de usuario en form crear usuario
+    'crispy_forms',#para previsualizacion imagen de usuario en form crear usuario
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -69,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -128,9 +134,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticbase'),]
-
+#para el manejo de las imagenes
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
-
 #permite enviar mensajes de alerta al usuario
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+
+#redirecciona a la pantalla de principal en caso que un usuario queira acceder a una url portegida sin estar logueado
+LOGIN_URL = '/loginPage'
+#para el envio de mensajes
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'angiepmc93@gmail.com'
+EMAIL_HOST_PASSWORD = 'paola2905'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

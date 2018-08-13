@@ -3,6 +3,8 @@ from rest_framework import status
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy
+from django.contrib import messages
 
 from .main_info import *
 from cotizadorFV.modelsCSV import *
@@ -107,7 +109,7 @@ class deserializacion (APIView):
             #print  serializer.validated_data
             generalFv=getGeneralFvNativeObject(serializer.data)
             lectura(generalFv)
-            
+            messages.success(self.request, "Cotizacion")
             return  HttpResponseRedirect(redirect_to='https://simulador-fv-paolamedina.c9users.io/cotizadorFV/cotizacion/')
 
         else:
@@ -175,14 +177,16 @@ def lectura(generalFv):
         #Calculo Interruptores automáticos AC (IAAC) (Circuito de salida inversor)
         interruptoresAutoSalidaInversor.append(calculoInterruptoresAutoSalidaInversor(tensionServicio,tipoServicio,inversor))
         #suma de las Corriente_Int de todos los campos FV, para Calculo Interruptores automáticos AC (IAAC) (Combinador AC )
-        sumCorriente_Int += calculoCorriente_Int(tensionServicio,inversor)
+        corriente=calculoCorriente_Int(tensionServicio,inversor)
+        if (corriente !=None):
+            sumCorriente_Int += corriente
         for mppt in panelfv.mttps:
             cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
             cadenas_serie=mppt.numero_de_paneles_en_serie_por_cadena
             ##Datos nominales de mppt***************
             tension_Mpp= cadenas_serie  * vmmp_panel
             corrienteMPP= cadenas_paralelo * impp_panel
-            tensionMaximaMppt= cadenas_serie * voc_panel * coef_voc_panel * (temp_ambiente_mas_baja_esperada - 25  )
+            tensionMaximaMppt= cadenas_serie * voc_panel * 1+(coef_voc_panel/100) * (temp_ambiente_mas_baja_esperada - 25  )
             ##***************************************
             max_conductoresFuente= mppt.cableado.input.maximo_numero_de_conductores
             max_conductoresSalida=mppt.cableado.output.maximo_numero_de_conductores

@@ -101,7 +101,9 @@ def caidaTensionFuente(posicionCalibre,tension_Mpp,impp_panel,distanciaConductor
 
 def corrienteNominalSalida(tem_amb,max_conductores,isc_panel,cadenas_paralelo):
     kt=correcionTemp(tem_amb)
+    print "kt salida"+str(kt)
     kr=factorLlenado(max_conductores)
+    print "kr salida"+str(kr)
     i=cadenas_paralelo*isc_panel*1.56
     corrienteNom=i/(kt*kr)
     return  corrienteNom
@@ -249,7 +251,7 @@ def calibreconductorAC(isal,sumIsal,tem_amb,max_conductoresFuente,max_conductore
 
 def cantidadMppt(distanciaConductorSalida):
     cantidad=0
-    if (distanciaConductorSalida<=10):
+    if (distanciaConductorSalida<10):
         cantidad=1
     else:
         cantidad=2
@@ -295,24 +297,47 @@ def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
     dic_main=mainInfoLib.getDic()
     filtroInterruptores = { clave: valor for clave, valor in dic_main.interruptoresManuales_dict.items() if valor.no_contactos == 2}
     interruptores_list_sortedTension =  sorted(filtroInterruptores.values(), key=InterruptorManual.getSortTension)
-    for interruptor in interruptores_list_sortedTension:
-        if (tensionMaximaMppt<interruptor.tension)and (corrienteMpp<interruptor.ith):
-            interruptorTension=interruptor
+    
+    #sacando la mejor opcion entre precio y tension
+    listResultanteTension=[]
+    for i in range(0,len(interruptores_list_sortedTension)) :
+        if (tensionMaximaMppt<interruptores_list_sortedTension[i].tension)and (corrienteMpp<interruptores_list_sortedTension[i].ith):
+            interruptorTension=interruptores_list_sortedTension[i]
+            listResultanteTension=interruptores_list_sortedTension[i:]
             break
-            
+    
+    #probar si hay empate en tension (si hay otro item con la misma tension)       
+    for i in range(0,len(listResultanteTension)-1) :
+        
+        if listResultanteTension[i].tension==listResultanteTension[i+1].tension:
+            if listResultanteTension[i].precio > listResultanteTension[i+1].precio:
+                interruptorTension=listResultanteTension[i+1]
+                
+        else: break
+           
+    #sacando la mejor opcion entre precio y ith       
+    listResultanteIth=[]
     interruptores_list_sortedIth =  sorted(filtroInterruptores.values(), key=InterruptorManual.getSortIth)    
-    for interruptor in interruptores_list_sortedIth:
-        if (corrienteMpp<interruptor.ith) and (tensionMaximaMppt<interruptor.tension):
-            interruptorIth=interruptor
+    for i in range(0,len(interruptores_list_sortedIth)):
+        if (corrienteMpp<interruptores_list_sortedIth[i].ith) and (tensionMaximaMppt<interruptores_list_sortedIth[i].tension):
+            interruptorIth=interruptores_list_sortedIth[i]
+            listResultanteIth=interruptores_list_sortedIth[i:]
             break
         
-    if (interruptorTension!=None and interruptorIth !=None):        
-        diferenciaTension=(interruptorTension.tension-tensionMaximaMppt)+(interruptorTension.ith-corrienteMpp)
-        diferenciaIth=(interruptorIth.tension-tensionMaximaMppt)+(interruptorIth.ith-corrienteMpp)
-        if (diferenciaTension<diferenciaIth):
-            item=interruptorTension.descripcion
-        else:
+    #probar si hay empate en ith (si hay otro item con el mismo ith)       
+    for i in range(0,len(listResultanteIth)-1) :
+        
+        if listResultanteIth[i].ith==listResultanteIth[i+1].ith:
+            if listResultanteIth[i].precio > listResultanteIth[i+1].precio:
+                interruptorIth=listResultanteIth[i+1]
+        else: break
+    
+    #escoger le mejoro entre los items seleccionados anteriormente de tension y ith    
+    if (interruptorTension!=None and interruptorIth !=None):   
+        if (interruptorTension.precio>interruptorIth.precio):
             item=interruptorIth.descripcion
+        else:
+            item=interruptorTension.descripcion
     else: item=None
     
     return item
@@ -436,12 +461,12 @@ def calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio):
     listResultante=[]
     dic_main=mainInfoLib.getDic()
     filtroPolo= { clave: valor for clave, valor in dic_main.interruptoresAuto_dict.items() if valor.no_polos == polos}
-    filtroTension= { clave: valor for clave, valor in filtroPolo.items() if  tensionServicio >valor.tension or tensionServicio >valor.tension_2 }
+    filtroTension= { clave: valor for clave, valor in filtroPolo.items() if  tensionServicio <=valor.tension or tensionServicio <=valor.tension_2 }
     interruptor_list_sortedIn =  sorted(filtroTension.values(), key=InteAuto.getSortKeyIn)
     
             
     for i in range(0,len(interruptor_list_sortedIn)) :
-        if (corriente_Int<interruptor_list_sortedIn[i].in_in):
+        if (corriente_Int<=interruptor_list_sortedIn[i].in_in):
               
             interruptor=interruptor_list_sortedIn[i].descripcion
             listResultante=interruptor_list_sortedIn[i:]
