@@ -53,6 +53,16 @@ class UploadFileView(FormView):
                     name='microinversor.csv'
                 elif (type == 'panelSolar'):
                     name='panelesSolares.csv'
+                elif (type == 'canalizacion'):
+                    name='Canalizacion.csv'
+                elif (type == 'bandeja_portacable'):
+                    name='Bandeja_Portacable.csv'
+                elif (type == 'conductores'):
+                    name='Conductores.csv'
+                elif (type == 'accesorios'):
+                    name='Accesorios.csv'
+                elif (type == 'armarios'):
+                    name='Armarios.csv'
                     
                 
                 handle_uploaded_file(file,name)

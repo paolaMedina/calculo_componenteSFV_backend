@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django import forms
  
 from .widgets import KrajeeFileInputWidget
@@ -14,6 +16,11 @@ class FormUpload(forms.Form):
     ('inversor', 'Inversores'),
     ('microInve', 'MicroInversores'),
     ('panelSolar', 'Paneles Solares'),
+    ('canalizacion' ,'Canalización'), 
+    ('bandeja_portacable', 'Bandeja Portacable'),
+    ('conductores', 'Conductores'), 
+    ('accesorios' ,'Accesorios'),
+    ('armarios','Armarios')
     )
     '''
     Form principal
