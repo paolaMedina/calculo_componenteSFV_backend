@@ -13,6 +13,22 @@ calibreConductor=constants.calibreConductor
 calibreAire=constants.calibreAire
 
 
+#funcion que determina el Isal_max de la base de datos inversores dependiendo inversor y el Vsal seleccionado en la cotización  
+def isalN(inversor,tensionServicio):
+    dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
+    isal=0
+    isal_max_1=float(dic_main.inversores_dict[inversor].isal_max_1)
+    
+    isal_max_2=float(dic_main.inversores_dict[inversor].isal_max_2)
+    isal_max_3=float(dic_main.inversores_dict[inversor].isal_max_3)
+    if tensionServicio==float(dic_main.inversores_dict[inversor].vsal_1):
+        isal=isal_max_1
+    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_2):
+        isal=isal_max_2
+    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_3):
+        isal=isal_max_3
+    return isal
+
     
 #kt
 def correcionTemp(tem_amb):
@@ -163,7 +179,7 @@ def CalculoConductores(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_p
     #falta retornar array
     
     
-#___________________________________________Salida Inversor___________________________________________________---
+#___________________________________________Salida Inversor y combinacion inversor___________________________________________________---
 
 
 def corrienteNominalInversor(isal,tem_amb,max_conductores,isc_panel):
@@ -173,6 +189,7 @@ def corrienteNominalInversor(isal,tem_amb,max_conductores,isc_panel):
     
 
 def posicionCalibreInversor(isal,tem_amb,max_conductores,isc_panel):
+    
     posicion=0
     corr_nominal=corrienteNominalInversor(isal,tem_amb,max_conductores,isc_panel)
     for i in range(len(calibre)):
@@ -182,34 +199,34 @@ def posicionCalibreInversor(isal,tem_amb,max_conductores,isc_panel):
     return posicion
     
 
-def caidaTensionInversor(posicionCalibre,isal,tem_amb,max_conductores,isc_panel,l,v):
+def caidaTensionInversor(tipo_servicio,posicionCalibre,isal,tem_amb,max_conductores,isc_panel,l,v):
     cos=1
     r=44
     calibreSeleccionado=calibre[posicionCalibre][0]
     s=seleccionarConductor(calibreSeleccionado)#conductor_seleccionado
     i=corrienteNominalInversor(isal,tem_amb,max_conductores,isc_panel)#corriente nominal salida
-    caida_tension= (i*l*cos)/(r*s)*100/v
-    
+    if (tipo_servicio.encode('utf8')==u"Monofásica".encode('utf8')):
+        factor=2
+    else :
+        factor =1
+    caida_tension= factor*(i*l*cos)/(r*s)*100/v
     
     return caida_tension
 
-#funcion que entrega los calibres de entrada y salida para el inversor  
-def CalculoConductoresInversor(isalFuente,isalSalida,tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio,caidaTensionUsuarioSalida):
-    conductoresInversor=[]
-    
-    posicionCalibreFuente=posicionCalibreInversor(isalFuente,tem_amb,max_conductoresFuente,isc_panel)
-    calibreFuente=calibre[posicionCalibreFuente][0] 
-    
-    posicionCalibreSalida=posicionCalibreInversor(isalSalida,tem_amb,max_conductoresSalida,isc_panel)
-    caidaTensionSalida=caidaTensionInversor(posicionCalibreSalida,isalSalida,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
+#funcion que entrega el  calibre salida para el inversor  y  tambien se usa para circuito de invesor combinadoo (isal=suma de los isal de los inversore)
+def CalculoConductorInversor(tipo_servicio,isal,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio,caidaTensionUsuarioSalida):
+    conductoresInversor=None
+
+    posicionCalibreSalida=posicionCalibreInversor(isal,tem_amb,max_conductoresSalida,isc_panel)
+    caidaTensionSalida=caidaTensionInversor(tipo_servicio,posicionCalibreSalida,isal,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
     
     for i in range(len(calibre)):
         if (caidaTensionSalida>caidaTensionUsuarioSalida):
                 posicionCalibreSalida +=1
-                caidaTensionSalida=caidaTensionInversor(posicionCalibreSalida,isalSalida,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
+                caidaTensionSalida=caidaTensionInversor(tipo_servicio,posicionCalibreSalida,isal,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
         else: 
             break
-    conductoresInversor=[calibre[posicionCalibreFuente][0],calibre[posicionCalibreSalida][0]] 
+    conductoresInversor=calibre[posicionCalibreSalida][0]
     return conductoresInversor
                 
     
@@ -238,13 +255,18 @@ def calibreconductorDC(mttps,Isc_panel):
     
 
 #Calibre de conductor puesta a tierra AC
-def calibreconductorAC(isal,sumIsal,tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel): 
-    corrienteNominalEntrada=corrienteNominalInversor(isal,tem_amb,max_conductoresFuente,isc_panel)
-    corrienteNominalSalida=corrienteNominalInversor(sumIsal,tem_amb,max_conductoresSalida,isc_panel)
-    
-    calibreEntrada=buscarCalibreCondutor(corrienteNominalEntrada)
-    calibreSalida=buscarCalibreCondutor(corrienteNominalSalida)
-    return [calibreEntrada,calibreSalida]
+def calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel,camposFV,tensionServicio):
+    list=[]
+    corrienteCombinacionInversor=corrienteNominalInversor(sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel)
+    calibreCombinacionInversor=buscarCalibreCondutor(corrienteCombinacionInversor)
+    for campoFV in camposFV:
+        isalInversor=isalN(campoFV.modelo_panel_solar_2,tensionServicio)
+        max_conductInversor=campoFV.salida_inversor.output.maximo_numero_de_conductores
+        corrienteInversor=corrienteNominalInversor(isalInversor,tem_amb,max_conductInversor,isc_panel)
+        calibreInversor=buscarCalibreCondutor(corrienteInversor)
+        list.append(calibreInversor)
+        list.append(calibreCombinacionInversor)
+    return list
     
 
 #__________________________________DPS FV______________________
@@ -503,8 +525,6 @@ def calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,corriente_In
 #Armario que soporte la cantidad total de cadenas en paralelo y MPPTs del campo FV  y con menor precio
 def seleccionCajaCombinatoria1(total_cadenas_paralelo,total_mppts):
     seleccion=None
-    print total_cadenas_paralelo
-    print total_mppts
     dic_main=mainInfoLib.getDic()
     filtro1= { clave: valor for clave, valor in dic_main.armarios_dict.items() if 
                 (valor.capacidad_cadenas >= total_cadenas_paralelo) and(valor.capacidad_mppts >= total_mppts) }

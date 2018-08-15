@@ -135,13 +135,13 @@ def lectura(generalFv):
     dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
     conductoresMttp=[]#matriz de los calibres de entrada y salida de los mppts
     conductoresInversor=[] #matriz de los calibres de entrada y salida de los inversores de campos fv
-    conductoresAC=[]#matriz de los calibres de entrada y salida de los inversores de campos fv para coductores AC
     itemsDpsDC=[]
     itemInterruptorDC=[]
     itemsDpsACSalida=[]
     fusibles=[]
     interruptoresAutoSalidaInversor=[]
     sumCorriente_Int=0
+    sumaIsal=0
     
     cajasCombinadorasMppt=[]#arreglo de la caja combinadora que sale por cada mppt de cada panel
     cajasCombinadorasFinal=[]#las cajas por cada panel 
@@ -152,6 +152,10 @@ def lectura(generalFv):
     tipoServicio=generalFv.tipo_servicio
     lugar_instalacion=generalFv.lugar_instalacion
     lugar_instalacion_opcion_techo_cubierta=generalFv.lugar_instalacion_opcion_techo_cubierta
+    max_conductCombinacionInversor=generalFv.combinacion_inversor.input.maximo_numero_de_conductores
+    distanciaCombinacionInversor=generalFv.combinacion_inversor.input.distancia_del_conductor_mas_largo
+    caidaTensionCombinacionInversor=generalFv.combinacion_inversor.input.caida_de_tension_de_diseno
+    
     itemDpsACInyeccion=calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio)
     paneles_agrupados=calculoPanelesSolares(generalFv.fvs)
     for panelfv in  generalFv.fvs:
@@ -161,24 +165,22 @@ def lectura(generalFv):
         voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].voc)
         coef_voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].coef_voc.replace("%","").replace(',','.'))
     
-        max_conductInInversor=panelfv.salida_inversor.output.maximo_numero_de_conductores
+        
         max_conductOutInversor=panelfv.salida_inversor.output.maximo_numero_de_conductores
         distanciaConductOutInversor=panelfv.salida_inversor.output.distancia_del_conductor_mas_largo
         caidaTensionUsuarioSalida=panelfv.salida_inversor.output.caida_de_tension_de_diseno
         
         #calculo de conductores para salida inversor
         inversor=panelfv.modelo_panel_solar_2#modelo del inversor
-        isalFuente=isalN(inversor,tensionServicio)
-        isalSalida=sumIsal(inversor)
-        conductorInversor=CalculoConductoresInversor(isalFuente,isalSalida,tem_amb,max_conductInInversor,max_conductOutInversor,isc_panel,
+        isalInversor=isalN(inversor,tensionServicio)
+        sumaIsal+=isalInversor#acumulado de los isal de cada salida inversor
+        conductorInversor=CalculoConductorInversor(tipoServicio,isalInversor,tem_amb,max_conductOutInversor,isc_panel,
                                                         distanciaConductOutInversor,tensionServicio,caidaTensionUsuarioSalida)
         conductoresInversor.append(conductorInversor)
         
         #calculo de conductores puesto a tierra DC
         conductorDC=calibreconductorDC(panelfv.mttps,isc_panel)
-        #calculo de conductores puesto a tierra AC
-        conductorAC=calibreconductorAC(isalFuente,isalSalida,tem_amb,max_conductInInversor,max_conductOutInversor,isc_panel)
-        conductoresAC.append(conductorAC)
+        
         #Calculo DPS AC (Salida inversores)
         itemsDpsACSalida.append(calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio))
         #Calculo Interruptores automáticos AC (IAAC) (Circuito de salida inversor)
@@ -226,12 +228,20 @@ def lectura(generalFv):
         #print "cadenas paralelo "+str(total_cadenas_paralelo)
         interruptoresAutoCombinador=calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,sumCorriente_Int)
         
+        
+        #calculo de conductores puesto a tierra AC
+        conductorAC=calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel,generalFv.fvs,tensionServicio)
+        
+        
         #calculo de cajas combitorias 
         cajaCombinatoriaGeneral=seleccionCajaCombinatoria1(total_cadenas_paralelo,len(panelfv.mttps))#una caja combinatoria para todo sloo mppts
         
         #Cajas combinatorias finales seleccionadas por cada panel fv
         cajasCombinadorasFinal.append(calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinadorasMppt))
     
+    
+    conductoresCombninacionInversor=CalculoConductorInversor(tipoServicio,sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel,
+                                                        distanciaCombinacionInversor,tensionServicio,caidaTensionCombinacionInversor)
     
     #print dic_main.panelesSolares_dict[panel].isc
     print "conductores mppt"
@@ -240,7 +250,7 @@ def lectura(generalFv):
     print conductoresInversor
     print "conductorDC " + str(conductorDC)
     print "conductorAC "
-    print conductoresAC
+    print conductorAC
     print "itemsDpsDC"
     print itemsDpsDC
     print "itemInterruptorDC"
@@ -260,23 +270,10 @@ def lectura(generalFv):
     #print cajasCombinadorasFinal
     print "paneles_agrupados"
     print paneles_agrupados
+    print "conductoresCombninacionInversor "+  str (conductoresCombninacionInversor)
     
-#funcion que determina el Isal_max de la base de datos inversores dependiendo inversor y el Vsal seleccionado en la cotización  
-def isalN(inversor,tensionServicio):
-    dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
-    isal=0
-    isal_max_1=float(dic_main.inversores_dict[inversor].isal_max_1)
-    
-    isal_max_2=float(dic_main.inversores_dict[inversor].isal_max_2)
-    isal_max_3=float(dic_main.inversores_dict[inversor].isal_max_3)
-    if tensionServicio==float(dic_main.inversores_dict[inversor].vsal_1):
-        isal=isal_max_1
-    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_2):
-        isal=isal_max_2
-    elif tensionServicio==float(dic_main.inversores_dict[inversor].vsal_3):
-        isal=isal_max_3
-    return isal
- 
+
+""" 
 #funcion que suma todos los Isal_max de la base de datos del inversor segun el inversor seleccionado  
 def sumIsal(inversor):
     dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
@@ -284,6 +281,7 @@ def sumIsal(inversor):
     isal_max_2=float(dic_main.inversores_dict[inversor].isal_max_2)
     isal_max_3=float(dic_main.inversores_dict[inversor].isal_max_3)
     return isal_max_1+isal_max_1+isal_max_1
+"""
     
 def cotizador(request):
     return render(request, 'formulario.html')
