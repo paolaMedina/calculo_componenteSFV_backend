@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 
 
 def Home(request):
+    print  request.user.usuario.imagen
     return render(request, 'index2.html')
     
     

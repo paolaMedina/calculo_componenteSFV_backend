@@ -3,7 +3,8 @@
 class Generalfv():
     def __init__(self, potencia_de_planta_fv,nombre_proyecto,
         temperatura_ambiente,minima_temperatura_ambiente_esperada,tipo_de_inversor,
-        lugar_instalacion_opcion_techo_cubierta, tipo_servicio,voltage_servicio,lugar_instalacion,fvs=[]):
+        lugar_instalacion_opcion_techo_cubierta, tipo_servicio,voltage_servicio,lugar_instalacion,combinacion_inversor,
+        fvs=[]):
     
         self.potencia_de_planta_fv = potencia_de_planta_fv
         self.nombre_proyecto = nombre_proyecto
@@ -14,9 +15,10 @@ class Generalfv():
         self.tipo_servicio = tipo_servicio
         self.voltage_servicio = voltage_servicio
         self.lugar_instalacion = lugar_instalacion
+        self.combinacion_inversor=Input(**combinacion_inversor)
         self.fvs= [PanelFV(**fv) for fv in fvs]
+        
 
-    
     
 class PanelFV():
     def __init__(self,_id,nombre,fabricante_1,model_panel_solar_1,modelo_panel_solar_2,fabricante_2,salida_inversor,mttps=[]):
@@ -27,7 +29,7 @@ class PanelFV():
         self.modelo_panel_solar_2 = modelo_panel_solar_2#modelo inversor
         self.fabricante_2 = fabricante_2#fabricante inversor
         self.mttps  =  [Mttp(**mttp) for mttp in mttps]
-        self.salida_inversor =Cableado (**salida_inversor)#BaseCableado(**salida_inversor)
+        self.salida_inversor =Output(**salida_inversor)
     
     
     
@@ -46,6 +48,14 @@ class Cableado():
         self.output= BaseCableado(**output)
         
         
+class Input():
+    def __init__(self,input):
+        self.input= BaseCableado(**input)
+        
+class Output():
+    def __init__(self,output):
+        self.output= BaseCableado(**output)       
+
 class BaseCableado():
     def __init__(self,_id,tipo_alambrado,tipo_conductor,distancia_del_conductor_mas_largo,caida_de_tension_de_diseno,tipo_canalizacion,
                 canalizacion,tamanio_canalizacion,material_conductor,disenio_bandeja,material_bandeja,tipo_acabado,

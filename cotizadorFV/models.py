@@ -19,7 +19,7 @@ class GeneralFV(models.Model):
     tipo_servicio = models.CharField(max_length = 40)
     voltage_servicio = models.CharField(max_length = 40)
     lugar_instalacion = models.CharField(max_length = 40)
-    
+    combinacion_inversor= models.ForeignKey('Input')
     class Meta:
         managed = False
         
@@ -34,7 +34,7 @@ class PanelFV(models.Model):
     model_panel_solar_1 = models.CharField(max_length = 40)
     modelo_panel_solar_2 = models.CharField(max_length = 40)
     fabricante_2 = models.CharField(max_length = 40)
-    salida_inversor= models.ForeignKey('Cableado')#models.ForeignKey('BaseCableado')
+    salida_inversor= models.ForeignKey('Output')
     class Meta:
         managed = False
         
@@ -61,7 +61,7 @@ class BaseCableado(models.Model):
     caida_de_tension_de_diseno= models.IntegerField()
     tipo_canalizacion= models.CharField(max_length = 40,null=True)
     canalizacion= models.CharField(max_length = 40,null=True)
-    tamanio_canalizacion= models.IntegerField(null=True)
+    tamanio_canalizacion= models.CharField(max_length = 40,null=True)
     material_conductor= models.CharField(max_length = 40)
     disenio_bandeja= models.CharField(max_length = 40,null=True)
     material_bandeja= models.CharField(max_length = 40,null=True)
@@ -80,10 +80,12 @@ class Cableado(models.Model):
     output= models.ForeignKey('BaseCableado',related_name='salida')
 
 
-
+class Input(models.Model):
+    input= models.ForeignKey('BaseCableado')
         
         
-
+class Output(models.Model):
+    output= models.ForeignKey('BaseCableado')
 
         
         

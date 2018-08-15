@@ -1,0 +1,7 @@
+Descripcion;Grado_Proteccion;Alto;Ancho;Profundidad;Capacidad_Cadenas ;Capacidad_MPPts;Cantidad_Inversores;Precio
+Armario IP65 210x280x130;IP65;210;280;130;0;0;0;3000
+Armario IP65 300x400x165;IP65;300;400;165;2;1;0;3000
+Armario IP65 400x500x175;IP65;400;500;175;3;1;0;1000
+Armario IP65 400x600x200;IP65;400;600;200;4;1;0;3000
+Armario IP65 700x500x245;IP65;700;500;245;5;1;0;1000
+Armario IP65 800x600x260;IP65;800;600;260;6;2;3;1500

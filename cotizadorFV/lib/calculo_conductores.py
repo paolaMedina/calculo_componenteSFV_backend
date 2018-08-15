@@ -101,9 +101,9 @@ def caidaTensionFuente(posicionCalibre,tension_Mpp,impp_panel,distanciaConductor
 
 def corrienteNominalSalida(tem_amb,max_conductores,isc_panel,cadenas_paralelo):
     kt=correcionTemp(tem_amb)
-    print "kt salida"+str(kt)
+    #print "kt salida"+str(kt)
     kr=factorLlenado(max_conductores)
-    print "kr salida"+str(kr)
+    #print "kr salida"+str(kr)
     i=cadenas_paralelo*isc_panel*1.56
     corrienteNom=i/(kt*kr)
     return  corrienteNom
@@ -499,3 +499,77 @@ def calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,corriente_In
     polos=cantPolos("interruptores",tipoServicio)
     interruptor=calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio)
     return interruptor
+  
+#Armario que soporte la cantidad total de cadenas en paralelo y MPPTs del campo FV  y con menor precio
+def seleccionCajaCombinatoria1(total_cadenas_paralelo,total_mppts):
+    seleccion=None
+    print total_cadenas_paralelo
+    print total_mppts
+    dic_main=mainInfoLib.getDic()
+    filtro1= { clave: valor for clave, valor in dic_main.armarios_dict.items() if 
+                (valor.capacidad_cadenas >= total_cadenas_paralelo) and(valor.capacidad_mppts >= total_mppts) }
+                
+    if len(filtro1)>0:
+        armarios_list_sortedPrecio =  sorted(filtro1.values(), key=Armario.getSortKeyPrecio)
+        seleccion=armarios_list_sortedPrecio[0]
+    return seleccion
+    
+#Un armario para cada MPPT que soporte la cantidad de cadenas de dicho MPPT
+def seleccionCajaCombinatoria2(cadenas_paralelo):
+    dic_main=mainInfoLib.getDic()
+    filtro2= { clave: valor for clave, valor in dic_main.armarios_dict.items() if valor.capacidad_cadenas >= cadenas_paralelo}
+    armarios_list_sortedPrecio =  sorted(filtro2.values(), key=Armario.getSortKeyPrecio)
+    return armarios_list_sortedPrecio[0]
+
+#   cajaCombinatoriaGeneral=caja combinatoria con menor precio para todos los mppts
+#   cajasCombinatoria= arreglo de cajas combinatorias por cada mppt
+def calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinatorias):
+    seleccionFinal=None
+    armarios_list_sortedPrecio =  sorted(cajasCombinatorias, key=Armario.getSortKeyPrecio)
+    precioTotal=0
+    for armario in armarios_list_sortedPrecio:
+        precioTotal +=armario.precio
+    if cajaCombinatoriaGeneral !=None:
+        if (cajaCombinatoriaGeneral.precio<precioTotal):
+            seleccionFinal= cajaCombinatoriaGeneral
+        else :
+           seleccionFinal= armarios_list_sortedPrecio
+    else : 
+        seleccionFinal=armarios_list_sortedPrecio
+    return seleccionFinal
+       
+       
+"""  Paneles solares:
+•	En cada campo se selecciona un modelo de panel y mira l acantidad por mppt, luega
+    se mira si algun otro campo tiene en comun modelos de paneles, si lo es se suman las cantidades"""
+    
+
+def calculoPanelesSolares(paneles):
+    paneles_cantidad= [ (panel,sumaMppts(panel.mttps)) for panel in paneles  ]
+    lista=[]
+   
+    while (len(paneles_cantidad) > 0):
+            elemento=paneles_cantidad.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+            lista.append(duplicatesPanel(paneles_cantidad,elemento))
+            #esta  linea actualiza la lista sin repetidos   
+            paneles_cantidad = [panel for panel in paneles_cantidad if panel[0].model_panel_solar_1 != elemento[0].model_panel_solar_1]
+    return lista
+    
+def sumaMppts(mttps):   
+    result=0
+    for mppt in mttps:
+        cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
+        paneles_serie= mppt.numero_de_paneles_en_serie_por_cadena
+        result+= cadenas_paralelo*paneles_serie
+        
+    return result
+                
+def duplicatesPanel(paneles_cantidad,elemento):
+    sum=elemento[1]
+    for i in range (0,len(paneles_cantidad)):
+        if (elemento[0].model_panel_solar_1==paneles_cantidad[i][0].model_panel_solar_1):
+            sum+=paneles_cantidad[i][1]
+   
+    #print (elemento[0].model_panel_solar_1,sum)
+    return (elemento[0].model_panel_solar_1,sum)
+    

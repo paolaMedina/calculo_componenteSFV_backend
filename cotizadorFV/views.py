@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
-
+from rest_framework.permissions import AllowAny
 from .main_info import *
 from cotizadorFV.modelsCSV import *
 from rest_framework.views import APIView
@@ -102,10 +102,11 @@ class DataCsvView(APIView):
 #___________________________________________________________________-
 
 class deserializacion (APIView):
-    
+    permission_classes = (AllowAny,)
     def post(self, request, format=None):
         serializer = GeneralFVSerializer(data=request.data)
         if serializer.is_valid():
+            print "valido"
             #print  serializer.validated_data
             generalFv=getGeneralFvNativeObject(serializer.data)
             lectura(generalFv)
@@ -113,6 +114,8 @@ class deserializacion (APIView):
             return  HttpResponseRedirect(redirect_to='https://simulador-fv-paolamedina.c9users.io/cotizadorFV/cotizacion/')
 
         else:
+            print "invalido"
+            print serializer.errors
             return Response(serializer.errors,  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
 
@@ -122,8 +125,9 @@ def getGeneralFvNativeObject(serializer):
     generalfv=Generalfv(serializer['potencia_de_planta_fv'],serializer['nombre_proyecto'],serializer['temperatura_ambiente'],
     serializer['minima_temperatura_ambiente_esperada'],serializer['tipo_de_inversor'],
     serializer['lugar_instalacion_opcion_techo_cubierta'],serializer['tipo_servicio'],serializer['voltage_servicio'],
-    serializer['lugar_instalacion'],serializer['fvs'])
+    serializer['lugar_instalacion'],serializer['combinacion_inversor'],serializer['fvs'])
     mttps= generalfv.fvs[0].mttps
+    #print "combi "+ generalfv.combinacion_inversor
     return generalfv
             
   
@@ -139,6 +143,9 @@ def lectura(generalFv):
     interruptoresAutoSalidaInversor=[]
     sumCorriente_Int=0
     
+    cajasCombinadorasMppt=[]#arreglo de la caja combinadora que sale por cada mppt de cada panel
+    cajasCombinadorasFinal=[]#las cajas por cada panel 
+    
     tem_amb=generalFv.temperatura_ambiente
     temp_ambiente_mas_baja_esperada=generalFv.minima_temperatura_ambiente_esperada
     tensionServicio=float(generalFv.voltage_servicio)
@@ -146,7 +153,7 @@ def lectura(generalFv):
     lugar_instalacion=generalFv.lugar_instalacion
     lugar_instalacion_opcion_techo_cubierta=generalFv.lugar_instalacion_opcion_techo_cubierta
     itemDpsACInyeccion=calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio)
-   
+    paneles_agrupados=calculoPanelesSolares(generalFv.fvs)
     for panelfv in  generalFv.fvs:
         isc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].isc)
         vmmp_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].vmpp)
@@ -154,7 +161,7 @@ def lectura(generalFv):
         voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].voc)
         coef_voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].coef_voc.replace("%","").replace(',','.'))
     
-        max_conductInInversor=panelfv.salida_inversor.input.maximo_numero_de_conductores
+        max_conductInInversor=panelfv.salida_inversor.output.maximo_numero_de_conductores
         max_conductOutInversor=panelfv.salida_inversor.output.maximo_numero_de_conductores
         distanciaConductOutInversor=panelfv.salida_inversor.output.distancia_del_conductor_mas_largo
         caidaTensionUsuarioSalida=panelfv.salida_inversor.output.caida_de_tension_de_diseno
@@ -180,6 +187,8 @@ def lectura(generalFv):
         corriente=calculoCorriente_Int(tensionServicio,inversor)
         if (corriente !=None):
             sumCorriente_Int += corriente
+        
+        total_cadenas_paralelo=0
         for mppt in panelfv.mttps:
             cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
             cadenas_serie=mppt.numero_de_paneles_en_serie_por_cadena
@@ -207,10 +216,22 @@ def lectura(generalFv):
             itemInterruptorDC.append(seleccionIMDC(corrienteMPP,tensionMaximaMppt))
             #Calculo fusibles de cadena FV
             fusibles.append(calculoFusibles(cadenas_paralelo,isc_panel))
+            #acumulado de las cadenas en paralelo de los mppts
+            total_cadenas_paralelo +=cadenas_paralelo
             
-    #Calculo Interruptores automáticos AC (IAAC) (Combinador AC )
-    interruptoresAutoCombinador=calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,sumCorriente_Int)
- 
+            #añadiendo la caja combinatoria seleccionada para cada mppt
+            cajasCombinadorasMppt.append(seleccionCajaCombinatoria2(cadenas_paralelo))
+            
+        #Calculo Interruptores automáticos AC (IAAC) (Combinador AC )
+        #print "cadenas paralelo "+str(total_cadenas_paralelo)
+        interruptoresAutoCombinador=calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,sumCorriente_Int)
+        
+        #calculo de cajas combitorias 
+        cajaCombinatoriaGeneral=seleccionCajaCombinatoria1(total_cadenas_paralelo,len(panelfv.mttps))#una caja combinatoria para todo sloo mppts
+        
+        #Cajas combinatorias finales seleccionadas por cada panel fv
+        cajasCombinadorasFinal.append(calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinadorasMppt))
+    
     
     #print dic_main.panelesSolares_dict[panel].isc
     print "conductores mppt"
@@ -233,12 +254,19 @@ def lectura(generalFv):
     print interruptoresAutoSalidaInversor
     print "calculoInterruptoresAutoCombinador"
     print interruptoresAutoCombinador
-
+    print "cajasCombinadorasFinal"
+    for x in aplanarList(cajasCombinadorasFinal):
+        print x.descripcion
+    #print cajasCombinadorasFinal
+    print "paneles_agrupados"
+    print paneles_agrupados
+    
 #funcion que determina el Isal_max de la base de datos inversores dependiendo inversor y el Vsal seleccionado en la cotización  
 def isalN(inversor,tensionServicio):
     dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
     isal=0
     isal_max_1=float(dic_main.inversores_dict[inversor].isal_max_1)
+    
     isal_max_2=float(dic_main.inversores_dict[inversor].isal_max_2)
     isal_max_3=float(dic_main.inversores_dict[inversor].isal_max_3)
     if tensionServicio==float(dic_main.inversores_dict[inversor].vsal_1):
@@ -265,3 +293,12 @@ def cotizador(request):
 def calculos(request):
     seleccionCalibre(30,10,4,9.82,8.28,4,500,200,33.12,92.4,20,20,'','')
     return HttpResponse("hola")
+    
+def aplanarList(l):
+    ret = []
+    for i in l:
+        if isinstance(i, list) or isinstance(i, tuple):
+            ret.extend(aplanarList(i)) #aplanarList() siendo usado dentro de def aplanarList()
+        else:
+            ret.append(i)
+    return ret

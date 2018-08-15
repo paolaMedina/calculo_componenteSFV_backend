@@ -14,6 +14,37 @@ class DecimalField(DecimalField):
         return Decimal(point_separated_decimal).quantize(Decimal("0.01"), decimal.ROUND_HALF_DOWN)   
         
         
+class IntegerField(IntegerField):
+    normalized_value = -1
+    def to_python(self, value):
+        if (value==''):
+            normalized_value = '0'
+        else:
+            normalized_value = value
+        return super(IntegerField, self).to_python(normalized_value)
+"""
+Version antigua por si danio algo :v
+
+
+class DecimalField(DecimalField):
+    def to_python(self, value):
+        if (value==''):
+            point_separated_decimal = 0
+        else:
+            point_separated_decimal = value.replace(',','.')
+        return Decimal(point_separated_decimal).quantize(Decimal("0.01"), decimal.ROUND_HALF_DOWN)   
+        
+        
+class IntegerField(IntegerField):
+    def to_python(self, value):
+        if (value==''):
+            return  0
+        else:
+            return value
+
+"""
+        
+        
 class InterruptorManual(CsvModel):
     descripcion= CharField()
     marca= CharField()
@@ -223,3 +254,75 @@ class PanelSolar(CsvModel):
     class Meta:
         delimiter = ";"
         has_header = True
+
+
+class Canalizacion(CsvModel):
+    
+    descripcion= CharField()
+    tipo_canalizacion= CharField()
+    tamanio= CharField()
+    precio= IntegerField()
+    class Meta:
+        delimiter = ";"
+        has_header = True
+
+class BandejaPortacable(CsvModel):
+    
+    descripcion= CharField()
+    disenio= CharField()
+    material= CharField()
+    acabado= CharField()
+    longitud= DecimalField()
+    ancho= DecimalField()
+    alto= DecimalField()
+    tipo_carga= CharField()
+    precio= IntegerField()
+    class Meta:
+        delimiter = ";"
+        has_header = True
+        
+class Conductor(CsvModel):
+    
+    descripcion= CharField()
+    tipo_conductor= CharField()
+    material= CharField()
+    calibre= CharField()
+    temperatura= IntegerField()
+    precio=IntegerField()
+    class Meta:
+        delimiter = ";"
+        has_header = True
+        
+class Accesorio(CsvModel):
+    
+    descripcion= CharField()
+    tipo_accesorio= CharField()
+    material= CharField()
+    longitud= DecimalField()
+    alto= DecimalField()
+    ancho= DecimalField()
+    precio=IntegerField()
+    class Meta:
+        delimiter = ";"
+        has_header = True
+        
+        
+class Armario(CsvModel):
+    
+    descripcion= CharField()
+    grado_proteccion= CharField()
+    alto= DecimalField()
+    ancho= DecimalField()
+    profundidad= DecimalField()
+    capacidad_cadenas=IntegerField()
+    capacidad_mppts=IntegerField()
+    catidad_inversores=IntegerField()
+    precio=IntegerField()
+    
+    @staticmethod
+    def getSortKeyPrecio(armario):
+        return armario.precio
+    class Meta:
+        delimiter = ";"
+        has_header = True
+        

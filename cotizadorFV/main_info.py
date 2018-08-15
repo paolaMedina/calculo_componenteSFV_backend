@@ -1,6 +1,7 @@
 class MainInfo():
     def __init__(self, interruptoresManuales=[], panelesSolares=[], dpssAC=[], dpssDC=[],
-                fusibles=[], interruptoresAutomaticos=[],inversores=[], microInversores=[]):
+                fusibles=[], interruptoresAutomaticos=[],inversores=[], microInversores=[],canalizaciones=[],
+                bandejasPortacables=[],conductores=[],accesorios=[],armarios=[]):
         """Init main info
         
         Keyword Arguments:
@@ -18,6 +19,11 @@ class MainInfo():
         self.interruptoresAutomaticos = interruptoresAutomaticos
         self.inversores = inversores
         self.microInversores = microInversores
+        self.canalizaciones = canalizaciones
+        self.bandejasPortacables = bandejasPortacables
+        self.conductores = conductores
+        self.accesorios = accesorios
+        self.armarios = armarios
         
         
         
@@ -39,5 +45,15 @@ class MainInfo():
         self.inversores = inversores
     def setMicroInversores(self, microInversores):
         self.microInversores = microInversores
+    def setCanalizaciones(self, canalizaciones):
+        self.canalizaciones = canalizaciones
+    def setBandejasPortacables(self, bandejasPortacables):
+        self.bandejasPortacables = bandejasPortacables
+    def setConductores(self, conductores):
+        self.conductores = conductores
+    def setAccesorios(self, accesorios):
+        self.accesorios = accesorios
+    def setArmarios(self, armarios):
+        self.armarios = armarios
         
 inicial=MainInfo()

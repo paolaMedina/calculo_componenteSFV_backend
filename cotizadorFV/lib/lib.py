@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from cotizadorFV.modelsCSV import *
 from cotizadorFV.main_info import inicial
 from cotizadorFV.dic_data import dic_inicial
@@ -28,7 +29,7 @@ def importarPanelesSolares():
 def importarMicroInversores():
     microInversores = importcsv(MicroInversor, 'media/archivosCSV/microinversor.csv')
     inicial.setMicroInversores(microInversores)
-    print(inicial.microInversores[0])
+    
 def importarDpsAC():
     dpssAC = importcsv(DpsAC, 'media/archivosCSV/DPS_AC.csv')
     inicial.setDpsAC(dpssAC)
@@ -49,8 +50,28 @@ def importarInterruptoresAuto():
 def importarInversores():
     inversores = importcsv(Inversor, 'media/archivosCSV/inversor.csv')
     inicial.setInversores(inversores)
+
+def importarCanalizaciones():
+    canalizaciones = importcsv(Canalizacion, 'media/archivosCSV/Canalizacion.csv')
+    inicial.setCanalizaciones(canalizaciones)
+
+def importarBandejasPortacables():
+    bandejasPortacables = importcsv(BandejaPortacable, 'media/archivosCSV/Bandeja_Portacable.csv')
+    inicial.setBandejasPortacables(bandejasPortacables)
     
+def importarConductores():
+    conductores = importcsv(Conductor, 'media/archivosCSV/Conductores.csv')
+    inicial.setConductores(conductores)
     
+def importarAccesorios():
+    accesorios = importcsv(Accesorio, 'media/archivosCSV/Accesorios.csv')
+    inicial.setAccesorios(accesorios)
+    
+def importarArmarios():
+    armarios = importcsv(Armario, 'media/archivosCSV/Armarios.csv')
+    inicial.setArmarios(armarios)
+     
+
 def importarCsvs():
     importarInterruptoresManuales()
     importarPanelesSolares()
@@ -60,7 +81,12 @@ def importarCsvs():
     importarInterruptoresAuto()
     importarMicroInversores()
     importarInversores()
-    makeDic()
+    importarCanalizaciones()
+    importarBandejasPortacables()
+    importarConductores()
+    importarAccesorios()
+    importarArmarios()
+    makeDic()#diccionario con la bd
     
     
 def getData():
@@ -90,7 +116,21 @@ def makeDic():
     #inversores
     inversor_dict= {x.descripcion: x for x in inicial.inversores}
     dic_inicial.setInversores_dict(inversor_dict)
-    print (dpsAC_dict["DS250E-120"].precio)
+    #Canalizacion
+    canalizacion_dict= {x.descripcion: x for x in inicial.canalizaciones}
+    dic_inicial.setCanalizaciones_dict(canalizacion_dict)
+    #bandejaPortacable
+    bandejaPortacable_dict= {x.descripcion: x for x in inicial.bandejasPortacables}
+    dic_inicial.setBandejasPortacables_dict(bandejaPortacable_dict)
+    #conductores
+    conductores_dict= {x.descripcion: x for x in inicial.conductores}
+    dic_inicial.setConductores_dict(conductores_dict)
+    #Accesorios
+    accesorios_dict= {x.descripcion: x for x in inicial.accesorios}
+    dic_inicial.setAccesorios_dict(accesorios_dict)
+    #Armarios
+    armarios_dict= {x.descripcion: x for x in inicial.armarios}
+    dic_inicial.setArmarios_dict(armarios_dict)
     
     
 def getDic():

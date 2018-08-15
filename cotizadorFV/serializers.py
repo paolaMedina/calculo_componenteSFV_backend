@@ -186,12 +186,26 @@ class BaseCableadoSerializer(serializers.ModelSerializer):
         model = BaseCableado
         fields='__all__'
         
+class InputSerializer(serializers.ModelSerializer):
+    input= BaseCableadoSerializer(required=True)
+    class Meta:
+        model = Input
+        fields='__all__'
+        
+class OutputSerializer(serializers.ModelSerializer):
+    output= BaseCableadoSerializer(required=True)
+    class Meta:
+        model = Output
+        fields='__all__'
+        
 class CableadoSerializer(serializers.ModelSerializer):
     input= BaseCableadoSerializer(required=True)
     output=BaseCableadoSerializer(required=True)
     class Meta:
         model = Cableado
         fields='__all__'
+    
+
     
     
 class MpptSerializer(serializers.ModelSerializer):
@@ -203,7 +217,7 @@ class MpptSerializer(serializers.ModelSerializer):
        
 class PanelFVSerializer(serializers.ModelSerializer):
     mttps=MpptSerializer(many=True, required=True)
-    salida_inversor=CableadoSerializer(required=True)
+    salida_inversor=OutputSerializer(required=True)
     
     class Meta:
         model = PanelFV
@@ -212,6 +226,7 @@ class PanelFVSerializer(serializers.ModelSerializer):
         
 class GeneralFVSerializer(serializers.ModelSerializer):
     fvs=PanelFVSerializer(many=True, required=True)
+    combinacion_inversor=InputSerializer(required=True)
     """
     def getGeneralFV(self):
         generalFV = None
@@ -224,6 +239,7 @@ class GeneralFVSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralFV
         fields=('potencia_de_planta_fv','nombre_proyecto','temperatura_ambiente','minima_temperatura_ambiente_esperada',
-        'tipo_de_inversor','lugar_instalacion_opcion_techo_cubierta', 'tipo_servicio','voltage_servicio','lugar_instalacion','fvs')
+        'tipo_de_inversor','lugar_instalacion_opcion_techo_cubierta', 'tipo_servicio','voltage_servicio','lugar_instalacion',
+        'combinacion_inversor','fvs')
 
   
