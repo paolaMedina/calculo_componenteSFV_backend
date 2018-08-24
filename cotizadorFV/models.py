@@ -91,3 +91,22 @@ class Output(models.Model):
         
         
 
+#modelo para el formato de salida de los resultados de los calculos 
+class Resultado(models.Model):
+    descripcion = models.CharField(max_length= 255)
+    cantidad= models.DecimalField(max_digits=50, decimal_places=2)
+    unidad =  models.CharField(max_length= 255)
+    valor_unitario = models.IntegerField()
+    valor_total = models.IntegerField()
+    class Meta:
+        managed = False
+        
+#modelo para la salida de calibre de conductores entrada, salida, salida inversor y combinacion inversor
+class  CalibreConductor(models.Model):
+    tipo_conductor = models.CharField(max_length= 255)
+    material_conductor= models.CharField(max_length= 255)
+    calibre =models.CharField(max_length= 255)
+    distancia= models.IntegerField()
+    
+    class Meta:
+        managed = False

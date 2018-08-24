@@ -1,15 +1,15 @@
-Descripcion;Diseño;Material;Acabado;Longitud_m;Ancho_mm;Alto_mm;Tipo_carga;Precio
+Descripcion;Diseï¿½o;Material;Acabado;Longitud_m;Ancho_mm;Alto_mm;Tipo_carga;Precio
 Bandeja portacable Tipo Escalera de Aluminio (Galvanizado en caliente) 2,4m 50x50mm Carga ligera;Escalera;Aluminio;Galvanizado en caliente;2,4;50;50;Carga ligera;
-Bandeja portacable Tipo Escalera de Acero (Pintura especial/ Epóxico) 3m 75x60mm Carga media;Escalera;Acero;Pintura especial/ Epóxico;3;75;60;Carga media;
+Bandeja portacable Tipo Escalera de Acero (Pintura especial/ Epï¿½xico) 3m 75x60mm Carga media;Escalera;Acero;Pintura especial/ Epï¿½xico;3;75;60;Carga media;
 Bandeja portacable Tipo Escalera de Acero inoxidable (Acero inoxidable) 2,4m 100x75mm Carga pesada;Escalera;Acero inoxidable;Acero inoxidable;2,4;100;75;Carga pesada;
 Bandeja portacable Tipo Escalera de PVC (Electrozincado) 3m 150x80mm Carga ligera;Escalera;PVC;Electrozincado;3;150;80;Carga ligera;
-Bandeja portacable Tipo Escalera de Aluminio (Galvanizado en continuo) 2,4m 200x100mm Carga media;Escalera;Aluminio;Galvanizado en continuo;2,4;200;100;Carga media;
+Bandeja portacable Tipo Escalera de Aluminio (Galvanizado en continuo) 2,4m 200x100mm Carga media;Escalera;Aluminio;Galvanizado en continuo;2,4;90;100;Carga media;
 Bandeja portacable Tipo Ducto perforado de Acero (Galvanizado en caliente) 3m 225x150mm Carga pesada;Ducto perforado;Acero;Galvanizado en caliente;3;225;150;Carga pesada;
 Bandeja portacable Tipo Ducto perforado de Acero inoxidable (Galvanizado en caliente (Zn + Al)) 2,4m 300x50mm Carga ligera;Ducto perforado;Acero inoxidable;Galvanizado en caliente (Zn + Al);2,4;300;50;Carga ligera;
 Bandeja portacable Tipo Ducto perforado de PVC (Acero indoxidable 304L) 3m 400x60mm Carga media;Ducto perforado;PVC;Acero indoxidable 304L;3;400;60;Carga media;
 Bandeja portacable Tipo Ducto perforado de Aluminio (Acero indoxidable 316L) 2,4m 450x75mm Carga pesada;Ducto perforado;Aluminio;Acero indoxidable 316L;2,4;450;75;Carga pesada;
 Bandeja portacable Tipo Ducto perforado de Acero (Galvanizado en caliente) 3m 500x80mm Carga ligera;Ducto perforado;Acero;Galvanizado en caliente;3;500;80;Carga ligera;
-Bandeja portacable Tipo Ducto solido de Acero inoxidable (Pintura especial/ Epóxico) 2,4m 600x100mm Carga media;Ducto solido;Acero inoxidable;Pintura especial/ Epóxico;2,4;600;100;Carga media;
+Bandeja portacable Tipo Ducto solido de Acero inoxidable (Pintura especial/ Epï¿½xico) 2,4m 600x100mm Carga media;Ducto solido;Acero inoxidable;Pintura especial/ Epï¿½xico;2,4;600;100;Carga media;
 Bandeja portacable Tipo Ducto solido de PVC (Acero inoxidable) 3m 700x150mm Carga pesada;Ducto solido;PVC;Acero inoxidable;3;700;150;Carga pesada;
 Bandeja portacable Tipo Ducto solido de Aluminio (Electrozincado) 2,4m 750x50mm Carga ligera;Ducto solido;Aluminio;Electrozincado;2,4;750;50;Carga ligera;
 Bandeja portacable Tipo Ducto solido de Acero (Galvanizado en continuo) 3m 800x60mm Carga media;Ducto solido;Acero;Galvanizado en continuo;3;800;60;Carga media;
@@ -18,7 +18,7 @@ Bandeja portacable Tipo Bandejas de aluminio de PVC (Galvanizado en caliente (Zn
 Bandeja portacable Tipo Bandejas de aluminio de Aluminio (Acero indoxidable 304L) 2,4m 75x100mm Carga media;Bandejas de aluminio;Aluminio;Acero indoxidable 304L;2,4;75;100;Carga media;
 Bandeja portacable Tipo Bandejas de aluminio de Acero (Acero indoxidable 316L) 3m 100x150mm Carga pesada;Bandejas de aluminio;Acero;Acero indoxidable 316L;3;100;150;Carga pesada;
 Bandeja portacable Tipo Bandejas de aluminio de Acero inoxidable (Galvanizado en caliente) 2,4m 150x50mm Carga ligera;Bandejas de aluminio;Acero inoxidable;Galvanizado en caliente;2,4;150;50;Carga ligera;
-Bandeja portacable Tipo Bandejas de aluminio de PVC (Pintura especial/ Epóxico) 3m 200x60mm Carga media;Bandejas de aluminio;PVC;Pintura especial/ Epóxico;3;200;60;Carga media;
+Bandeja portacable Tipo Bandejas de aluminio de PVC (Pintura especial/ Epï¿½xico) 3m 200x60mm Carga media;Bandejas de aluminio;PVC;Pintura especial/ Epï¿½xico;3;200;60;Carga media;
 Bandeja portacable Tipo Malla de Aluminio (Acero inoxidable) 2,4m 225x75mm Carga pesada;Malla;Aluminio;Acero inoxidable;2,4;225;75;Carga pesada;
 Bandeja portacable Tipo Malla de Acero (Electrozincado) 3m 300x80mm Carga ligera;Malla;Acero;Electrozincado;3;300;80;Carga ligera;
 Bandeja portacable Tipo Malla de Acero inoxidable (Galvanizado en continuo) 2,4m 400x100mm Carga media;Malla;Acero inoxidable;Galvanizado en continuo;2,4;400;100;Carga media;

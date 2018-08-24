@@ -2,8 +2,10 @@
 
 from . import constants
 from cotizadorFV.modelsCSV import *
+from cotizadorFV.models import CalibreConductor,Resultado
 from cotizadorFV.lib import lib as mainInfoLib
 import math
+from unidecode import unidecode
 
 correcion_tem_amb= constants.correcion_tem_amb
 factorAjusteConductores=constants.factorAjusteConductores
@@ -29,6 +31,14 @@ def isalN(inversor,tensionServicio):
         isal=isal_max_3
     return isal
 
+def aplanarList(l):
+    ret = []
+    for i in l:
+        if isinstance(i, list) or isinstance(i, tuple):
+            ret.extend(aplanarList(i)) #aplanarList() siendo usado dentro de def aplanarList()
+        else:
+            ret.append(i)
+    return ret
     
 #kt
 def correcionTemp(tem_amb):
@@ -138,17 +148,23 @@ def caidaTensionSalida(posicionCalibre,distanciaConductor,corrienteMPP,tension_M
     return caida_tension
     
 
-    
+ #_______________________________________________________________________________________________
     
 #Seleccionar el calibre que cumple con la tension ingresada por el usuario
-def CalculoConductores(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,impp_panel,cadenas_paralelo,distanciaConductorFuente,
-                    distanciaConductorSalida,corrienteMPP,tension_Mpp,tensionFuenteDiseno,tensionSalidaDiseno,tipo_alambradoEntrada,tipo_alambradoSalida):
-                        
+
+def CalculoConductores(tem_amb,mppt,isc_panel,impp_panel,corrienteMPP,tension_Mpp):
+    cadenas_paralelo= mppt.numero_de_cadenas_en_paralelo
+    max_conductoresFuente= mppt.cableado.input.maximo_numero_de_conductores
+    max_conductoresSalida=mppt.cableado.output.maximo_numero_de_conductores
+    distanciaConductorFuente= mppt.cableado.input.distancia_del_conductor_mas_largo
+    distanciaConductorSalida= mppt.cableado.output.distancia_del_conductor_mas_largo
+    tensionFuenteDiseno= mppt.cableado.input.caida_de_tension_de_diseno
+    tensionSalidaDiseno= mppt.cableado.output.caida_de_tension_de_diseno
+    tipo_alambradoEntrada=mppt.cableado.input.tipo_alambrado
+    tipo_alambradoSalida=mppt.cableado.output.tipo_alambrado
     #caida de tension fuente inicial                    
     posCalibreFuente=posicionCalibreFuente(tem_amb,max_conductoresFuente,isc_panel,tipo_alambradoEntrada)
     caidaTensionF=caidaTensionFuente(posCalibreFuente,tension_Mpp,impp_panel,distanciaConductorFuente)
- 
-    
     #caida de tension salida inicial                    
     posCalibreSalida=posicionCalibreSalida(tem_amb,max_conductoresSalida,isc_panel,cadenas_paralelo,tipo_alambradoSalida)
     caidaTensionS=caidaTensionSalida(posCalibreSalida,distanciaConductorSalida,corrienteMPP,tension_Mpp)
@@ -168,15 +184,27 @@ def CalculoConductores(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_p
         else: 
             break
                 
+    distanciaFuente=distanciaConductorFuente*2
+    calibreFuente=calibre[posCalibreFuente][0]
     
-    #print ("calibre fuente ")
-    #print (calibre[posCalibreFuente][0])
-    #print ("calibre salida ")
-    #print (calibre[posCalibreSalida][0])
-    calibresES=[calibre[posCalibreFuente][0],calibre[posCalibreSalida][0]] 
+    distanciaSalida=distanciaConductorSalida*2
+    calibreSalida=calibre[posCalibreSalida][0]
+    
+    calibreSeleccionadoFuente=CalibreConductor()
+    calibreSeleccionadoFuente.tipo_conductor=mppt.cableado.input.tipo_conductor
+    calibreSeleccionadoFuente.material_conductor=mppt.cableado.input.material_conductor
+    calibreSeleccionadoFuente.calibre=calibreFuente
+    calibreSeleccionadoFuente.distancia=distanciaFuente
+  
+    calibreSeleccionadoSalida=CalibreConductor()
+    calibreSeleccionadoSalida.tipo_conductor=mppt.cableado.output.tipo_conductor
+    calibreSeleccionadoSalida.material_conductor=mppt.cableado.output.material_conductor
+    calibreSeleccionadoSalida.calibre=calibreSalida
+    calibreSeleccionadoSalida.distancia=distanciaSalida
+    
+    calibresES=[calibreSeleccionadoFuente,calibreSeleccionadoSalida]
     return calibresES
     
-    #falta retornar array
     
     
 #___________________________________________Salida Inversor y combinacion inversor___________________________________________________---
@@ -213,20 +241,36 @@ def caidaTensionInversor(tipo_servicio,posicionCalibre,isal,tem_amb,max_conducto
     
     return caida_tension
 
-#funcion que entrega el  calibre salida para el inversor  y  tambien se usa para circuito de invesor combinadoo (isal=suma de los isal de los inversore)
-def CalculoConductorInversor(tipo_servicio,isal,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio,caidaTensionUsuarioSalida):
+#funcion que entrega el  calibre salida para el inversor  y  tambien se usa para circuito de inversor combinadoo (isal=suma de los isal de los inversore)
+   
+def CalculoConductorInversor(cableadoInversor,tipo_servicio,isal,tem_amb,isc_panel,tensionServicio):    
     conductoresInversor=None
+    max_conductores=cableadoInversor.maximo_numero_de_conductores
+    distanciaConductor=cableadoInversor.distancia_del_conductor_mas_largo
+    caidaTensionUsuario=cableadoInversor.caida_de_tension_de_diseno
 
-    posicionCalibreSalida=posicionCalibreInversor(isal,tem_amb,max_conductoresSalida,isc_panel)
-    caidaTensionSalida=caidaTensionInversor(tipo_servicio,posicionCalibreSalida,isal,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
+    posicionCalibreSalida=posicionCalibreInversor(isal,tem_amb,max_conductores,isc_panel)
+    caidaTensionSalida=caidaTensionInversor(tipo_servicio,posicionCalibreSalida,isal,tem_amb,max_conductores,isc_panel,distanciaConductor,tensionServicio)
     
     for i in range(len(calibre)):
-        if (caidaTensionSalida>caidaTensionUsuarioSalida):
+        if (caidaTensionSalida>caidaTensionUsuario):
                 posicionCalibreSalida +=1
-                caidaTensionSalida=caidaTensionInversor(tipo_servicio,posicionCalibreSalida,isal,tem_amb,max_conductoresSalida,isc_panel,distanciaConductorSalida,tensionServicio)
+                caidaTensionSalida=caidaTensionInversor(tipo_servicio,posicionCalibreSalida,isal,tem_amb,max_conductores,isc_panel,distanciaConductor,tensionServicio)
         else: 
             break
-    conductoresInversor=calibre[posicionCalibreSalida][0]
+    
+    if (tipo_servicio.encode('utf8')==u"Monofásica".encode('utf8')):
+        distancia=distanciaConductor*2
+    else:
+        distancia=distanciaConductor*4
+        
+    calibreSeleccionado=calibre[posicionCalibreSalida][0]
+    
+    conductoresInversor=CalibreConductor()
+    conductoresInversor.tipo_conductor=cableadoInversor.tipo_conductor
+    conductoresInversor.material_conductor=cableadoInversor.material_conductor
+    conductoresInversor.calibre=calibreSeleccionado
+    conductoresInversor.distancia=distancia
     return conductoresInversor
                 
     
@@ -309,9 +353,7 @@ def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_op
             else:items=[item]
             break
     return items
-
-  
-
+ 
 #Calculo Interruptor manual DC (IMDC)
 def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
     interruptorTension=None
@@ -593,3 +635,306 @@ def duplicatesPanel(paneles_cantidad,elemento):
     #print (elemento[0].model_panel_solar_1,sum)
     return (elemento[0].model_panel_solar_1,sum)
     
+    
+def calculoConductoresFinal(condutoresMppts,conductoresSalidaInversor,conductorCombinacionInversores):
+    condutores=aplanarList([condutoresMppts,conductoresSalidaInversor,conductorCombinacionInversores])
+    lista=[]
+    while (len(condutores) > 0):
+            elemento=condutores.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+            #lista con los distancias finales sumadas, en caso que comparatn calibre, tipoconductor ymaterial
+            lista.append(duplicatesCondutores(condutores,elemento))
+            #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal sumado en el paso anterior)   
+            condutores = [conductor for conductor in condutores if (elemento.tipo_conductor!=conductor.tipo_conductor)and(elemento.material_conductor!=conductor.material_conductor)and(elemento.calibre!=conductor.calibre)]
+    conductoresSeleccionados=buscarConductor(lista)
+    print conductoresSeleccionados
+    return conductoresSeleccionados 
+     
+def duplicatesCondutores(conductores,elemento):
+    sumaDistancia=elemento.distancia
+    for i in range (0,len(conductores)):
+        if (elemento.tipo_conductor==conductores[i].tipo_conductor)and(elemento.material_conductor==conductores[i].material_conductor)and(elemento.calibre==conductores[i].calibre) :
+                sumaDistancia+=conductores[i].distancia
+    
+    elemento.distancia=sumaDistancia
+    return (elemento)
+    
+#funcion que recibe los conductores con la distancia ya acumulada y retorna la lista con el formato de salida 
+def buscarConductor(conductores):
+    dic_main=mainInfoLib.getDic()
+    resultado=[]
+    for conductor in conductores:
+        for clave, valor in dic_main.conductores_dict.items():
+            if (valor.tipo_conductor==conductor.tipo_conductor
+               and valor.material==conductor.material_conductor
+               and valor.calibre==conductor.calibre):
+                   objResultado=Resultado()
+                   objResultado.descripcion=valor.descripcion
+                   objResultado.cantidad=conductor.distancia
+                   objResultado.unidad="Metros"
+                   objResultado.valor_unitario=valor.precio
+                   objResultado.valor_total=valor.precio*conductor.distancia
+                   resultado.append(objResultado)
+    return resultado
+    
+#_____________________________________Canalización_________________________________    
+def calculoCanalizacion(camposFV,combinacionInversores):
+    canalizaciones=[]
+    bandejasPortacables=[]
+    salidaInversoresCanalizacion=[]
+    salidaInversoresBandejaPortacable=[]
+    canalizacionesResult=[] #arreglo con el retorno e las canalizaciones seleccionadas en cada item
+    
+    for campoFV in camposFV:
+        mpptsCanalizacion=[]
+        mpptsFuenteBandeja=[]
+        mpptsSalidaBandeja=[]
+        for mppt in campoFV.mttps:
+            
+            if mppt.cableado.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+                canalizaciones.append((mppt.cableado.input,mppt.cableado.input.distancia_del_conductor_mas_largo))
+            elif mppt.cableado.input.tipo_alambrado=="Bandeja porta cable":
+                mpptsFuenteBandeja.append(mppt)
+            
+            if mppt.cableado.output.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+                mpptsCanalizacion.append(mppt)
+            elif  mppt.cableado.output.tipo_alambrado=="Bandeja porta cable":
+                mpptsSalidaBandeja.append(mppt)
+         
+        canalizaciones.extend(CanalizacionSalidaFV(mpptsCanalizacion))   
+        bandejasPortacables.extend(bandejaPortacableFuente(mpptsFuenteBandeja))
+        bandejasPortacables.extend(bandejaPortacableSalida(mpptsSalidaBandeja))
+        
+        if campoFV.salida_inversor.output.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+            salidaInversoresCanalizacion.append(campoFV.salida_inversor)
+        elif campoFV.salida_inversor.output.tipo_alambrado=="Bandeja porta cable":
+            salidaInversoresBandejaPortacable.append(campoFV.salida_inversor)
+            
+        
+    
+    canalizaciones.extend(canalizacionSalidaInversor(salidaInversoresCanalizacion))
+    bandejasPortacables.extend(bandejaPortacableSalidaInversor(salidaInversoresBandejaPortacable))
+    
+    
+    if combinacionInversores.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+        canalizaciones.extend((combinacionInversores.input, combinacionInversores.input.distancia_del_conductor_mas_largo))
+    elif combinacionInversores.input.tipo_alambrado=="Bandeja porta cable":
+        longitud=float(combinacionInversores.input.longitud_tramo.replace(',','.'))
+        cantidad=  combinacionInversores.input.distancia_del_conductor_mas_largo/longitud
+        bandejasPortacables.append((combinacionInversores.input,cantidad))
+    
+    #buscar similitudes en bandejas portacables y si las hay suar sus cantidades
+    combinacionBandejaPortacable=combinarBandejaPortacable(bandejasPortacables)
+    #cojer canalizaciones y buscar en la bd Canalizaciones
+    canalizacionesResult.extend(buscarCanalilzacion(canalizaciones))
+    canalizacionesResult.extend(buscarBandejaPortacable(combinacionBandejaPortacable))
+    print canalizacionesResult
+    return canalizacionesResult
+            
+    
+def CanalizacionSalidaFV(mppts): 
+    lista=[]
+    while (len(mppts) > 0):
+        elemento=mppts.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        
+        lista.append(duplicatesCanalizacionOutput(mppts,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        mppts = [mppt for mppt in mppts if (elemento.cableado.output.tipo_canalizacion!=mppt.cableado.output.tipo_canalizacion and 
+            elemento.cableado.output.tamanio_canalizacion!=mppt.cableado.output.tamanio_canalizacion)]
+    return lista
+            
+def duplicatesCanalizacionOutput(mpptsSalida,elemento):
+    distanciaMayor=elemento.cableado.output.distancia_del_conductor_mas_largo
+    
+    for i in range (0,len(mpptsSalida)):
+        if (elemento.cableado.output.tipo_canalizacion==mpptsSalida[i].cableado.output.tipo_canalizacion and 
+            elemento.cableado.output.tamanio_canalizacion==mpptsSalida[i].cableado.output.tamanio_canalizacion):
+                if distanciaMayor< mpptsSalida[i].cableado.output.distancia_del_conductor_mas_largo:
+                    distanciaMayor=mpptsSalida[i].cableado.output.distancia_del_conductor_mas_largo
+    
+    return (elemento.cableado.output,distanciaMayor)
+    
+def canalizacionSalidaInversor(salidaInversores): 
+    lista=[]
+    while (len(salidaInversores) > 0):
+        elemento=salidaInversores.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        
+        lista.append(duplicatesCanalizacionSalidaInversor(salidaInversores,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        salidaInversores = [salidaInversor for salidaInversor in salidaInversores if (elemento.output.tipo_canalizacion!=salidaInversor.output.tipo_canalizacion and 
+            elemento.output.tamanio_canalizacion!=salidaInversor.output.tamanio_canalizacion)]
+    return lista
+    
+def duplicatesCanalizacionSalidaInversor(salidaInversores,elemento):
+    distancia=elemento.output.distancia_del_conductor_mas_largo
+    contador=1
+    for i in range (0,len(salidaInversores)):
+        if (elemento.output.tipo_canalizacion==salidaInversores[i].output.tipo_canalizacion and 
+            elemento.output.tamanio_canalizacion==salidaInversores[i].output.tamanio_canalizacion):
+                distancia+=salidaInversores[i].output.distancia_del_conductor_mas_largo
+                contador+=1
+    return (elemento.output,float(distancia)/contador)
+    
+def bandejaPortacableFuente(mppts): 
+    lista=[]
+    while (len(mppts) > 0):
+        elemento=mppts.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        lista.append(duplicatesBandejaPortacableInput(mppts,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        mppts = [mppt for mppt in mppts if (elemento.cableado.input.disenio_bandeja!=mppt[i].cableado.input.disenio_bandeja and 
+            elemento.cableado.input.material_bandeja!=mppt[i].cableado.input.material_bandeja and 
+            elemento.cableado.input.tipo_acabado!=mppt[i].cableado.input.tipo_acabado and 
+            elemento.cableado.input.longitud_tramo!=mppt[i].cableado.input.longitud_tramo and 
+            elemento.cableado.input.ancho_mm!=mppt[i].cableado.input.ancho_mm and 
+            elemento.cableado.input.alto_mm!=mppt[i].cableado.input.alto_mm and 
+            elemento.cableado.input.tipo_carga!=mppt[i].cableado.input.tipo_carga)]
+    return lista
+    
+def duplicatesBandejaPortacableInput(mpptsEntrada,elemento):
+    distanciaMayor=elemento.cableado.input.distancia_del_conductor_mas_largo
+    
+    for i in range (0,len(mpptsEntrada)):
+        if (elemento.cableado.input.disenio_bandeja==mpptsEntrada[i].cableado.input.disenio_bandeja and 
+            elemento.cableado.input.material_bandeja==mpptsEntrada[i].cableado.input.material_bandeja and 
+            elemento.cableado.input.tipo_acabado==mpptsEntrada[i].cableado.input.tipo_acabado and 
+            elemento.cableado.input.longitud_tramo==mpptsEntrada[i].cableado.input.longitud_tramo and 
+            elemento.cableado.input.ancho_mm==mpptsEntrada[i].cableado.input.ancho_mm and 
+            elemento.cableado.input.alto_mm==mpptsEntrada[i].cableado.input.alto_mm and 
+            elemento.cableado.input.tipo_carga==mpptsEntrada[i].cableado.input.tipo_carga):
+                if distanciaMayor< mpptsEntrada[i].cableado.input.distancia_del_conductor_mas_largo:
+                    distanciaMayor=mpptsEntrada[i].cableado.input.distancia_del_conductor_mas_largo
+    longitud=float(elemento.cableado.input.longitud_tramo.replace(',','.'))
+    return (elemento.cableado.input,distanciaMayor/longitud)
+
+def bandejaPortacableSalida(mppts): 
+    lista=[]
+    while (len(mppts) > 0):
+        elemento=mppts.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        lista.append(duplicatesBandejaPortacableOutput(mppts,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        mppts = [mppt for mppt in mppts if (elemento.cableado.input.disenio_bandeja!=mppt[i].cableado.input.disenio_bandeja and 
+            elemento.cableado.input.material_bandeja!=mppt[i].cableado.input.material_bandeja and 
+            elemento.cableado.input.tipo_acabado!=mppt[i].cableado.input.tipo_acabado and 
+            elemento.cableado.input.longitud_tramo!=mppt[i].cableado.input.longitud_tramo and 
+            elemento.cableado.input.ancho_mm!=mppt[i].cableado.input.ancho_mm and 
+            elemento.cableado.input.alto_mm!=mppt[i].cableado.input.alto_mm and 
+            elemento.cableado.input.tipo_carga!=mppt[i].cableado.input.tipo_carga)]
+    return lista
+    
+def duplicatesBandejaPortacableOutput(mpptsEntrada,elemento):
+    distanciaMayor=elemento.cableado.output.distancia_del_conductor_mas_largo
+    
+    for i in range (0,len(mpptsEntrada)):
+        if (elemento.cableado.output.disenio_bandeja==mpptsEntrada[i].cableado.output.disenio_bandeja and 
+            elemento.cableado.output.material_bandeja==mpptsEntrada[i].cableado.output.material_bandeja and 
+            elemento.cableado.output.tipo_acabado==mpptsEntrada[i].cableado.output.tipo_acabado and 
+            elemento.cableado.output.longitud_tramo==mpptsEntrada[i].cableado.output.longitud_tramo and 
+            elemento.cableado.output.ancho_mm==mpptsEntrada[i].cableado.output.ancho_mm and 
+            elemento.cableado.output.alto_mm==mpptsEntrada[i].cableado.output.alto_mm and 
+            elemento.cableado.output.tipo_carga==mpptsEntrada[i].cableado.output.tipo_carga):
+                if distanciaMayor< mpptsEntrada[i].cableado.output.distancia_del_conductor_mas_largo:
+                    distanciaMayor=mpptsEntrada[i].cableado.output.distancia_del_conductor_mas_largo
+    longitud=float(elemento.cableado.output.longitud_tramo.replace(',','.'))
+    return (elemento.cableado.output,distanciaMayor/longitud)
+    
+def bandejaPortacableSalidaInversor(salidaInversores): 
+    lista=[]
+    while (len(salidaInversores) > 0):
+        elemento=salidaInversores.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        
+        lista.append(duplicatesBandejaPortacableSalidaInversor(salidaInversores,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        salidaInversores = [salidaInversor for salidaInversor in salidaInversores if (elemento.output.disenio_bandeja!=salidaInversor[i].output.disenio_bandeja and 
+            elemento.output.material_bandeja!=salidaInversor[i].output.material_bandeja and 
+            elemento.output.tipo_acabado!=salidaInversor[i].output.tipo_acabado and 
+            elemento.output.longitud_tramo!=salidaInversor[i].output.longitud_tramo and 
+            elemento.output.ancho_mm!=salidaInversor[i].output.ancho_mm and 
+            elemento.output.alto_mm!=salidaInversor[i].output.alto_mm and 
+            elemento.output.tipo_carga!=salidaInversor[i].output.tipo_carga)]
+    return lista
+    
+def duplicatesBandejaPortacableSalidaInversor(salidaInversores,elemento):
+    distancia=elemento.output.distancia_del_conductor_mas_largo
+    contador=1
+    for i in range (0,len(salidaInversores)):
+       if (elemento.output.disenio_bandeja==salidaInversores[i].output.disenio_bandeja and 
+            elemento.output.material_bandeja==salidaInversores[i].output.material_bandeja and 
+            elemento.output.tipo_acabado==salidaInversores[i].output.tipo_acabado and 
+            elemento.output.longitud_tramo==salidaInversores[i].output.longitud_tramo and 
+            elemento.output.ancho_mm==salidaInversores[i].output.ancho_mm and 
+            elemento.output.alto_mm==salidaInversores[i].output.alto_mm and 
+            elemento.output.tipo_carga==salidaInversores[i].output.tipo_carga):
+                distancia+=salidaInversores[i].output.distancia_del_conductor_mas_largo
+                contador+=1
+    promedio=float(distancia)/contador
+    longitud=float(elemento.output.longitud_tramo.replace(',','.'))
+    cantidad=promedio/longitud
+    return (elemento.output,promedio/cantidad)
+    
+def combinarBandejaPortacable(bandejasPortacables): 
+    lista=[]
+    l=[]
+    while (len(bandejasPortacables) > 0):
+        
+        elemento=bandejasPortacables.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        lista.append(duplicatesBandejaPortacable(bandejasPortacables,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        
+        bandejasPortacables=[bandejaPortacable  for bandejaPortacable in bandejasPortacables 
+                            if( elemento[0].disenio_bandeja!=bandejaPortacable[0].disenio_bandeja or 
+                                elemento[0].material_bandeja!=bandejaPortacable[0].material_bandeja or 
+                                elemento[0].tipo_acabado!=bandejaPortacable[0].tipo_acabado or 
+                                elemento[0].longitud_tramo!=bandejaPortacable[0].longitud_tramo or 
+                                elemento[0].ancho_mm!=bandejaPortacable[0].ancho_mm or 
+                                elemento[0].alto_mm!=bandejaPortacable[0].alto_mm or 
+                                elemento[0].tipo_carga!=bandejaPortacable[0].tipo_carga)]    
+             
+    return lista
+    
+def duplicatesBandejaPortacable(bandejasPortacables,elemento):
+    sumaCantidad=elemento[1]
+    for i in range (0,len(bandejasPortacables)):
+        if (elemento[0].disenio_bandeja==bandejasPortacables[i][0].disenio_bandeja and 
+            elemento[0].material_bandeja==bandejasPortacables[i][0].material_bandeja and 
+            elemento[0].tipo_acabado==bandejasPortacables[i][0].tipo_acabado and 
+            elemento[0].longitud_tramo==bandejasPortacables[i][0].longitud_tramo and 
+            elemento[0].ancho_mm==bandejasPortacables[i][0].ancho_mm and 
+            elemento[0].alto_mm==bandejasPortacables[i][0].alto_mm and 
+            elemento[0].tipo_carga==bandejasPortacables[i][0].tipo_carga):
+                sumaCantidad+=bandejasPortacables[i][1]
+    return (elemento[0],sumaCantidad)
+
+  
+def buscarCanalilzacion(canalizaciones):
+    dic_main=mainInfoLib.getDic()
+    resultado=[]
+    for canalizacion in canalizaciones:
+        for clave, valor in dic_main.canalizaciones_dict.items():
+            tamanioConvert=unidecode( canalizacion[0].tamanio_canalizacion).replace(" ","")
+            
+            if (valor.tipo_canalizacion==canalizacion[0].tipo_canalizacion and 
+                valor.tamanio.replace(" ","")==tamanioConvert):      
+                   objResultado=Resultado(descripcion=valor.descripcion,cantidad=canalizacion[1],
+                                          unidad="Metros",valor_unitario=valor.precio,valor_total=valor.precio*canalizacion[1])
+                  
+                   resultado.append(objResultado)
+    return resultado
+    
+
+def buscarBandejaPortacable(bandejasPortacables):
+    dic_main=mainInfoLib.getDic()
+    resultado=[]
+    for bandejaPortacable in bandejasPortacables:
+        for clave, valor in dic_main.bandejasPortacables_dict.items():
+            if (valor.disenio==bandejaPortacable[0].disenio_bandeja and 
+                valor.material==bandejaPortacable[0].material_bandeja and 
+                valor.acabado==bandejaPortacable[0].tipo_acabado and 
+                float(valor.longitud)==float(bandejaPortacable[0].longitud_tramo.replace(",",".")) and 
+                float(valor.ancho)==float(bandejaPortacable[0].ancho_mm) and 
+                float(valor.alto)==float(bandejaPortacable[0].alto_mm) and 
+                valor.tipo_carga==bandejaPortacable[0].tipo_carga):
+                    objResultado=Resultado(descripcion=valor.descripcion,cantidad=bandejaPortacable[1],
+                                          unidad="Metros",valor_unitario=valor.precio,valor_total=valor.precio*bandejaPortacable[1])
+                    #print objResultado.descripcion
+                    resultado.append(objResultado)
+                   
+    return resultado

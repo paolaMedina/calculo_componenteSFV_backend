@@ -1,7 +1,33 @@
+
+{% load static %}
+<style>
+.texto  {
+          width:200px;
+          height:70px;
+          }
+.logo  {
+          width:70px;
+          height:60px;
+          }
+  @media screen and (max-width: 720px){
+    .texto   {
+      width:100px;
+      height:50px;
+      }
+      .logo  {
+          width:35px;
+          height:40px;
+          }
+    }
+  </style>
+
+
 <div class="pull-right">
-    <div align="center">
-        <img src="/static/static/images/Logo.png" width="70" height="60" >
-        <img src="/static/static/images/Logo nombre.png" width="300" height="70" >
+    <div align="right">
+            <img  class="logo" src="{% static 'static/images/Logo.png' %}" >
+       
+            <img class="texto"  src="{% static 'static/images/Logo nombre.png' %}" >
     </div>
 </div>
 <div class="clearfix"></div>
+

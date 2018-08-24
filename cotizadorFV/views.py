@@ -15,6 +15,12 @@ from cotizadorFV.lib import lib as mainInfoLib
 from django.http import HttpResponse            
 from   lib.calculo_conductores import *  
 from objetos_nativos_python_frontend import Generalfv
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
 """
 # Create your views here.
 """
@@ -101,8 +107,11 @@ class DataCsvView(APIView):
     
 #___________________________________________________________________-
 
+
 class deserializacion (APIView):
     permission_classes = (AllowAny,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
+    @csrf_exempt
     def post(self, request, format=None):
         serializer = GeneralFVSerializer(data=request.data)
         if serializer.is_valid():
@@ -158,6 +167,7 @@ def lectura(generalFv):
     
     itemDpsACInyeccion=calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio)
     paneles_agrupados=calculoPanelesSolares(generalFv.fvs)
+    
     for panelfv in  generalFv.fvs:
         isc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].isc)
         vmmp_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].vmpp)
@@ -165,17 +175,11 @@ def lectura(generalFv):
         voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].voc)
         coef_voc_panel=float(dic_main.panelesSolares_dict[panelfv.model_panel_solar_1].coef_voc.replace("%","").replace(',','.'))
     
-        
-        max_conductOutInversor=panelfv.salida_inversor.output.maximo_numero_de_conductores
-        distanciaConductOutInversor=panelfv.salida_inversor.output.distancia_del_conductor_mas_largo
-        caidaTensionUsuarioSalida=panelfv.salida_inversor.output.caida_de_tension_de_diseno
-        
         #calculo de conductores para salida inversor
         inversor=panelfv.modelo_panel_solar_2#modelo del inversor
         isalInversor=isalN(inversor,tensionServicio)
         sumaIsal+=isalInversor#acumulado de los isal de cada salida inversor
-        conductorInversor=CalculoConductorInversor(tipoServicio,isalInversor,tem_amb,max_conductOutInversor,isc_panel,
-                                                        distanciaConductOutInversor,tensionServicio,caidaTensionUsuarioSalida)
+        conductorInversor= CalculoConductorInversor(panelfv.salida_inversor.output,tipoServicio,isalInversor,tem_amb,isc_panel,tensionServicio)
         conductoresInversor.append(conductorInversor)
         
         #calculo de conductores puesto a tierra DC
@@ -199,18 +203,10 @@ def lectura(generalFv):
             corrienteMPP= cadenas_paralelo * impp_panel
             tensionMaximaMppt= cadenas_serie * voc_panel * 1+(coef_voc_panel/100) * (temp_ambiente_mas_baja_esperada - 25  )
             ##***************************************
-            max_conductoresFuente= mppt.cableado.input.maximo_numero_de_conductores
-            max_conductoresSalida=mppt.cableado.output.maximo_numero_de_conductores
-            distanciaConductorFuente= mppt.cableado.input.distancia_del_conductor_mas_largo
             distanciaConductorSalida= mppt.cableado.output.distancia_del_conductor_mas_largo
-            tensionFuenteDiseno= mppt.cableado.input.caida_de_tension_de_diseno
-            tensionSalidaDiseno= mppt.cableado.output.caida_de_tension_de_diseno
-            tipo_alambradoEntrada=mppt.cableado.input.tipo_alambrado
-            tipo_alambradoSalida=mppt.cableado.output.tipo_alambrado
             
-            condutor=CalculoConductores(tem_amb,max_conductoresFuente,max_conductoresSalida,isc_panel,impp_panel,
-                            cadenas_paralelo,distanciaConductorFuente,distanciaConductorSalida,corrienteMPP,tension_Mpp,
-                            tensionFuenteDiseno,tensionSalidaDiseno,tipo_alambradoEntrada,tipo_alambradoSalida)
+            #calculo de conductores de entrada y salida de mppts
+            condutor=CalculoConductores(tem_amb,mppt,isc_panel,impp_panel,corrienteMPP,tension_Mpp)
             conductoresMttp.append(condutor)    
             #Calculo de DPS DC FV.
             itemsDpsDC.append(seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida))
@@ -239,15 +235,19 @@ def lectura(generalFv):
         #Cajas combinatorias finales seleccionadas por cada panel fv
         cajasCombinadorasFinal.append(calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinadorasMppt))
     
-    
-    conductoresCombninacionInversor=CalculoConductorInversor(tipoServicio,sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel,
-                                                        distanciaCombinacionInversor,tensionServicio,caidaTensionCombinacionInversor)
+    conductoresCombninacionInversor=CalculoConductorInversor(generalFv.combinacion_inversor.input,tipoServicio,sumaIsal,tem_amb,isc_panel,tensionServicio)
+    print "list"
+    calculoConductoresFinal(conductoresMttp,conductoresInversor,conductoresCombninacionInversor)
+    print "canalizaciones"
+    calculoCanalizacion(generalFv.fvs, generalFv.combinacion_inversor)
     
     #print dic_main.panelesSolares_dict[panel].isc
-    print "conductores mppt"
+    print "conductores entrada y salida fv"
     print conductoresMttp
-    print "conductores inversor"
+    print "conductores salida inversor"
     print conductoresInversor
+    print "conductores Combinacion Inversor "+  str (conductoresCombninacionInversor)
+    
     print "conductorDC " + str(conductorDC)
     print "conductorAC "
     print conductorAC
@@ -270,7 +270,7 @@ def lectura(generalFv):
     #print cajasCombinadorasFinal
     print "paneles_agrupados"
     print paneles_agrupados
-    print "conductoresCombninacionInversor "+  str (conductoresCombninacionInversor)
+    
     
 
 """ 
@@ -292,11 +292,3 @@ def calculos(request):
     seleccionCalibre(30,10,4,9.82,8.28,4,500,200,33.12,92.4,20,20,'','')
     return HttpResponse("hola")
     
-def aplanarList(l):
-    ret = []
-    for i in l:
-        if isinstance(i, list) or isinstance(i, tuple):
-            ret.extend(aplanarList(i)) #aplanarList() siendo usado dentro de def aplanarList()
-        else:
-            ret.append(i)
-    return ret
