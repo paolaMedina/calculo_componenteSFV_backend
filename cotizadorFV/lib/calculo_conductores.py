@@ -284,36 +284,49 @@ def buscarCalibreCondutor(corrienteNominal):
             break
     return conductor_seleccionado
 
-
-#Calibre de conductor puesta a tierra DC
+ 
+#Calibre de los conductores puesta a tierra DC (Solo para MPPT)
 def calibreconductorDC(mttps,Isc_panel):
     corrienteNominal=0 #corriente nominal del circuito de la salida fotovoltaica 
-    conductor_seleccionado=0
+    calibre_seleccionado=None
+    distanciaConductor=mttps[0].cableado.output.distancia_del_conductor_mas_largo
+    
     for mttp in mttps:
         corrienteNominal += mttp.numero_de_cadenas_en_paralelo* Isc_panel*1.56
+        if distanciaConductor < mttp.cableado.output.distancia_del_conductor_mas_largo:
+            distanciaConductor =mttp.cableado.output.distancia_del_conductor_mas_largo
     #buscar el calibre del conductor equivalente  a la tabla
-    conductor_seleccionado=buscarCalibreCondutor(corrienteNominal)
-        
-    return conductor_seleccionado
+    calibre_seleccionado=buscarCalibreCondutor(corrienteNominal)
+    conductorCalculado=CalibreConductor(tipo_conductor="THHN/THWN-2 CT" ,material_conductor="Cobre",
+                                            calibre=calibre_seleccionado,distancia=distanciaConductor)
+    conductorSeleccionado=buscarConductor([conductorCalculado])
+    return conductorSeleccionado[0]
     
     
 
-#Calibre de conductor puesta a tierra AC
-def calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel,camposFV,tensionServicio):
-    list=[]
-    corrienteCombinacionInversor=corrienteNominalInversor(sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel)
+#Calibre de conductor puesta a tierra AC (Salida combinador inversores)
+def calibreconductorAC(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,distanciaCombinacionInversor,isc_panel,camposFV,tensionServicio):
+    conductores=[]
+    #hallar calibre para combinacion de inversores
+    corrienteCombinacionInversor=corrienteNominalInversor(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,isc_panel)
     calibreCombinacionInversor=buscarCalibreCondutor(corrienteCombinacionInversor)
+    #hallar calibre para cada salida de inversor en cada campo FV
     for campoFV in camposFV:
         isalInversor=isalN(campoFV.modelo_panel_solar_2,tensionServicio)
         max_conductInversor=campoFV.salida_inversor.output.maximo_numero_de_conductores
         corrienteInversor=corrienteNominalInversor(isalInversor,tem_amb,max_conductInversor,isc_panel)
         calibreInversor=buscarCalibreCondutor(corrienteInversor)
-        list.append(calibreInversor)
-        list.append(calibreCombinacionInversor)
-    return list
+        conductor=CalibreConductor(tipo_conductor="THHN/THWN-2 CT" ,material_conductor="Cobre",
+                                            calibre=calibreInversor,distancia=campoFV.salida_inversor.output.distancia_del_conductor_mas_largo)
+        conductores.append(conductor)
+        
+    conductores.append(CalibreConductor(tipo_conductor="THHN/THWN-2 CT" ,material_conductor="Cobre",
+                                            calibre=calibreCombinacionInversor,distancia=distanciaCombinacionInversor))
+    conductoresSeleccionado=buscarConductor(conductores)
+    return conductoresSeleccionado
     
 
-#__________________________________DPS FV______________________
+#__________________________________Calculo de DPS FV______________________
 
 def cantidadMppt(distanciaConductorSalida):
     cantidad=0
@@ -347,14 +360,32 @@ def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_op
     dpsDC_list_sorted =  sorted(filtroDps.values(), key=DpsDC.getSortKey)
     for dps in dpsDC_list_sorted:
         if (tensionMaximaMppt<dps.uc):
-            item=dps.descripcion
-            if (numItems==2):
-                items=[item,item]
-            else:items=[item]
+            item=(dps.descripcion,numItems,dps.precio)
+            items.append(item)
             break
+        
     return items
+    
+    
+def combinarItemsDpsDC(items):
+    lista=[]
+    while (len(items) > 0):
+        elemento=items.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+        lista.append(duplicatesItemsDpsDC(items,elemento))
+        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+        items=[item  for item in items if(elemento[0]!=item[0])]    
+             
+    return lista
+    
+def duplicatesItemsDpsDC(items,elemento):
+    sumaCantidad=elemento[1]
+    for i in range (0,len(items)):
+        if (elemento[0]==items[i][0]):
+            sumaCantidad+=items[i][1]
+    item=Resultado(descripcion=elemento[0],cantidad=sumaCantidad,unidad="Unidad",valor_unitario=elemento[2],valor_total=elemento[2]*sumaCantidad)
+    return item
  
-#Calculo Interruptor manual DC (IMDC)
+#____________________________________________Calculo Interruptor manual DC (IMDC)___________________________________
 def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
     interruptorTension=None
     interruptorIth=None
@@ -399,9 +430,9 @@ def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
     #escoger le mejoro entre los items seleccionados anteriormente de tension y ith    
     if (interruptorTension!=None and interruptorIth !=None):   
         if (interruptorTension.precio>interruptorIth.precio):
-            item=interruptorIth.descripcion
+            item=(interruptorIth.descripcion,1,interruptorIth.precio)
         else:
-            item=interruptorTension.descripcion
+            item=(interruptorTension.descripcion,1,interruptorTension.precio)
     else: item=None
     
     return item
@@ -445,7 +476,7 @@ def calculoDpsACGeneral(tipo,polos,nivel_tension):
     listResultante=[]
     for i in range(0,len(DpsAC_list_sortedUc)) :
         if (nivel_tension<DpsAC_list_sortedUc[i].uc):
-            dpsAC=DpsAC_list_sortedUc[i].descripcion
+            dpsAC=(DpsAC_list_sortedUc[i].descripcion,1,DpsAC_list_sortedUc[i].precio)
             listResultante=DpsAC_list_sortedUc[i:]
             break
             
@@ -453,7 +484,8 @@ def calculoDpsACGeneral(tipo,polos,nivel_tension):
     for i in range(0,len(listResultante)-1) :
         if listResultante[i].uc==listResultante[i+1].uc:
             if listResultante[i].in_in < listResultante[i+1].in_in:
-                dpsAC=listResultante[i+1].descripcion
+                dpsAC=(listResultante[i+1].descripcion,1,listResultante[i+1].precio)
+                
         else: break
     
     return dpsAC
@@ -477,8 +509,9 @@ def calculoDpsACInyeccion(lugar_instalacion, lugar_instalacion_opcion_techo_cubi
     polos=cantPolos("dps",tipoServicio)
     nivel_tension=nivelTension(tipoServicio,tensionServicio)
     dpsAC=calculoDpsACGeneral(tipo,polos,nivel_tension)
+    dpsACResultado=Resultado(descripcion=dpsAC[0],cantidad=1,unidad="Unidad",valor_unitario=dpsAC[2],valor_total=dpsAC[2])
         
-    return dpsAC
+    return dpsACResultado
 
 
 #Calculo fusibles de cadena FV
@@ -489,14 +522,13 @@ def calculoFusibles(cadenas_paralelo,iscPanel):
     corrienteIn=In=1.5625*iscPanel
     cantidadMPPT= 0
     if cadenas_paralelo > 2 :
-       
         cantidadMPPT=cadenas_paralelo*2
     
     
     fusibles_list_sortedUc =  sorted(dic_main.fusible_dict.values(), key=Fusible.getSortKeyIn)
     for fusible in fusibles_list_sortedUc:
         if (corrienteIn<fusible.in_in):
-            fusible=fusible.descripcion
+            fusible=(fusible.descripcion,1,fusible.precio)
             break
             
     if cantidadMPPT !=0 and fusible !=None:
@@ -532,7 +564,7 @@ def calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio):
     for i in range(0,len(interruptor_list_sortedIn)) :
         if (corriente_Int<=interruptor_list_sortedIn[i].in_in):
               
-            interruptor=interruptor_list_sortedIn[i].descripcion
+            interruptor=(interruptor_list_sortedIn[i].descripcion,1,interruptor_list_sortedIn[i].precio)
             listResultante=interruptor_list_sortedIn[i:]
             
             break
@@ -540,19 +572,10 @@ def calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio):
     for i in range(0,len(listResultante)-1) :
         if listResultante[i].in_in==listResultante[i+1].in_in:
             if listResultante[i].icn < listResultante[i+1].icn:
-                interruptor=listResultante[i+1].descripcion
+                interruptor=(listResultante[i+1].descripcion,1,listResultante[i+1].precio)
         else: break
     return interruptor
     
-
-
-def calculoInterruptoresAutoCombinados(tensionServicio,tipoServicio,inversor):
-    polos=cantPolos("interruptores",tipoServicio)
-    corriente_Int = calculoCorriente_Int(tensionServicio,inversor)
-    interruptor=calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio)
-    return interruptor
-    
-
 def calculoInterruptoresAutoSalidaInversor(tensionServicio,tipoServicio,inversor):
     polos=cantPolos("interruptores",tipoServicio)
     corriente_Int = calculoCorriente_Int(tensionServicio,inversor)
@@ -562,7 +585,8 @@ def calculoInterruptoresAutoSalidaInversor(tensionServicio,tipoServicio,inversor
 def calculoInterruptoresAutoCombinador(tensionServicio,tipoServicio,corriente_Int):
     polos=cantPolos("interruptores",tipoServicio)
     interruptor=calculoInterruptoresAutoGeneral(polos,corriente_Int,tensionServicio)
-    return interruptor
+    interruptorResultado=Resultado(descripcion=interruptor[0],cantidad=interruptor[1],unidad="Unidad",valor_unitario=interruptor[2],valor_total=interruptor[2])
+    return interruptorResultado
   
 #Armario que soporte la cantidad total de cadenas en paralelo y MPPTs del campo FV  y con menor precio
 def seleccionCajaCombinatoria1(total_cadenas_paralelo,total_mppts):
@@ -586,19 +610,24 @@ def seleccionCajaCombinatoria2(cadenas_paralelo):
 #   cajaCombinatoriaGeneral=caja combinatoria con menor precio para todos los mppts
 #   cajasCombinatoria= arreglo de cajas combinatorias por cada mppt
 def calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinatorias):
-    seleccionFinal=None
+    seleccionCajas=None
+    cajas=[]
     armarios_list_sortedPrecio =  sorted(cajasCombinatorias, key=Armario.getSortKeyPrecio)
     precioTotal=0
     for armario in armarios_list_sortedPrecio:
         precioTotal +=armario.precio
     if cajaCombinatoriaGeneral !=None:
         if (cajaCombinatoriaGeneral.precio<precioTotal):
-            seleccionFinal= cajaCombinatoriaGeneral
+            seleccionCajas= [cajaCombinatoriaGeneral]
         else :
-           seleccionFinal= armarios_list_sortedPrecio
+           seleccionCajas= armarios_list_sortedPrecio
     else : 
-        seleccionFinal=armarios_list_sortedPrecio
-    return seleccionFinal
+        seleccionCajas=armarios_list_sortedPrecio
+    
+    for seleccion in seleccionCajas:
+        
+        cajas.append((seleccion.descripcion,1,seleccion.precio))
+    return cajas
        
        
 """  Paneles solares:
@@ -646,7 +675,6 @@ def calculoConductoresFinal(condutoresMppts,conductoresSalidaInversor,conductorC
             #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal sumado en el paso anterior)   
             condutores = [conductor for conductor in condutores if (elemento.tipo_conductor!=conductor.tipo_conductor)and(elemento.material_conductor!=conductor.material_conductor)and(elemento.calibre!=conductor.calibre)]
     conductoresSeleccionados=buscarConductor(lista)
-    print conductoresSeleccionados
     return conductoresSeleccionados 
      
 def duplicatesCondutores(conductores,elemento):
@@ -668,7 +696,7 @@ def buscarConductor(conductores):
                and valor.material==conductor.material_conductor
                and valor.calibre==conductor.calibre):
                    objResultado=Resultado()
-                   objResultado.descripcion=valor.descripcion
+                   objResultado.descripcion=valor.descripcion.decode('iso-8859-1').encode('utf8')
                    objResultado.cantidad=conductor.distancia
                    objResultado.unidad="Metros"
                    objResultado.valor_unitario=valor.precio
@@ -716,7 +744,7 @@ def calculoCanalizacion(camposFV,combinacionInversores):
     
     
     if combinacionInversores.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
-        canalizaciones.extend((combinacionInversores.input, combinacionInversores.input.distancia_del_conductor_mas_largo))
+        canalizaciones.append((combinacionInversores.input, combinacionInversores.input.distancia_del_conductor_mas_largo))
     elif combinacionInversores.input.tipo_alambrado=="Bandeja porta cable":
         longitud=float(combinacionInversores.input.longitud_tramo.replace(',','.'))
         cantidad=  combinacionInversores.input.distancia_del_conductor_mas_largo/longitud
@@ -724,10 +752,9 @@ def calculoCanalizacion(camposFV,combinacionInversores):
     
     #buscar similitudes en bandejas portacables y si las hay suar sus cantidades
     combinacionBandejaPortacable=combinarBandejaPortacable(bandejasPortacables)
-    #cojer canalizaciones y buscar en la bd Canalizaciones
+    #mirara en las canalizaciones seleccionadas y buscar en la bd Canalizaciones
     canalizacionesResult.extend(buscarCanalilzacion(canalizaciones))
     canalizacionesResult.extend(buscarBandejaPortacable(combinacionBandejaPortacable))
-    print canalizacionesResult
     return canalizacionesResult
             
     

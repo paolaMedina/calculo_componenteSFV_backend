@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'floppyforms',#para previsualizacion imagen de usuario en form crear usuario
     'easy_thumbnails',#para previsualizacion imagen de usuario en form crear usuario
     'crispy_forms',#para previsualizacion imagen de usuario en form crear usuario
+    'xhtml2pdf',
 ]
 
 MIDDLEWARE_CLASSES = [

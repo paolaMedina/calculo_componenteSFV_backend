@@ -13,101 +13,27 @@ from rest_framework.response import Response
 from .serializers import *
 from cotizadorFV.lib import lib as mainInfoLib
 from django.http import HttpResponse            
-from   lib.calculo_conductores import *  
+from lib.calculo_conductores import *  
 from objetos_nativos_python_frontend import Generalfv
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
-class CsrfExemptSessionAuthentication(SessionAuthentication):
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from django.views.generic import View
+from django.utils import timezone
+from lib.render import render_to_pdf
+import json
 
+class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return  # To not perform the csrf check previously happening
-"""
-# Create your views here.
-"""
          
-
-
-#Clases serializadoras para los archivos CSV
-class InterruptorManualSerializerView(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        interruptoresM=inicial.interruptoresManuales #se obtiene del arreglo inicial (que se carga al inicio cuanod se leen los excel) los interruptores manuales
-        for interruptor in interruptoresM:
-            serializer.append(InteManualSerializer(interruptor).data)
-            #example = InterruptorManual(**exampleSerializer.data)
-        return Response(serializer)
-        
-
-class DpsACView(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        DpsAC=inicial.dpssAC
-        for interruptor in DpsAC:
-            serializer.append(DpsACSerializer(interruptor).data)
-        return Response(serializer)
-        
-class DpsDCView(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        for interruptor in inicial.dpssDC:
-            serializer.append(DpsDCSerializer(interruptor).data)
-        return Response(serializer)
-        
-class Inversoriew(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        inversores=inicial.inversores
-        for interruptor in inversores:
-            serializer.append(InversorSerializer(interruptor).data)
-        return Response(serializer) 
-
-
-class MicroInversoriew(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        microInversores=inicial.microInversores
-        for interruptor in microInversores:
-            serializer.append(MicroInversorSerializer(interruptor).data)
-        return Response(serializer)      
-        
-
-class PanelSolarView(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        PanelSolar=inicial.panelesSolares
-        for interruptor in PanelSolar:
-            serializer.append(PanelSolarSerializer(interruptor).data)
-        return Response(serializer) 
-        
-class FusibleView(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        for interruptor in inicial.fusibles:
-            serializer.append(FusibleSerializer(interruptor).data)
-        return Response(serializer) 
-      
-
-class InteAutoView(APIView):
-    def get(self, request, format=None):
-        serializer=[]
-        for interruptor in inicial.interruptoresAutomaticos:
-            serializer.append(InteAutoSerializer(interruptor).data)
-        return Response(serializer) 
-        
-# Realiza la  serialización de los archivos CSV, ante peticion get__________
-        
+# Realiza la  serialización de los archivos CSV, ante peticion get de la api
 class DataCsvView(APIView):
     def get(self, request, format=None):
         serializer = DataSerializer(mainInfoLib.getData())
         return Response(serializer.data)
         
         
-    
-    
-    
-#___________________________________________________________________-
-
-
+#recibir el json de la api y realizar operaciones
 class deserializacion (APIView):
     permission_classes = (AllowAny,)
     authentication_classes = (CsrfExemptSessionAuthentication,)
@@ -119,32 +45,70 @@ class deserializacion (APIView):
             #print  serializer.validated_data
             generalFv=getGeneralFvNativeObject(serializer.data)
             lectura(generalFv)
-            messages.success(self.request, "Cotizacion")
-            return  HttpResponseRedirect(redirect_to='https://simulador-fv-paolamedina.c9users.io/cotizadorFV/cotizacion/')
-
+            #messages.success(self.request, "Cotizacion")
+            data = {
+            'today': timezone.now(), 
+            'amount': 39.99,
+            'customer_name': 'Cooper Mann',
+            'order_id': 1233434,
+            
+            }
+            pdf = render_to_pdf('pdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf', status=303)
+            #return  HttpResponseRedirect('pdf')
         else:
-            print "invalido"
+            print serializer.data
             print serializer.errors
             return Response(serializer.errors,  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#recibir el json de la api y realizar operaciones
+class deserializacion2 (APIView):
+    permission_classes = (AllowAny,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
+    @csrf_exempt
+    def post(self, request, format=None):
+        if( request.data.get('validated_data')):
+            generalFv = perfect_information_posted(request)
             
-
-
-       
+            #messages.success(self.request, "Cotizacion")
+            data = lectura(generalFv)
+            pdf = render_to_pdf('pdf.html', data)
+            return HttpResponse(pdf, content_type='application/pdf')
+            #
+            return  HttpResponseRedirect('pdf')
+        else:
+            serializer = GeneralFVSerializer(data=request.data)
+            if serializer.is_valid():
+                return Response(serializer.data,  status=200)
+            else:
+                return Response(serializer.errors,  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+def perfect_information_posted(request):
+    information_posted_string = request.data.get('validated_data')
+    print(information_posted_string)
+    information_posted_json = json.loads(information_posted_string)
+    serializer = GeneralFVSerializer(data=information_posted_json)
+    generalFv = {}
+    if(serializer.is_valid()):
+        print(serializer.data)
+        generalFv=getGeneralFvNativeObject(serializer.data)
+    else:
+        return Response(serializer.errors,  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return generalFv
 def getGeneralFvNativeObject(serializer):
     generalfv=Generalfv(serializer['potencia_de_planta_fv'],serializer['nombre_proyecto'],serializer['temperatura_ambiente'],
     serializer['minima_temperatura_ambiente_esperada'],serializer['tipo_de_inversor'],
     serializer['lugar_instalacion_opcion_techo_cubierta'],serializer['tipo_servicio'],serializer['voltage_servicio'],
     serializer['lugar_instalacion'],serializer['combinacion_inversor'],serializer['fvs'])
     mttps= generalfv.fvs[0].mttps
-    #print "combi "+ generalfv.combinacion_inversor
     return generalfv
             
-  
 def lectura(generalFv):
     dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
     conductoresMttp=[]#matriz de los calibres de entrada y salida de los mppts
     conductoresInversor=[] #matriz de los calibres de entrada y salida de los inversores de campos fv
-    itemsDpsDC=[]
+    conductoresDC=[]#arreglo para los  conductores  puesta a tierra DC
+    itemsDpsDC_mppt=[]#arreglo con los dps DC de cada mppt, sin validar si existen repetidos
     itemInterruptorDC=[]
     itemsDpsACSalida=[]
     fusibles=[]
@@ -183,7 +147,7 @@ def lectura(generalFv):
         conductoresInversor.append(conductorInversor)
         
         #calculo de conductores puesto a tierra DC
-        conductorDC=calibreconductorDC(panelfv.mttps,isc_panel)
+        conductoresDC.append(calibreconductorDC(panelfv.mttps,isc_panel))
         
         #Calculo DPS AC (Salida inversores)
         itemsDpsACSalida.append(calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio))
@@ -209,11 +173,11 @@ def lectura(generalFv):
             condutor=CalculoConductores(tem_amb,mppt,isc_panel,impp_panel,corrienteMPP,tension_Mpp)
             conductoresMttp.append(condutor)    
             #Calculo de DPS DC FV.
-            itemsDpsDC.append(seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida))
+            itemsDpsDC_mppt.extend(seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida))
             #Calculo Interruptor manual DC (IMDC)
             itemInterruptorDC.append(seleccionIMDC(corrienteMPP,tensionMaximaMppt))
             #Calculo fusibles de cadena FV
-            fusibles.append(calculoFusibles(cadenas_paralelo,isc_panel))
+            fusibles.extend(calculoFusibles(cadenas_paralelo,isc_panel))
             #acumulado de las cadenas en paralelo de los mppts
             total_cadenas_paralelo +=cadenas_paralelo
             
@@ -226,69 +190,96 @@ def lectura(generalFv):
         
         
         #calculo de conductores puesto a tierra AC
-        conductorAC=calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,isc_panel,generalFv.fvs,tensionServicio)
+        conductorAC=calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,distanciaCombinacionInversor,isc_panel,generalFv.fvs,tensionServicio)
         
         
         #calculo de cajas combitorias 
         cajaCombinatoriaGeneral=seleccionCajaCombinatoria1(total_cadenas_paralelo,len(panelfv.mttps))#una caja combinatoria para todo sloo mppts
         
         #Cajas combinatorias finales seleccionadas por cada panel fv
-        cajasCombinadorasFinal.append(calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinadorasMppt))
+        cajasCombinadorasFinal.extend(calculoFinalCajaCombinatorias(cajaCombinatoriaGeneral,cajasCombinadorasMppt))
+   
+    canalizaciones=calculoCanalizacion(generalFv.fvs, generalFv.combinacion_inversor)
+    #con los items dps que se seleccionaron en cada mttp, se verifica si no existen mas de dos dps iguales, si los hay se unen 
+    ItemsDpsDCCombinados=combinarItemsDpsDC(itemsDpsDC_mppt)
+    itemInterruptorDCCombinados=combinarItemsDpsDC(itemInterruptorDC)
+    itemsDpsACSalidaCombinados=combinarItemsDpsDC(itemsDpsACSalida)
+    fusiblesCombinados=combinarItemsDpsDC(fusibles)
+    interruptoresAutoSalidaInversorCombinados=combinarItemsDpsDC(interruptoresAutoSalidaInversor)
+    cajasCombinadorasFinalCombinados=combinarItemsDpsDC(cajasCombinadorasFinal) 
+    
+
     
     conductoresCombninacionInversor=CalculoConductorInversor(generalFv.combinacion_inversor.input,tipoServicio,sumaIsal,tem_amb,isc_panel,tensionServicio)
-    print "list"
-    calculoConductoresFinal(conductoresMttp,conductoresInversor,conductoresCombninacionInversor)
+    conductores=calculoConductoresFinal(conductoresMttp,conductoresInversor,conductoresCombninacionInversor)
+    print "conductores"
+    print conductores
     print "canalizaciones"
-    calculoCanalizacion(generalFv.fvs, generalFv.combinacion_inversor)
+    print canalizaciones
     
-    #print dic_main.panelesSolares_dict[panel].isc
+    """
+    #estos ya se encuentran incluidos en el calculo de conductores finales
     print "conductores entrada y salida fv"
     print conductoresMttp
     print "conductores salida inversor"
     print conductoresInversor
     print "conductores Combinacion Inversor "+  str (conductoresCombninacionInversor)
-    
-    print "conductorDC " + str(conductorDC)
+    """
+    print "conductoresDC " 
+    print conductoresDC
     print "conductorAC "
-    print conductorAC
+    print conductorAC[0].descripcion
     print "itemsDpsDC"
-    print itemsDpsDC
+    print ItemsDpsDCCombinados
     print "itemInterruptorDC"
-    print itemInterruptorDC
+    print itemInterruptorDCCombinados
     print "itemsDpsACSalida"
-    print itemsDpsACSalida
-    print "itemDpsACInyeccion "+itemDpsACInyeccion
+    print itemsDpsACSalidaCombinados
+    print "itemDpsACInyeccion "
+    print itemDpsACInyeccion
     print "fusibles"
-    print fusibles
+    print fusiblesCombinados
     print "calculoInterruptoresAutoSalidaInversor"
-    print interruptoresAutoSalidaInversor
+    print interruptoresAutoSalidaInversorCombinados
     print "calculoInterruptoresAutoCombinador"
     print interruptoresAutoCombinador
     print "cajasCombinadorasFinal"
-    for x in aplanarList(cajasCombinadorasFinal):
-        print x.descripcion
-    #print cajasCombinadorasFinal
+    print cajasCombinadorasFinalCombinados
     print "paneles_agrupados"
     print paneles_agrupados
     
+    data = {
+        'today': timezone.now(), 
+        'conductores': conductores,
+        'canalizaciones': canalizaciones,
+        'conductoresDC': conductoresDC,
+        'conductoresAC':conductorAC,
+        'itemsDpsDC': ItemsDpsDCCombinados,
+        'itemInterruptorDC':itemInterruptorDCCombinados,
+        'itemsDpsACSalida':itemsDpsACSalidaCombinados,
+        'itemDpsACInyeccion':itemDpsACInyeccion,
+        'fusibles':fusiblesCombinados,
+        'interruptoresAutoSalidaInversor': interruptoresAutoSalidaInversorCombinados,
+        'interruptoresAutoCombinador':interruptoresAutoCombinador,
+        'CombinadorasFinal': cajasCombinadorasFinalCombinados
+        
+        }
+    return data
     
 
-""" 
-#funcion que suma todos los Isal_max de la base de datos del inversor segun el inversor seleccionado  
-def sumIsal(inversor):
-    dic_main=mainInfoLib.getDic() #diccionario principal con los datos cargados de excel
-    isal_max_1=float(dic_main.inversores_dict[inversor].isal_max_1)
-    isal_max_2=float(dic_main.inversores_dict[inversor].isal_max_2)
-    isal_max_3=float(dic_main.inversores_dict[inversor].isal_max_3)
-    return isal_max_1+isal_max_1+isal_max_1
-"""
-    
 def cotizador(request):
     return render(request, 'formulario.html')
-    
-    
-    
-def calculos(request):
-    seleccionCalibre(30,10,4,9.82,8.28,4,500,200,33.12,92.4,20,20,'','')
-    return HttpResponse("hola")
-    
+
+
+class GeneratePdf(View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            'today': timezone.now(), 
+            'amount': 39.99,
+            'customer_name': 'Cooper Mann',
+            'order_id': 1233434,
+            
+        }
+        pdf = render_to_pdf('pdf.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
