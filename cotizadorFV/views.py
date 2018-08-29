@@ -201,12 +201,12 @@ def lectura(generalFv):
    
     canalizaciones=calculoCanalizacion(generalFv.fvs, generalFv.combinacion_inversor)
     #con los items dps que se seleccionaron en cada mttp, se verifica si no existen mas de dos dps iguales, si los hay se unen 
-    ItemsDpsDCCombinados=combinarItemsDpsDC(itemsDpsDC_mppt)
-    itemInterruptorDCCombinados=combinarItemsDpsDC(itemInterruptorDC)
-    itemsDpsACSalidaCombinados=combinarItemsDpsDC(itemsDpsACSalida)
-    fusiblesCombinados=combinarItemsDpsDC(fusibles)
-    interruptoresAutoSalidaInversorCombinados=combinarItemsDpsDC(interruptoresAutoSalidaInversor)
-    cajasCombinadorasFinalCombinados=combinarItemsDpsDC(cajasCombinadorasFinal) 
+    ItemsDpsDCCombinados=combinarItems(itemsDpsDC_mppt)
+    itemInterruptorDCCombinados=combinarItems(itemInterruptorDC)
+    itemsDpsACSalidaCombinados=combinarItems(itemsDpsACSalida)
+    fusiblesCombinados=combinarItems(fusibles)
+    interruptoresAutoSalidaInversorCombinados=combinarItems(interruptoresAutoSalidaInversor)
+    cajasCombinadorasFinalCombinados=combinarItems(cajasCombinadorasFinal) 
     
 
     
@@ -260,8 +260,9 @@ def lectura(generalFv):
         'itemDpsACInyeccion':itemDpsACInyeccion,
         'fusibles':fusiblesCombinados,
         'interruptoresAutoSalidaInversor': interruptoresAutoSalidaInversorCombinados,
-        'interruptoresAutoCombinador':interruptoresAutoCombinador,
+        'interruptorAutoCombinador':interruptoresAutoCombinador,
         'CombinadorasFinal': cajasCombinadorasFinalCombinados
+        #falta revisar paneles
         
         }
     return data

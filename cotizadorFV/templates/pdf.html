@@ -47,6 +47,12 @@
             list-style: none;
             font-size: 1.1em;
         }
+        table{counter-reset:section;}
+        .count:before
+        {
+        counter-increment:section;
+        content:counter(section);
+        }
     </style>
 </head>
 <body>
@@ -60,7 +66,189 @@
         <div class="list-group">
             <p>Name: {{ request.user.first_name }} {{ request.user.last_name }}</p>
         </div>
-
+        
+        <p>Lista de Conductores</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for conductor in conductores %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ conductor.descripcion }}</td>
+                    <td>{{ conductor.cantidad }}</td>
+                    <td>{{ conductor.unidad }}</td>
+                    <td>{{ conductor.valor_unitario }}</td>
+                    <td>{{ conductor.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <p>Lista de canalizaciones</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for canalizacion in canalizaciones %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ canalizacion.descripcion }}</td>
+                    <td>{{ canalizacion.cantidad }}</td>
+                    <td>{{ canalizacion.unidad }}</td>
+                    <td>{{ canalizacion.valor_unitario }}</td>
+                    <td>{{ canalizacion.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>   
+        
+        <p>Lista de conductores DC</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for conductorDC in conductoresDC %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ conductorDC.descripcion }}</td>
+                    <td>{{ conductorDC.cantidad }}</td>
+                    <td>{{ conductorDC.unidad }}</td>
+                    <td>{{ conductorDC.valor_unitario }}</td>
+                    <td>{{ conductorDC.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>   
+        <p>Lista de conductores AC</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for conductorAC in conductoresAC %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ conductorAC.descripcion }}</td>
+                    <td>{{ conductorAC.cantidad }}</td>
+                    <td>{{ conductorAC.unidad }}</td>
+                    <td>{{ conductorAC.valor_unitario }}</td>
+                    <td>{{ conductorAC.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <p>Lista de items Dps DC</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for DpsDC in itemsDpsDC %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ DpsDC.descripcion }}</td>
+                    <td>{{ DpsDC.cantidad }}</td>
+                    <td>{{ DpsDC.unidad }}</td>
+                    <td>{{ DpsDC.valor_unitario }}</td>
+                    <td>{{ DpsDC.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <p>Lista de items Interruptor DC</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for interruptorDC in itemInterruptorDC %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ interruptorDC.descripcion }}</td>
+                    <td>{{ interruptorDC.cantidad }}</td>
+                    <td>{{ interruptorDC.unidad }}</td>
+                    <td>{{ interruptorDC.valor_unitario }}</td>
+                    <td>{{ interruptorDC.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <p>Lista de items Dps AC Salida</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for dpsACSalida in itemsDpsACSalida %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ dpsACSalida.descripcion }}</td>
+                    <td>{{ dpsACSalida.cantidad }}</td>
+                    <td>{{ dpsACSalida.unidad }}</td>
+                    <td>{{ dpsACSalida.valor_unitario }}</td>
+                    <td>{{ dpsACSalida.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <p>Item Dps AC Inyeccion</p>
         <table class="table">
             <thead>
             <tr>
@@ -74,20 +262,118 @@
             </thead>
             <tbody>
                 <tr>
-            {% for conductorAC in conductoresAC %}
-                
                     <td class="count"></td>
-                    <td>{{ conductorAC.descripcion }}</td>
-                    <td>{{ conductorAC.cantidad }}</td>
-                    <td>{{ conductorAC.unidad }}</td>
-                    <td>{{ conductorAC.valor_unitario }}</td>
-                    <td>{{ conductorAC.valor_total}}</td>
-                    
-            
+                    <td>{{ itemDpsACInyeccion.descripcion }}</td>
+                    <td>{{ itemDpsACInyeccion.cantidad }}</td>
+                    <td>{{ itemDpsACInyeccion.unidad }}</td>
+                    <td>{{ itemDpsACInyeccion.valor_unitario }}</td>
+                    <td>{{ itemDpsACInyeccion.valor_total}}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p>Lista de fusibles</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for fusible in fusibles %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ fusible.descripcion }}</td>
+                    <td>{{ fusible.cantidad }}</td>
+                    <td>{{ fusible.unidad }}</td>
+                    <td>{{ fusible.valor_unitario }}</td>
+                    <td>{{ fusible.valor_total}}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        
+        <p>Lista de interruptores Automaticos de Salida Inversor</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for interruptorAutoSalidaInversor in interruptoresAutoSalidaInversor %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ interruptorAutoSalidaInversor.descripcion }}</td>
+                    <td>{{ interruptorAutoSalidaInversor.cantidad }}</td>
+                    <td>{{ interruptorAutoSalidaInversor.unidad }}</td>
+                    <td>{{ interruptorAutoSalidaInversor.valor_unitario }}</td>
+                    <td>{{ interruptorAutoSalidaInversor.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <p>Lista de interruptores Automaticos Combinador </p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ interruptorAutoCombinador.descripcion }}</td>
+                    <td>{{ interruptorAutoCombinador.cantidad }}</td>
+                    <td>{{ interruptorAutoCombinador.unidad }}</td>
+                    <td>{{ interruptorAutoCombinador.valor_unitario }}</td>
+                    <td>{{ interruptorAutoCombinador.valor_total}}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p>Lista de cajas combinadoras </p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Valor Unitario</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for caja in CombinadorasFinal %}
+                <tr>
+                    <td class="count"></td>
+                    <td>{{ caja.descripcion }}</td>
+                    <td>{{ caja.cantidad }}</td>
+                    <td>{{ caja.unidad }}</td>
+                    <td>{{ caja.valor_unitario }}</td>
+                    <td>{{ caja.valor_total}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
     </div>
 </div>
 </body>

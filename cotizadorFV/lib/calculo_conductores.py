@@ -367,22 +367,24 @@ def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_op
     return items
     
     
-def combinarItemsDpsDC(items):
+def combinarItems(items):
     lista=[]
     while (len(items) > 0):
         elemento=items.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
-        lista.append(duplicatesItemsDpsDC(items,elemento))
+        lista.append(duplicatesItems(items,elemento))
         #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
         items=[item  for item in items if(elemento[0]!=item[0])]    
              
     return lista
     
-def duplicatesItemsDpsDC(items,elemento):
-    sumaCantidad=elemento[1]
-    for i in range (0,len(items)):
-        if (elemento[0]==items[i][0]):
-            sumaCantidad+=items[i][1]
-    item=Resultado(descripcion=elemento[0],cantidad=sumaCantidad,unidad="Unidad",valor_unitario=elemento[2],valor_total=elemento[2]*sumaCantidad)
+def duplicatesItems(items,elemento):
+    item=None
+    if elemento != None: 
+        sumaCantidad=elemento[1]
+        for i in range (0,len(items)):
+            if (elemento[0]==items[i][0]):
+                sumaCantidad+=items[i][1]
+        item=Resultado(descripcion=elemento[0],cantidad=sumaCantidad,unidad="Unidad",valor_unitario=elemento[2],valor_total=elemento[2]*sumaCantidad)
     return item
  
 #____________________________________________Calculo Interruptor manual DC (IMDC)___________________________________
@@ -718,23 +720,29 @@ def calculoCanalizacion(camposFV,combinacionInversores):
         mpptsSalidaBandeja=[]
         for mppt in campoFV.mttps:
             
-            if mppt.cableado.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+            if (mppt.cableado.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8')or 
+                (mppt.cableado.input.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
                 canalizaciones.append((mppt.cableado.input,mppt.cableado.input.distancia_del_conductor_mas_largo))
-            elif mppt.cableado.input.tipo_alambrado=="Bandeja porta cable":
+            elif (mppt.cableado.input.tipo_alambrado=="Bandeja porta cable"or 
+                (mppt.cableado.input.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
                 mpptsFuenteBandeja.append(mppt)
             
-            if mppt.cableado.output.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+            if (mppt.cableado.output.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8')or 
+                (mppt.cableado.output.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
                 mpptsCanalizacion.append(mppt)
-            elif  mppt.cableado.output.tipo_alambrado=="Bandeja porta cable":
+            elif(mppt.cableado.output.tipo_alambrado=="Bandeja porta cable"or
+                (mppt.cableado.output.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
                 mpptsSalidaBandeja.append(mppt)
          
         canalizaciones.extend(CanalizacionSalidaFV(mpptsCanalizacion))   
         bandejasPortacables.extend(bandejaPortacableFuente(mpptsFuenteBandeja))
         bandejasPortacables.extend(bandejaPortacableSalida(mpptsSalidaBandeja))
         
-        if campoFV.salida_inversor.output.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+        if(campoFV.salida_inversor.output.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8')or
+           (campoFV.salida_inversor.output.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
             salidaInversoresCanalizacion.append(campoFV.salida_inversor)
-        elif campoFV.salida_inversor.output.tipo_alambrado=="Bandeja porta cable":
+        elif(campoFV.salida_inversor.output.tipo_alambrado=="Bandeja porta cable" or
+            (campoFV.salida_inversor.output.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
             salidaInversoresBandejaPortacable.append(campoFV.salida_inversor)
             
         
@@ -743,9 +751,11 @@ def calculoCanalizacion(camposFV,combinacionInversores):
     bandejasPortacables.extend(bandejaPortacableSalidaInversor(salidaInversoresBandejaPortacable))
     
     
-    if combinacionInversores.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8'):
+    if  (combinacionInversores.input.tipo_alambrado.encode('utf8')==u"Canalización".encode('utf8')or
+        (combinacionInversores.input.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
         canalizaciones.append((combinacionInversores.input, combinacionInversores.input.distancia_del_conductor_mas_largo))
-    elif combinacionInversores.input.tipo_alambrado=="Bandeja porta cable":
+    elif(combinacionInversores.input.tipo_alambrado=="Bandeja porta cable" or
+        (combinacionInversores.input.tipo_alambrado.encode('utf8')==u"Bandeja porta cable + canalización".encode('utf8'))):
         longitud=float(combinacionInversores.input.longitud_tramo.replace(',','.'))
         cantidad=  combinacionInversores.input.distancia_del_conductor_mas_largo/longitud
         bandejasPortacables.append((combinacionInversores.input,cantidad))

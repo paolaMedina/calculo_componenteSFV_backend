@@ -1,0 +1,88 @@
+{% extends "base_site.html" %}
+{% load static %}
+
+{% block head %}
+  {{ block.super }}
+  <!-- 
+    <script >
+ function resizeIframe(obj) {
+   obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  obj.style.width="100%";
+}
+ 
+ </script>    
+  -->
+  <style type="text/css">
+    /* CSS general */
+.miIframe {
+  width: 100px;
+}
+
+/* CSS pantallas de 320px o superior */
+@media (max-width: 320px) {
+
+  .miIframe {
+    width: 200px;
+  } 
+
+}
+
+/* CSS pantalla 768px o superior */
+@media (min-width: 768px) {
+
+  .miIframe {
+    width: 500px;
+  } 
+
+}
+  </style>
+  <script>
+window.onresize = function() {
+    var iframe = window.parent.document.getElementById('miIframe');
+    //iframe.style.width = window.style.width;
+    iframe.style.height = window.style.height;
+}
+</script>
+<link rel="stylesheet" href="{% static 'cotizador_frontend/styles.f55fa99136f76a333ecb.css' %}"></head>
+   
+{% endblock head %}
+
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      
+      <div class="clearfix"></div>
+      <div class="row">
+          <div class="x_panel">
+            {% csrf_token %}
+            <app-root></app-root>
+  <script>
+(function () {
+    var location = window.document.location;
+
+    var preventNavigation = function () {
+        var originalHashValue = location.hash;
+
+        window.setTimeout(function () {
+            location.hash = 'preventNavigation' + ~~ (9999 * Math.random());
+            location.hash = originalHashValue;
+        }, 0);
+    };
+
+    window.addEventListener('beforeunload', preventNavigation, false);
+    window.addEventListener('unload', preventNavigation, false);
+})();
+  </script>
+<script type="text/javascript" src="{% static 'cotizador_frontend/runtime.a66f828dca56eeb90e02.js' %}"></script>
+<script type="text/javascript" src="{% static 'cotizador_frontend/polyfills.7a0e6866a34e280f48e7.js' %}"></script>
+<script type="text/javascript" src="{% static 'cotizador_frontend/scripts.7e9bb0ca8fe9e2b29556.js' %}"></script>
+<script type="text/javascript" src="{% static 'cotizador_frontend/main.a85c82e95e28fe2b19c5.js' %}"></script>
+</body>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+

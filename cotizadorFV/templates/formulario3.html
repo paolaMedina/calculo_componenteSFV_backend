@@ -1,0 +1,70 @@
+{% extends "base_site.html" %}
+{% load static %}
+
+{% block head %}
+  {{ block.super }}
+ 
+    <script >
+ function resizeIframe(obj) {
+   obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  obj.style.width="100%";
+}
+ 
+ </script>    
+
+  <style type="text/css">
+  
+  .contenedor{
+    height:0px;
+    width:100%;
+  }
+  .contenedor iframe{
+      position:relative;
+      width:100%;
+      top:0px;
+      left:0px;
+  }
+   
+  </style>
+  <script>
+  window.onresize = function() {
+      var iframe = window.parent.document.getElementById('miIframe');
+      resizeIframe(iframe);
+      //iframe.style.width = window.style.width;
+      iframe.style.height = window.style.height;
+  }
+  </script>
+   
+   
+   
+   
+{% endblock head %}
+
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      
+      <div class="clearfix"></div>
+      <div class="row">
+          <div class="x_panel">
+            {% csrf_token %}
+            <div class="x_content">
+                  <!--
+                  <iframe src="{% static 'cotizador_frontend/index.html' %}"  frameborder="0"  onload="resizeIframe(this);">
+                   -->
+                  <!--START IFRAME-->
+                  <div class ="contenedor" align="left"><iframe
+                  src="{% static 'cotizador_frontend/index.html' %}"
+                  scrolling="no" align="middle"  width="960" height="1750"
+                  frameborder="no" id ="miIframe" allowtransparency="true" background-color="transparent" onLoad="onresize();"></iframe> 
+                  <!--END IFRAME-->
+                  </div>
+            </div>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
