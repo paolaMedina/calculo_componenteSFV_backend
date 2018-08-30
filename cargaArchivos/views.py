@@ -6,6 +6,7 @@ from django.views.generic.edit import FormView
 from .forms import FormUpload
 from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
+from cotizadorFV.lib.lib import importarCsvs
 import os
  
 class UploadFileView(FormView):
@@ -34,6 +35,7 @@ class UploadFileView(FormView):
             type = form.cleaned_data.get('tipo_archivo')
             name=''
             file = request.FILES['file']
+            print (file)
             extension = os.path.splitext(file.name)[1]
             print extension
             if 'file' in request.FILES and extension=='.csv':
@@ -67,6 +69,7 @@ class UploadFileView(FormView):
                 
                 handle_uploaded_file(file,name)
                 messages.success(self.request, 'Se actualizo el archivo '+ file.name +' con EXITO')
+                importarCsvs() #carga inicial de los archivos csv
                 return self.form_valid(form, **kwargs)
                 
             else:
@@ -79,7 +82,9 @@ class UploadFileView(FormView):
             
 #Para guardar la iniformacion en los archivos ya existentes o crear uno nuevo y guardar             
 def handle_uploaded_file(file,name):
-        with open('archivos/' + name, 'w') as destination:
+    
+        with open('media/archivosCSV/' + name, 'w') as destination:
+            print (destination)
             for chunk in file.chunks():
                 destination.write(chunk)
                 print chunk
