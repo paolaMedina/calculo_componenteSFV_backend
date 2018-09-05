@@ -115,6 +115,7 @@ def lectura(generalFv):
     interruptoresAutoSalidaInversor=[]
     sumCorriente_Int=0
     sumaIsal=0
+    inversoresSeleccionados=[]
     
     cajasCombinadorasMppt=[]#arreglo de la caja combinadora que sale por cada mppt de cada panel
     cajasCombinadorasFinal=[]#las cajas por cada panel 
@@ -149,6 +150,8 @@ def lectura(generalFv):
         #calculo de conductores puesto a tierra DC
         conductoresDC.append(calibreconductorDC(panelfv.mttps,isc_panel))
         
+        inversoresSeleccionados.append(inversor)#acumulando los inversores seleccionados
+        
         #Calculo DPS AC (Salida inversores)
         itemsDpsACSalida.append(calculoDpsACSalida(lugar_instalacion, lugar_instalacion_opcion_techo_cubierta, tipoServicio,tensionServicio))
         #Calculo Interruptores automáticos AC (IAAC) (Circuito de salida inversor)
@@ -171,7 +174,7 @@ def lectura(generalFv):
             
             #calculo de conductores de entrada y salida de mppts
             condutor=CalculoConductores(tem_amb,mppt,isc_panel,impp_panel,corrienteMPP,tension_Mpp)
-            conductoresMttp.append(condutor)    
+            conductoresMttp.extend(condutor)    
             #Calculo de DPS DC FV.
             itemsDpsDC_mppt.extend(seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_opcion_techo_cubierta,distanciaConductorSalida))
             #Calculo Interruptor manual DC (IMDC)
@@ -207,24 +210,24 @@ def lectura(generalFv):
     fusiblesCombinados=combinarItems(fusibles)
     interruptoresAutoSalidaInversorCombinados=combinarItems(interruptoresAutoSalidaInversor)
     cajasCombinadorasFinalCombinados=combinarItems(cajasCombinadorasFinal) 
-    
-
-    
+    inversores=calculoInversores(inversoresSeleccionados)
     conductoresCombninacionInversor=CalculoConductorInversor(generalFv.combinacion_inversor.input,tipoServicio,sumaIsal,tem_amb,isc_panel,tensionServicio)
     conductores=calculoConductoresFinal(conductoresMttp,conductoresInversor,conductoresCombninacionInversor)
+    
+    """
     print "conductores"
     print conductores
     print "canalizaciones"
     print canalizaciones
     
-    """
+    
     #estos ya se encuentran incluidos en el calculo de conductores finales
     print "conductores entrada y salida fv"
     print conductoresMttp
     print "conductores salida inversor"
     print conductoresInversor
     print "conductores Combinacion Inversor "+  str (conductoresCombninacionInversor)
-    """
+    #hasta aqui
     print "conductoresDC " 
     print conductoresDC
     print "conductorAC "
@@ -247,7 +250,7 @@ def lectura(generalFv):
     print cajasCombinadorasFinalCombinados
     print "paneles_agrupados"
     print paneles_agrupados
-    
+    """
     data = {
         'today': timezone.now(), 
         'conductores': conductores,
@@ -261,8 +264,9 @@ def lectura(generalFv):
         'fusibles':fusiblesCombinados,
         'interruptoresAutoSalidaInversor': interruptoresAutoSalidaInversorCombinados,
         'interruptorAutoCombinador':interruptoresAutoCombinador,
-        'CombinadorasFinal': cajasCombinadorasFinalCombinados
-        #falta revisar paneles
+        'CombinadorasFinal': cajasCombinadorasFinalCombinados,
+        'paneles':paneles_agrupados,
+        'inversores':inversores
         
         }
     return data

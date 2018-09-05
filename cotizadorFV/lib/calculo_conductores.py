@@ -299,8 +299,11 @@ def calibreconductorDC(mttps,Isc_panel):
     calibre_seleccionado=buscarCalibreCondutor(corrienteNominal)
     conductorCalculado=CalibreConductor(tipo_conductor="THHN/THWN-2 CT" ,material_conductor="Cobre",
                                             calibre=calibre_seleccionado,distancia=distanciaConductor)
+    
     conductorSeleccionado=buscarConductor([conductorCalculado])
-    return conductorSeleccionado[0]
+    if len(conductorSeleccionado)>0:
+        return conductorSeleccionado[0]
+    else: return []
     
     
 
@@ -646,7 +649,22 @@ def calculoPanelesSolares(paneles):
             lista.append(duplicatesPanel(paneles_cantidad,elemento))
             #esta  linea actualiza la lista sin repetidos   
             paneles_cantidad = [panel for panel in paneles_cantidad if panel[0].model_panel_solar_1 != elemento[0].model_panel_solar_1]
-    return lista
+    panelesResult=buscarPaneles(lista)
+    return panelesResult
+    
+#funcion que recibe tuplas con los paneles y la distancia ya acumulada y retorna la lista con el formato de salida 
+def buscarPaneles(paneles):
+    dic_main=mainInfoLib.getDic()
+    resultado=[]
+    for panel in paneles:
+        for clave, valor in dic_main.panelesSolares_dict.items():
+            if (valor.descripcion==panel[0]):
+                   objResultado=Resultado(descripcion=valor.descripcion,cantidad=panel[1],unidad="Unidad",
+                                          valor_unitario=valor.precio,valor_total=valor.precio*panel[1])
+                   resultado.append(objResultado)
+    return resultado
+
+
     
 def sumaMppts(mttps):   
     result=0
@@ -676,6 +694,7 @@ def calculoConductoresFinal(condutoresMppts,conductoresSalidaInversor,conductorC
             lista.append(duplicatesCondutores(condutores,elemento))
             #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal sumado en el paso anterior)   
             condutores = [conductor for conductor in condutores if (elemento.tipo_conductor!=conductor.tipo_conductor)and(elemento.material_conductor!=conductor.material_conductor)and(elemento.calibre!=conductor.calibre)]
+    
     conductoresSeleccionados=buscarConductor(lista)
     return conductoresSeleccionados 
      
@@ -696,7 +715,7 @@ def buscarConductor(conductores):
         for clave, valor in dic_main.conductores_dict.items():
             if (valor.tipo_conductor==conductor.tipo_conductor
                and valor.material==conductor.material_conductor
-               and valor.calibre==conductor.calibre):
+               and valor.calibre==str(conductor.calibre)):
                    objResultado=Resultado()
                    objResultado.descripcion=valor.descripcion.decode('iso-8859-1').encode('utf8')
                    objResultado.cantidad=conductor.distancia
@@ -974,4 +993,34 @@ def buscarBandejaPortacable(bandejasPortacables):
                     #print objResultado.descripcion
                     resultado.append(objResultado)
                    
+    return resultado
+    
+
+def calculoInversores (inversores):
+    lista=[]
+    while (len(inversores) > 0):
+            elemento=inversores.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
+            lista.append(duplicatesInversores(inversores,elemento))
+            #esta  linea actualiza la lista sin repetidos   
+            inversores = [inversor for inversor in inversores if inversor != elemento]
+    inversoresResult=buscarInversores(lista)
+    return inversoresResult
+    
+def duplicatesInversores(inversores,elemento):
+    sumaCantidad=1
+    for i in range (0,len(inversores)):
+        if (elemento==inversores[i]):
+                sumaCantidad+=1
+    return (elemento,sumaCantidad)
+
+
+def buscarInversores(inversores):
+    dic_main=mainInfoLib.getDic()
+    resultado=[]
+    for inversor in inversores:
+        for clave, valor in dic_main.inversores_dict.items():
+            if (valor.descripcion==inversor[0]):
+                   objResultado=Resultado(descripcion=valor.descripcion,cantidad=inversor[1],unidad="Unidad",
+                                          valor_unitario=valor.precio,valor_total=valor.precio*inversor[1])
+                   resultado.append(objResultado)
     return resultado
