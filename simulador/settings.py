@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'floppyforms',#para previsualizacion imagen de usuario en form crear usuario
     'easy_thumbnails',#para previsualizacion imagen de usuario en form crear usuario
     'crispy_forms',#para previsualizacion imagen de usuario en form crear usuario
-    'xhtml2pdf',
+    'xhtml2pdf',#render html to pfd
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -150,3 +150,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'angiepmc93@gmail.com'
 EMAIL_HOST_PASSWORD = 'paola2905'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+#caducidad de seccion
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 5 * 60 #

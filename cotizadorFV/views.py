@@ -18,7 +18,7 @@ from objetos_nativos_python_frontend import Generalfv
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.views.generic import View
-from django.utils import timezone
+from datetime import date
 from lib.render import render_to_pdf
 import json
 
@@ -252,7 +252,9 @@ def lectura(generalFv):
     print paneles_agrupados
     """
     data = {
-        'today': timezone.now(), 
+        'today': date.today(), 
+        'proyecto':generalFv.nombre_proyecto,
+        'potencia':generalFv.potencia_de_planta_fv,
         'conductores': conductores,
         'canalizaciones': canalizaciones,
         'conductoresDC': conductoresDC,
@@ -279,7 +281,7 @@ def cotizador(request):
 class GeneratePdf(View):
     def get(self, request, *args, **kwargs):
         data = {
-            'today': timezone.now(), 
+            'today': date.today(), 
             'amount': 39.99,
             'customer_name': 'Cooper Mann',
             'order_id': 1233434,
@@ -287,4 +289,7 @@ class GeneratePdf(View):
         }
         pdf = render_to_pdf('pdf.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
+        
+
+
 

@@ -1,0 +1,81 @@
+
+{% extends "base_site.html" %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block title %} Registrar Usuario  {% endblock title %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Información Personal </h2>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="container">
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Username</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-4">
+                          {{user}}
+                      </div>
+                    </div>
+    <p>Username: {{ user }}</p>
+    <p>First name: {{ user.first_name }}</p>
+    <p>Last name: {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <img src="/media{{request.user.usuario.imagen}}" alt="" width="240">
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- validator -->
+  <script src="{% static 'static/vendors/validator/validator.js' %}"></script>
+{% endblock javascripts %}
+
+{% block scripts %}
+<script >
+$(document).ready(function(){
+    $('#id_imagen').change(function(e) {
+        addImage(e); 
+       });
+  
+       function addImage(e){
+        var file = e.target.files[0],
+        imageType = /image.*/;
+      
+        if (!file.type.match(imageType))
+         return;
+    
+        var reader = new FileReader();
+        reader.onload = fileOnload;
+        reader.readAsDataURL(file);
+       }
+    
+       function fileOnload(e) {
+        var result=e.target.result;
+        $('#imgSalida').attr("src",result);
+       }
+  })
+  
+</script>
+
+{% endblock scripts%}

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
 #Importamos el formulario de autenticacion de django
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from .models import Usuario
@@ -91,3 +92,37 @@ class FormularioReset(PasswordResetForm):
             super(FormularioReset, self).__init__(*args, **kwargs)
             self.fields['email'].widget.attrs['class'] = 'form-control'
             self.fields['email'].widget.attrs['placeholder'] = 'Usuario'
+            
+            
+class EditProfileForm(UserChangeForm):
+    first_name = forms.CharField(required=True, label='Nombres',widget=forms.TextInput(attrs={'class':'form-control col-md-7 col-xs-12', 'required':'required'}))
+    last_name = forms.CharField(required=True, label='Apellidos',widget=forms.TextInput(attrs={'class':'form-control col-md-7 col-xs-12', 'required':'required'}))
+    email = forms.EmailField(required=True, label= 'Correo Electrónico',widget=forms.EmailInput(attrs={'type':'email', 'class':'form-control col-md-7 col-xs-12', 'required':'required'}))
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'first_name',
+            'last_name',
+            'password'
+        )
+        
+    #clean email field
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        try:
+            User._default_manager.get(email=email)
+        except User.DoesNotExist:
+            return email
+        raise forms.ValidationError('Este email ya se encuentra registrado')
+        
+        
+        
+class FormPasswordChange(PasswordChangeForm):
+    old_password  = forms.CharField(required=True, label='Contraseña Anterior',widget=forms.PasswordInput(attrs={'class':'form-control col-md-7 col-xs-12', 'required':'required'}))
+    new_password1  = forms.CharField(required=True, label='Nueva Contraseña',widget=forms.PasswordInput(attrs={'class':'form-control col-md-7 col-xs-12', 'required':'required'}))
+    new_password2 = forms.CharField(required=True, label= 'Confirmar Contraseña',widget=forms.PasswordInput(attrs={'type':'email', 'class':'form-control col-md-7 col-xs-12', 'required':'required'}))
+
+    class Meta:
+        model = User

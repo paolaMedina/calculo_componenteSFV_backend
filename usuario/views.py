@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.views.generic.edit import FormView
 from django.http.response import HttpResponseRedirect
 from django.contrib.auth import login
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render,get_object_or_404, render_to_response
 from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
@@ -13,11 +14,12 @@ from django.core.mail import send_mail
 from django.contrib.messages.views import SuccessMessageMixin
 import hashlib, datetime, random
 from django.utils import timezone
-from .forms import RegistroForm,UpdateForm,FormularioLogin
+from .forms import RegistroForm,UpdateForm,FormularioLogin,EditProfileForm,FormPasswordChange
 from .models import Usuario
 from simulador.utilities import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 class RegistroUsuario(LoginRequiredMixin,CreateView):
@@ -43,7 +45,7 @@ class RegistroUsuario(LoginRequiredMixin,CreateView):
         
         # Enviar un email de confirmacion
         email_subject = 'Account confirmation'
-        email_body = "Buenas acabas de ser registrado en la pagina de © Solar Energies. Tus datos de registro son: \n Usuario:%s \n contrasena es %s \n puedes ingresar al siguiente link para loguearte: https://simulador-fv-paolamedina.c9users.io/usuario/" % (usuario.username,usuario.password1)
+        email_body = "Acabas de ser registrado en la pagina de © Solar Energies. Tus datos de registro son: \n Usuario:%s \n contrasena es %s \n puedes ingresar al siguiente link para loguearte: https://simulador-fv-paolamedina.c9users.io/usuario/" % (usuario.username,usuario.password1)
         
         send_mail(email_subject, email_body, 'angiepmc93@gmail.com',
             [email], fail_silently=False)
@@ -146,3 +148,45 @@ class Login(FormView):
         messages.error(self.request, 'NOMBRE DE USUARIO O CONTRASEÑA INCORRECTAS')
         print form.errors
         return  super(Login, self).form_invalid(form)
+
+@login_required         
+def view_profile(request, pk=None):
+    if pk:
+        user = User.objects.get(pk=pk)
+    else:
+        user = request.user
+    args = {'user': user}
+    return render(request, 'profile.html', args)
+ 
+       
+        
+@login_required        
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('view_profile'))
+    else:
+        form = EditProfileForm(instance=request.user)
+        args = {'form': form}
+        return render(request, 'edit_perfil.html', args)
+        
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = FormPasswordChange(data=request.POST, user=request.user)
+
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect(reverse('view_profile'))
+        else:
+            return redirect(reverse('change_password'))
+    else:
+        form = FormPasswordChange(user=request.user)
+
+        args = {'form': form}
+        return render(request, 'change_password.html', args)
+        

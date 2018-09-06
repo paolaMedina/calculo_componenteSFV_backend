@@ -1,0 +1,99 @@
+
+{% extends "base_site.html" %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block title %} Registrar Usuario  {% endblock title %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Editar Cuenta</h3>
+        </div>
+
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Información Personal </h2>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+
+              <form class="form-horizontal form-label-left"  enctype="multipart/form-data" action="" method="POST" id="form" novalidate>
+                    {% csrf_token %}
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for={{form.first_name.name}}>{{form.first_name.label}} <span class="required">*</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                          {{form.first_name}}
+                      </div>
+                    </div>
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for={{form.last_name.name}}>{{form.last_name.label}}<span class="required">*</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                        {{form.last_name}}
+                      </div>
+                    </div>
+                    <div class="item form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for={{form.email.name}}>{{form.email.label}}<span class="required">*</span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                        {% bootstrap_field form.email show_label=False  placeholder=''  %}
+                      </div>
+                    </div>
+                  
+                    <div align="right">
+                        <a class="btn btn-primary" type="reset" href="{% url 'inicio' %}" >Cancel</a>
+                        <button id="send" type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                  
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- validator -->
+  <script src="{% static 'static/vendors/validator/validator.js' %}"></script>
+{% endblock javascripts %}
+
+{% block scripts %}
+<script >
+$(document).ready(function(){
+    $('#id_imagen').change(function(e) {
+        addImage(e); 
+       });
+  
+       function addImage(e){
+        var file = e.target.files[0],
+        imageType = /image.*/;
+      
+        if (!file.type.match(imageType))
+         return;
+    
+        var reader = new FileReader();
+        reader.onload = fileOnload;
+        reader.readAsDataURL(file);
+       }
+    
+       function fileOnload(e) {
+        var result=e.target.result;
+        $('#imgSalida').attr("src",result);
+       }
+  })
+  
+</script>
+
+{% endblock scripts%}
