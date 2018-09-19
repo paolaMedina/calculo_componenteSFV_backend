@@ -14,3 +14,9 @@ def Home(request):
     
 def loginPage(request):
     return  redirect('usuario:login')
+    
+def handler404(request, exception):
+    return render(request, '404.html', locals())
+    
+def handler500(request, exception):
+    return render(request, '404.html', locals())

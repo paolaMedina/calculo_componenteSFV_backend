@@ -1,12 +1,12 @@
 from django.conf.urls import url
 from . import views
-from .views import  cotizador
+from .views import  cotizador,viewSendPDF
 urlpatterns = [
     url(r'^csvData/$', views.DataCsvView.as_view(), name='csvData'),
     url(r'^postData/$', views.deserializacion.as_view(), name='postData'),
     url(r'^postData2/$', views.deserializacion2.as_view(), name='postData2'),
     url (r'^cotizacion/$', cotizador, name='cotizacion' ),
-    url ('render/pdf/', views.GeneratePdf.as_view(),name='pdf')
+    url ('pdf/(?P<filename>[\w-]+)/$', viewSendPDF,name='pdf')
     ]
 """url(r'^interruptoresManuales/$', views.InterruptorManualSerializerView.as_view(), name='interruptoresManuales'),
 url(r'^DpsACView/$', views.DpsACView.as_view(), name='DpsACView'),

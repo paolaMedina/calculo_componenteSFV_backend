@@ -20,6 +20,8 @@ from simulador.utilities import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import render, HttpResponseRedirect
 
 
 class RegistroUsuario(LoginRequiredMixin,CreateView):
@@ -145,7 +147,7 @@ class Login(FormView):
         
     def form_invalid(self, form):
         print "invalid"
-        messages.error(self.request, 'NOMBRE DE USUARIO O CONTRASEÑA INCORRECTAS')
+        messages.error(self.request, 'Nombre de usuario o contraseña Incorrectos')
         print form.errors
         return  super(Login, self).form_invalid(form)
 
@@ -158,18 +160,26 @@ def view_profile(request, pk=None):
     args = {'user': user}
     return render(request, 'profile.html', args)
  
-       
+from django.urls import reverse
         
 @login_required        
 def edit_profile(request):
     if request.method == 'POST':
-        form = EditProfileForm(request.POST, instance=request.user)
-
+        form = EditProfileForm(request.POST, instance=request.user.usuario)
         if form.is_valid():
-            form.save()
-            return redirect(reverse('view_profile'))
+            usuario=form.save(commit=False)
+            if 'imagen' in request.FILES:
+                usuario.imagen=request.FILES['imagen']
+            usuario.save()
+            messages.success(request, "Se editó su perfil con éxito")
+            return HttpResponseRedirect (reverse ('usuario:edit_profile'))
+        else:
+            
+            form = EditProfileForm(instance=request.user.usuario)
+            args = {'form': form}
+            return render(request, 'edit_perfil.html', args)
     else:
-        form = EditProfileForm(instance=request.user)
+        form = EditProfileForm(instance=request.user.usuario)
         args = {'form': form}
         return render(request, 'edit_perfil.html', args)
         
@@ -181,9 +191,12 @@ def change_password(request):
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            return redirect(reverse('view_profile'))
+            messages.success(request, "Se cambio contraseña de forma exitosa")
+            return HttpResponseRedirect (reverse ('usuario:change_password'))
         else:
-            return redirect(reverse('change_password'))
+            messages.error(request, "Contraseña actual incorrecta")
+            print form.errors
+            return redirect(reverse('usuario:change_password'))
     else:
         form = FormPasswordChange(user=request.user)
 

@@ -15,6 +15,7 @@ Including another URLconf
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url, include
+from django.conf.urls import handler404,handler500
 from django.contrib import admin
 
 from cotizadorFV.models import *
@@ -45,6 +46,8 @@ urlpatterns = [
     url(r'^reset/done',password_reset_complete,{'template_name':'password_reset_complete.html'},name="password_reset_complete"),
  
 ]
+#handler404 = 'simulador.views.handler404'
+#handler500 = 'simulador.views.handler500'
 
 #para descargar archivos
 from django.conf.urls.static import  static
