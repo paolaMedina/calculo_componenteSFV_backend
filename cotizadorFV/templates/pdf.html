@@ -1,7 +1,8 @@
-
+{% load pdf_filter %}
 {% load static %}
 
-<!doctype html>
+
+<!doctype html>-
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -59,7 +60,12 @@
         }
         p{
             font-weight: bold;
+            font-size:10pt;
+            margin:0;
         }
+        table {
+	width: 80px;
+}
     </style>
 </head>
 <body>
@@ -69,14 +75,19 @@
         <div class="card-header">
             <h3>Cotización - {{ today | date:"d/m/Y" }}</h3>
         </div>
-            <img  width="70px" heigh="60px" class="logo" src="{% static 'static/images/Logo.png' %}" >
-         
-        <div class="list-group">
-            <p>NIT:900.966.848-9</p>
-            <p>Direc: Cll 1 No. 55B-107</p>
-            <p>Proyecto: {{proyecto}}</p>
-            <p>Potencia: {{potencia}}</p>
-        </div>
+        <table width= "50%">
+            <td class="col-md-4">
+                <img width="200px" heigh="200px" src="{{ 'static/static/images/Logo.png' | get64 }}">
+            </td>
+            <td class=" col-md-6">
+                <p>NIT:900.966.848-9</p>
+                <p>Direc: Cll 1 No. 55B-107</p>
+                <p>Proyecto: {{proyecto}}</p>
+                <p>Potencia: {{potencia}}</p>
+            </td>
+        </table>
+        
+        <br>
         
         {%if conductores %}
             <li>Lista de Conductores</li>

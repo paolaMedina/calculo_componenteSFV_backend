@@ -314,3 +314,6 @@ def viewSendPDF (request,filename):
         send_email(destinatarios,filename)
         #contexto = {'pdf':"/media/cotizaciones/"+filename}
         return HttpResponseRedirect (reverse ('cotizadorFv:cotizacion'))
+        
+def alonePdf(requests):
+        return render_to_pdf('pdf.html',{})
