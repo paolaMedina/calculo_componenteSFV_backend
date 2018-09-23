@@ -30,11 +30,11 @@ class RegistroUsuario(LoginRequiredMixin,CreateView):
     model = Usuario
     form_class = RegistroForm
              
-    """
+    
     @verificar_rol(roles_permitidos=["administrador"])
     def dispatch(self, request, *args, **kwargs):
         return super(RegistroUsuario, self).dispatch(request, *args, **kwargs)
-    """    
+    
    
     
     def form_valid(self, form):
@@ -82,22 +82,22 @@ class RegistroUsuario(LoginRequiredMixin,CreateView):
 
                
 class ListarUsuarios(LoginRequiredMixin,ListView):
-    """
+    
     @verificar_rol(roles_permitidos=["administrador"])
     def dispatch(self, request, *args, **kwargs):
         return super(ListarUsuarios, self).dispatch(request, *args, **kwargs)
-    """    
+      
     model=Usuario
     template_name='listar.html'
     
     
        
 class EditarUsuario(LoginRequiredMixin,SuccessMessageMixin,UpdateView):
-    """
+    
     @verificar_rol(roles_permitidos=["administrador"])
     def dispatch(self, request, *args, **kwargs):
         return super(EditarUsuario, self).dispatch(request, *args, **kwargs)
-    """    
+      
    
     model = Usuario
     form_class = UpdateForm
@@ -107,11 +107,11 @@ class EditarUsuario(LoginRequiredMixin,SuccessMessageMixin,UpdateView):
   
 
 class EliminarUsuario(LoginRequiredMixin,DeleteView):
-    """
+    
     @verificar_rol(roles_permitidos=["administrador"])
     def dispatch(self, request, *args, **kwargs):
         return super(EliminarUsuario, self).dispatch(request, *args, **kwargs)
-    """    
+       
     model = Usuario
     success_url=reverse_lazy("usuario:listar_usuario")
     success_message = 'Se elimino el usuario con EXITO'

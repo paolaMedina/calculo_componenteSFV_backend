@@ -8,7 +8,10 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
 from cotizadorFV.lib.lib import importarCsvs
 import os
- 
+from simulador.utilities import *
+
+
+
 class UploadFileView(FormView):
     '''
     Esta vista sube un archivo al servidor
@@ -17,11 +20,11 @@ class UploadFileView(FormView):
     form_class = FormUpload
     success_url = reverse_lazy("cargarArchivos:uploadFile")
     
-    """
+    
     @verificar_rol(roles_permitidos=["administrador","ingeniero"])
     def dispatch(self, request, *args, **kwargs):
         return super(UploadFileView, self).dispatch(request, *args, **kwargs)
-    """  
+    
  
     def get(self, request, *args, **kwargs):
         data = {'form': self.form_class}

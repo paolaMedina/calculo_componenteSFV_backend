@@ -23,6 +23,10 @@ from lib.render import render_to_pdf
 import requests
 from threading import Thread, activeCount
 import json
+from simulador.utilities import *
+
+
+
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
@@ -68,7 +72,10 @@ class deserializacion (APIView):
 class deserializacion2 (APIView):
     permission_classes = (AllowAny,)
     authentication_classes = (CsrfExemptSessionAuthentication,)
+    login_required = True
     @csrf_exempt
+    
+    
     def post(self, request, format=None):
         file=""
         filename=""

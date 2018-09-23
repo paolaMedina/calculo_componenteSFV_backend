@@ -35,7 +35,7 @@ def verificar_rol(roles_permitidos):
 						messages.error(request, "Para acceder a la página solicitada requiere loguearse")
 						return redirect('usuario:login')
 				if not (rol in roles_permitidos):
-					messages.error(request, "Usted no tiene ninguno de los roles permitidos para acceder a la página solicitada")
+					messages.error(request, "Usted no tiene permisos para acceder a la página solicitada")
 					return redirect('inicio')
 			except AttributeError:
 				messages.error(request, "Para acceder a la página solicitada requiere loguearse")
