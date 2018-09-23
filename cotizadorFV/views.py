@@ -77,7 +77,7 @@ class deserializacion2 (APIView):
             data = lectura(generalFv)
             #prueba
             filename="cotizacion_"+data['proyecto']+".pdf"
-            #file = render_to_file('pdf.html', data,filename)
+            file = render_to_file('pdf.html', data,filename)
             contexto = {'pdf':"/media/cotizaciones/"+filename}
             return render(request,'prueba.html', contexto )
             
