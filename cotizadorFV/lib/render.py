@@ -19,6 +19,7 @@ def render_to_pdf(template_src, context_dict={}):
  
  
 def render_to_file(path,params,file_name):
+  print params 
   template = get_template(path)
   html = template.render(params)
   result = BytesIO()

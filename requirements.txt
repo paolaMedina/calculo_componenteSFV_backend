@@ -12,3 +12,4 @@ unidecode==1.0.22
 six==1.11.0
 xhtml2pdf==0.2.2
 html5lib==1.0.1
+django-role-permissions==2.2.0

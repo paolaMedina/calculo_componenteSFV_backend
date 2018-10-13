@@ -23,8 +23,10 @@ from lib.render import render_to_pdf
 import requests
 from threading import Thread, activeCount
 import json
+from django.contrib.auth.decorators import login_required
 from simulador.utilities import *
-
+from django.core.mail import EmailMessage
+from lib.render import render_to_file
 
 
 
@@ -72,33 +74,27 @@ class deserializacion (APIView):
 class deserializacion2 (APIView):
     permission_classes = (AllowAny,)
     authentication_classes = (CsrfExemptSessionAuthentication,)
-    login_required = True
     @csrf_exempt
-    
-    
     def post(self, request, format=None):
-        file=""
-        filename=""
+        print request.data
         if( request.data.get('validated_data')):
+            print "valido"
             generalFv = perfect_information_posted(request)
             data = lectura(generalFv)
-            #prueba
-            filename="cotizacion_"+data['proyecto']+".pdf"
+            #print data
+            filename="cotizacion_"+data['proyecto']
             file = render_to_file('pdf.html', data,filename)
-            contexto = {'pdf':"/media/cotizaciones/"+filename}
-            return render(request,'prueba.html', contexto )
-            
-        if(request.data.get('emails')!= None):
-            destinatarios=request.POST['emails'].split(";")
-            print destinatarios
-            filename="cotizacion_uu"
-            send_email(destinatarios,filename)
-            return HttpResponseRedirect (reverse ('cotizadorFv:cotizacion'))
+            return Response(status=200)
         else:
             serializer = GeneralFVSerializer(data=request.data)
+            print "serializador"
+            
+           
             if serializer.is_valid():
                 return Response(serializer.data,  status=200)
             else:
+                print "invalido"
+                print serializer.errors
                 return Response(serializer.errors,  status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
 def perfect_information_posted(request):
@@ -268,10 +264,11 @@ def lectura(generalFv):
     print "paneles_agrupados"
     print paneles_agrupados
     """
+    potencia=generalFv.potencia_de_planta_fv[:generalFv.potencia_de_planta_fv.find(".")+4]
     data = {
         'today': date.today(), 
         'proyecto':generalFv.nombre_proyecto,
-        'potencia':generalFv.potencia_de_planta_fv,
+        'potencia':potencia,
         'conductores': conductores,
         'canalizaciones': canalizaciones,
         'conductoresDC': conductoresDC,
@@ -289,6 +286,8 @@ def lectura(generalFv):
         
         }
     return data
+    
+@login_required    
 def cotizador(request):
     return render(request, 'formulario.html')
 def GeneratePdf(request,data):
@@ -297,20 +296,10 @@ def GeneratePdf(request,data):
     #send_email(file)
     return response
     
-from django.core.mail import EmailMessage
-from lib.render import render_to_file
 
-
-def send_email(destinatarios,filename):
-    route="media/cotizaciones/"+filename+".pdf"
-    file = open(route, "rb")
-    filename=filename+".pdf"
-    msg = EmailMessage('Subject of the Email', 'Body of the email', 'angiepmc93@gmail.com',destinatarios)
-    msg.content_subtype = "html"  
-    msg.attach(filename, file.read() , 'application/pdf')
-    msg.send()
-    
+@login_required
 def viewSendPDF (request,filename):
+    #print filename
     if request.method == "GET":
         contexto = {'pdf':"/media/cotizaciones/"+filename+".pdf"}
         return render(request,'prueba.html', contexto )
@@ -321,6 +310,28 @@ def viewSendPDF (request,filename):
         send_email(destinatarios,filename)
         #contexto = {'pdf':"/media/cotizaciones/"+filename}
         return HttpResponseRedirect (reverse ('cotizadorFv:cotizacion'))
-        
-def alonePdf(requests):
+
+
+def send_email(destinatarios,filename):
+    route="media/cotizaciones/"+filename+".pdf"
+    file = open(route, "rb")
+    filename=filename+".pdf"
+    print filename
+    msg = EmailMessage('Subject of the Email', 'Body of the email', 'angiepmc93@gmail.com',destinatarios)
+    msg.content_subtype = "html"  
+    msg.attach(filename, file.read() , 'application/pdf')
+    msg.send()
+    
+
+@csrf_exempt        
+def alonePdf(request):
+    print request
+    if request.method == "POST":
+        print "post"
+        generalFv = request.data
+        data = lectura(generalFv)
+        filename="cotizacion_"+data['proyecto']
+        file = render_to_file('pdf.html', data,filename)
+        return Response(status=200)
+    if request.method == "GET":
         return render_to_pdf('pdf.html',{})

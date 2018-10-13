@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+{% load static %}
+{% load permission_tags %}
+<html>
+
 <div class="left_col scroll-view">
 
 <div class="navbar nav_title" style="border: 0;">
@@ -18,24 +23,49 @@
   <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
     <div class="menu_section">
       <ul class="nav side-menu">
-        <li><a href="{% url 'inicio' %}"><i class="fa fa-home"></i> Home </a></li>
-        <li><a href="{% url 'cotizadorFv:cotizacion' %}"><i class="fa fa-calculator"></i> Cotizador Paneles FV</span></a></li>
-        <li><a href="{% url 'cargarArchivos:uploadFile' %}"><i class="fa fa-upload"></i> Subir Archivo </a></li>
-        <li><a><i class="fa fa-users"></i> Usuarios<span class="fa fa-chevron-down"></span></a>
-          <ul class="nav child_menu">
-            <li><a href="{% url 'usuario:registrar_usuario' %}">Crear usuario</a></li>
-            <li><a href="{% url 'usuario:listar_usuario' %}">Listar usuarios</a></li>
-          </ul>
-        </li>
-        <li><a><i class="fa fa-gear"></i> Cuenta<span class="fa fa-chevron-down"></span></a>
-          <ul class="nav child_menu">
-            <li><a href="{% url 'usuario:edit_profile' %}">Configurar Cuenta</a></li>
-            <li><a href="{% url 'usuario:change_password' %}">Cambiar Contraseña</a></li>
-            
-          </ul>
-        </li>
+        {%  if request.user.groups.all.0.name  == 'administrador' %}
+          <li><a href="{% url 'inicio' %}"><i class="fa fa-home"></i> Home </a></li>
+          <li><a href="{% url 'cotizadorFv:cotizacion' %}"><i class="fa fa-calculator"></i> Cotizador Paneles FV</span></a></li>
+          <li><a href="{% url 'cargarArchivos:uploadFile' %}"><i class="fa fa-upload"></i> Subir Archivo </a></li>
+          <li><a><i class="fa fa-users"></i> Usuarios<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+              <li><a href="{% url 'usuario:registrar_usuario' %}">Crear usuario</a></li>
+              <li><a href="{% url 'usuario:listar_usuario' %}">Listar usuarios</a></li>
+            </ul>
+          </li>
+          <li><a><i class="fa fa-gear"></i> Cuenta<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+              <li><a href="{% url 'usuario:edit_profile' %}">Configurar Cuenta</a></li>
+              <li><a href="{% url 'usuario:change_password' %}">Cambiar Contraseña</a></li>
+              
+            </ul>
+          </li>
+        {% endif %}
         
-       </ul>
+        {%  if request.user.groups.all.0.name  == 'ingeniero' %}
+          <li><a href="{% url 'inicio' %}"><i class="fa fa-home"></i> Home </a></li>
+          <li><a href="{% url 'cotizadorFv:cotizacion' %}"><i class="fa fa-calculator"></i> Cotizador Paneles FV</span></a></li>
+          <li><a href="{% url 'cargarArchivos:uploadFile' %}"><i class="fa fa-upload"></i> Subir Archivo </a></li>
+          <li><a><i class="fa fa-gear"></i> Cuenta<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+              <li><a href="{% url 'usuario:edit_profile' %}">Configurar Cuenta</a></li>
+              <li><a href="{% url 'usuario:change_password' %}">Cambiar Contraseña</a></li>
+            </ul>
+          </li>
+        {% endif %}
+        
+        {%  if request.user.groups.all.0.name  == 'cotizador' %}
+          <li><a href="{% url 'inicio' %}"><i class="fa fa-home"></i> Home </a></li>
+          <li><a href="{% url 'cotizadorFv:cotizacion' %}"><i class="fa fa-calculator"></i> Cotizador Paneles FV</span></a></li>
+          <li><a><i class="fa fa-gear"></i> Cuenta<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+              <li><a href="{% url 'usuario:edit_profile' %}">Configurar Cuenta</a></li>
+              <li><a href="{% url 'usuario:change_password' %}">Cambiar Contraseña</a></li>
+            </ul>
+          </li>
+        {% endif %}
+        
+      </ul>
     </div>
   </div>
   <!-- /sidebar menu -->
@@ -49,3 +79,4 @@
   </div>
   <!-- /menu footer buttons -->
 </div>
+</html>
