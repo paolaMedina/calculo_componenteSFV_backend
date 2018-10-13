@@ -20,7 +20,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from django.views.generic import View
 from datetime import date
 from lib.render import render_to_pdf
-import requests
+#import requests
 from threading import Thread, activeCount
 import json
 from django.contrib.auth.decorators import login_required
