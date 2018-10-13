@@ -33,7 +33,6 @@
                             <th>Apellidos</th>
                             <th>Correo Electronico</th>
                             <th>Rol</th>
-                            <th>imagen</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -46,7 +45,6 @@
                             <td>{{usuario.last_name}}</td>
                             <td>{{usuario.email}}</td>
                             <td>{{usuario.rol}}</td>
-                            <td>{{usuario.imagen}}</td>
                             <td>
                               <a class="btn btn-success" href="{% url 'usuario:editar_usuario' pk=usuario.pk %}" ><span class="glyphicon glyphicon-pencil" aria-hidden="true"></a>
                               <a class="btn btn-danger" href="{% url 'usuario:eliminar_usuario' pk=usuario.pk %}" onclick="return confirm('Desea eliminar el registro {{usuario.first_name }} {{usuario.last_name }}?')"
