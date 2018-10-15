@@ -83,7 +83,12 @@ class deserializacion2 (APIView):
             data = lectura(generalFv)
             #print data
             filename="cotizacion_"+data['proyecto']
-            file = render_to_file('pdf.html', data,filename)
+            if (request.user.groups.all()[0].name=="administrador"):
+                print "admin"
+                file = render_to_file('pdf_admin.html', data,filename)
+            else:
+                print "otro"
+                file = render_to_file('pdf.html', data,filename)
             return Response(status=200)
         else:
             serializer = GeneralFVSerializer(data=request.data)
@@ -227,62 +232,30 @@ def lectura(generalFv):
     conductoresCombninacionInversor=CalculoConductorInversor(generalFv.combinacion_inversor.input,tipoServicio,sumaIsal,tem_amb,isc_panel,tensionServicio)
     conductores=calculoConductoresFinal(conductoresMttp,conductoresInversor,conductoresCombninacionInversor)
     
-    """
-    print "conductores"
-    print conductores
-    print "canalizaciones"
-    print canalizaciones
-    
-    
-    #estos ya se encuentran incluidos en el calculo de conductores finales
-    print "conductores entrada y salida fv"
-    print conductoresMttp
-    print "conductores salida inversor"
-    print conductoresInversor
-    print "conductores Combinacion Inversor "+  str (conductoresCombninacionInversor)
-    #hasta aqui
-    print "conductoresDC " 
-    print conductoresDC
-    print "conductorAC "
-    print conductorAC[0].descripcion
-    print "itemsDpsDC"
-    print ItemsDpsDCCombinados
-    print "itemInterruptorDC"
-    print itemInterruptorDCCombinados
-    print "itemsDpsACSalida"
-    print itemsDpsACSalidaCombinados
-    print "itemDpsACInyeccion "
-    print itemDpsACInyeccion
-    print "fusibles"
-    print fusiblesCombinados
-    print "calculoInterruptoresAutoSalidaInversor"
-    print interruptoresAutoSalidaInversorCombinados
-    print "calculoInterruptoresAutoCombinador"
-    print interruptoresAutoCombinador
-    print "cajasCombinadorasFinal"
-    print cajasCombinadorasFinalCombinados
-    print "paneles_agrupados"
-    print paneles_agrupados
-    """
+    #añadir un index a cada objeto
+    counter = Counter(1) 
+    total = Total() 
+    #reducir tamaño de la potencia
     potencia=generalFv.potencia_de_planta_fv[:generalFv.potencia_de_planta_fv.find(".")+4]
     data = {
         'today': date.today(), 
         'proyecto':generalFv.nombre_proyecto,
         'potencia':potencia,
-        'conductores': conductores,
-        'canalizaciones': canalizaciones,
-        'conductoresDC': conductoresDC,
-        'conductoresAC':conductorAC,
-        'itemsDpsDC': ItemsDpsDCCombinados,
-        'itemInterruptorDC':itemInterruptorDCCombinados,
-        'itemsDpsACSalida':itemsDpsACSalidaCombinados,
-        'itemDpsACInyeccion':itemDpsACInyeccion,
-        'fusibles':fusiblesCombinados,
-        'interruptoresAutoSalidaInversor': interruptoresAutoSalidaInversorCombinados,
-        'interruptorAutoCombinador':interruptoresAutoCombinador,
-        'CombinadorasFinal': cajasCombinadorasFinalCombinados,
-        'paneles':paneles_agrupados,
-        'inversores':inversores
+        'conductores': add_Index_Cost(conductores, counter,total),
+        'canalizaciones': add_Index_Cost(canalizaciones,counter,total),
+        'conductoresDC': add_Index_Cost(conductoresDC,counter,total),
+        'conductoresAC':add_Index_Cost(conductorAC,counter,total),
+        'itemsDpsDC': add_Index_Cost(ItemsDpsDCCombinados,counter,total),
+        'itemInterruptorDC':add_Index_Cost(itemInterruptorDCCombinados,counter,total),
+        'itemsDpsACSalida':add_Index_Cost(itemsDpsACSalidaCombinados,counter,total),
+        'itemDpsACInyeccion':add_Index_Cost([itemDpsACInyeccion],counter,total),
+        'fusibles':add_Index_Cost(fusiblesCombinados,counter,total),
+        'interruptoresAutoSalidaInversor': add_Index_Cost(interruptoresAutoSalidaInversorCombinados,counter,total),
+        'interruptorAutoCombinador':add_Index_Cost([interruptoresAutoCombinador],counter,total),
+        'CombinadorasFinal': add_Index_Cost(cajasCombinadorasFinalCombinados,counter,total),
+        'paneles':add_Index_Cost(paneles_agrupados,counter,total),
+        'inversores':add_Index_Cost(inversores,counter,total),
+        'total':total
         
         }
     return data
@@ -317,7 +290,7 @@ def send_email(destinatarios,filename):
     file = open(route, "rb")
     filename=filename+".pdf"
     print filename
-    msg = EmailMessage('Subject of the Email', 'Body of the email', 'angiepmc93@gmail.com',destinatarios)
+    msg = EmailMessage('Cotización calculadora fotovoltaica-Soler', '', 'angiepmc93@gmail.com',destinatarios)
     msg.content_subtype = "html"  
     msg.attach(filename, file.read() , 'application/pdf')
     msg.send()
@@ -335,3 +308,27 @@ def alonePdf(request):
         return Response(status=200)
     if request.method == "GET":
         return render_to_pdf('pdf.html',{})
+        
+      
+      
+class Total:
+    def __init__(self):
+        self.value = 0
+    def add(self,monto):
+        self.value += monto
+        
+"""
+Agregar contador a los elementos de la cotización
+"""
+class Counter:
+    def __init__(self, start):
+        self.index = start
+    def increment(self):
+        self.index += 1
+
+def add_Index_Cost(list, counter,total):
+    for element in list:
+        element.index = counter.index
+        counter.increment()
+        total.add(element.valor_total)
+    return list

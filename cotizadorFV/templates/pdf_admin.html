@@ -1,0 +1,537 @@
+{% load pdf_filter %}
+{% load static %}
+
+<!doctype html>-
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
+    <title>Cotizacion</title>
+    <style type="text/css">
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: #fff;
+            table-layout: fixed;
+        }
+        .table th,
+        .table td {
+            padding: 5px;
+            vertical-align: top;
+            border-top: 1px solid #0dc09c;
+            text-align: center;
+        }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #000;
+        }
+        .table tbody + tbody {
+            border-top: 2px solid #000;
+        }
+        .table .table {
+            background-color: #fff;
+        }
+        .list-group {
+            display: block;
+            width: 100%;
+            list-style: none;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .list-group p {
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            list-style: none;
+            font-size: 1.1em;
+        }
+        table {
+        	width: 80px;
+        }
+        p{
+            font-weight: bold;
+            font-size:10pt;
+            margin:0;
+        }
+        .card{
+            
+            counter-reset: section;
+        }
+        
+        .count::before {
+            counter-increment: section;
+            content:  counter(section);
+        }
+        
+    </style>
+</head>
+<body>
+
+
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3>Cotización - {{ today | date:"d/m/Y" }}</h3>
+        </div>
+        <table width= "50%">
+            <td class="col-md-4">
+                <img width="200px" heigh="200px" src="{{ 'static/static/images/Logo.png' | get64 }}">
+            </td>
+            <td class=" col-md-8">
+                <p>NIT:900.966.848-9</p>
+                <p>Direc: Cll 1 No. 55B-107</p>
+                <p>Proyecto: {{proyecto}}</p>
+                <p>Potencia: {{potencia}}</p>
+                
+            </td>
+        </table>
+        
+        <br>
+        
+        {%if conductores %}
+            <li>Lista de Conductores</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for conductor in conductores %}
+                    <tr>
+                        <td width="50px" class="count">{{ conductor.index }}</td>
+                        <td width="300px">{{ conductor.descripcion }}</td>
+                        <td width="70px">{{ conductor.cantidad }}</td>
+                        <td width="70px">{{ conductor.unidad }}</td>
+                        <td width="100px">{{ conductor.valor_unitario }}</td>
+                        <td width="100px">{{ conductor.valor_total}}</td>
+                        
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            
+        {% else %}
+            <li>No aplica conductores</li>
+        {% endif %}
+        
+        {%if canalizaciones %}
+            <li>Lista de canalizaciones</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                    
+                </tr>
+                </thead>
+                <tbody>
+                {% for canalizacion in canalizaciones %}
+                    <tr>
+                        <td width="50px" class="count">{{ canalizacion.index }}</td>
+                        <td width="300px">{{ canalizacion.descripcion }}</td>
+                        <td width="70px">{{ canalizacion.cantidad }}</td>
+                        <td width="70px">{{ canalizacion.unidad }}</td>
+                        <td width="100px">{{ canalizacion.valor_unitario }}</td>
+                        <td width="100px">{{ canalizacion.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>   
+           
+        {% else %}
+            <li>No aplica canalizaciones</li>
+        {% endif %}
+        
+        
+        {%if conductoresDC %}
+            <li>Lista de conductores DC</li>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th width="50px">Item</th>
+                        <th width="300px">Descripcion</th>
+                        <th width="70px">Cantidad</th>
+                        <th width="70px" >Unidad</th>
+                        <th width="100px">Valor Unitario</th>
+                        <th width="100px">Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conductorDC in conductoresDC %}
+                        <tr>
+                            <td width="50px" class="count">{{ conductorDC.index }}</td>
+                            <td width="300px">{{ conductorDC.descripcion }}</td>
+                            <td width="70px">{{ conductorDC.cantidad }}</td>
+                            <td width="70px">{{ conductorDC.unidad }}</td>
+                            <td width="100px">{{ conductorDC.valor_unitario }}</td>
+                            <td width="100px">{{ conductorDC.valor_total}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        {% else %}
+            <li>No aplica conductores DC</li>
+        {% endif %}
+        
+        {%if conductoresAC %}  
+            <li>Lista de conductores AC</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for conductorAC in conductoresAC %}
+                    <tr>
+                        <td width="50px" class="count">{{ conductorAC.index }}</td>
+                        <td width="300px">{{ conductorAC.descripcion }}</td>
+                        <td width="70px">{{ conductorAC.cantidad }}</td>
+                        <td width="70px">{{ conductorAC.unidad }}</td>
+                        <td width="100px">{{ conductorAC.valor_unitario }}</td>
+                        <td width="100px">{{ conductorAC.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica conductores AC</li>
+        {% endif %}
+        
+        {%if itemsDpsDC %}
+            <li>Lista de items Dps DC</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for DpsDC in itemsDpsDC %}
+                    <tr>
+                        <td width="50px" class="count">{{ DpsDC.index }}</td>
+                        <td width="300px">{{ DpsDC.descripcion }}</td>
+                        <td width="70px">{{ DpsDC.cantidad }}</td>
+                        <td width="70px">{{ DpsDC.unidad }}</td>
+                        <td width="100px">{{ DpsDC.valor_unitario }}</td>
+                        <td width="100px">{{ DpsDC.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+           
+        {% else %}
+            <li>No aplica Dps DC</li>
+        {% endif %}
+        
+        {%if itemInterruptorDC %}
+            <li>Lista de items Interruptor DC</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for interruptorDC in itemInterruptorDC %}
+                    <tr>
+                        <td width="50px" class="count">{{ interruptorDC.index }}</td>
+                        <td width="300px">{{ interruptorDC.descripcion }}</td>
+                        <td width="70px">{{ interruptorDC.cantidad }}</td>
+                        <td width="70px">{{ interruptorDC.unidad }}</td>
+                        <td width="100px">{{ interruptorDC.valor_unitario }}</td>
+                        <td width="100px">{{ interruptorDC.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica Interruptores DC</li>
+        {% endif %}
+        
+        {%if itemsDpsACSalida %}
+            <li>Lista de items Dps AC Salida</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for dpsACSalida in itemsDpsACSalida %}
+                    <tr>
+                        <td width="50px" class="count">{{ dpsACSalida.index }}</td>
+                        <td width="300px">{{ dpsACSalida.descripcion }}</td>
+                        <td width="70px">{{ dpsACSalida.cantidad }}</td>
+                        <td width="70px">{{ dpsACSalida.unidad }}</td>
+                        <td width="100px">{{ dpsACSalida.valor_unitario }}</td>
+                        <td width="100px">{{ dpsACSalida.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica Dps AC Salida</li>
+        {% endif %}
+        
+        {%if itemDpsACInyeccion %}
+            <li>Item Dps AC Inyeccion</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for item in itemDpsACInyeccion %}
+                        <tr>
+                            <td width="50px" class="count">{{ item.index }}</td>
+                            <td width="300px">{{ item.descripcion }}</td>
+                            <td width="70px">{{ item.cantidad }}</td>
+                            <td width="70px">{{ item.unidad }}</td>
+                            <td width="100px">{{ item.valor_unitario }}</td>
+                            <td width="100px">{{ item.valor_total}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        {% else %}
+            <li>No aplica Dps AC Inyeccion</li>
+        {% endif %}
+        
+        {%if fusibles %}
+            <li>Lista de fusibles</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for fusible in fusibles %}
+                    <tr>
+                        <td width="50px" class="count">{{ fusible.index }}</td>
+                        <td width="300px">{{ fusible.descripcion }}</td>
+                        <td width="70px">{{ fusible.cantidad }}</td>
+                        <td width="70px">{{ fusible.unidad }}</td>
+                        <td width="100px">{{ fusible.valor_unitario }}</td>
+                        <td width="100px">{{ fusible.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica fusibles</li>
+        {% endif %}
+        
+        {%if interruptoresAutoSalidaInversor %}
+            <li>Lista de interruptores Automaticos de Salida Inversor</li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for interruptorAutoSalidaInversor in interruptoresAutoSalidaInversor %}
+                    <tr>
+                        <td width="50px" class="count">{{ interruptorAutoSalidaInversor.index }}</td>
+                        <td width="300px">{{ interruptorAutoSalidaInversor.descripcion }}</td>
+                        <td width="70px">{{ interruptorAutoSalidaInversor.cantidad }}</td>
+                        <td width="70px">{{ interruptorAutoSalidaInversor.unidad }}</td>
+                        <td width="100px">{{ interruptorAutoSalidaInversor.valor_unitario }}</td>
+                        <td width="100px">{{ interruptorAutoSalidaInversor.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica interruptores Automaticos para Salida de Inversor</li>
+        {% endif %}
+        
+        {%if interruptorAutoCombinador %}
+            <li>Lista de interruptor Automaticos Combinador </li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for interruptor in interruptorAutoCombinador %}
+                        <tr>
+                            <td width="50px" class="count">{{ interruptor.index }}</td>
+                            <td width="300px">{{ interruptor.descripcion }}</td>
+                            <td width="70px">{{ interruptor.cantidad }}</td>
+                            <td width="70px">{{ interruptor.unidad }}</td>
+                            <td width="100px">{{ interruptor.valor_unitario }}</td>
+                            <td width="100px">{{ interruptor.valor_total}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        {% else %}
+            <li>No aplica interruptor Automaticos Combinado</li>
+        {% endif %}
+        
+        {%if CombinadorasFinal %}
+            <li>Lista de cajas combinadoras </li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for caja in CombinadorasFinal %}
+                    <tr>
+                        <td width="50px" class="count">{{ caja.index }}</td>
+                        <td width="300px">{{ caja.descripcion }}</td>
+                        <td width="70px">{{ caja.cantidad }}</td>
+                        <td width="70px">{{ caja.unidad }}</td>
+                        <td width="100px">{{ caja.valor_unitario }}</td>
+                        <td width="100px">{{ caja.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+           
+        {% else %}
+            <li>No aplica armarios</li>
+        {% endif %}
+        
+        {%if paneles %}
+            <li>Lista de paneles solares </li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for panel in paneles %}
+                    <tr>
+                        <td width="50px" class="count">{{ panel.index }}</td>
+                        <td width="300px">{{ panel.descripcion }}</td>
+                        <td width="70px">{{ panel.cantidad }}</td>
+                        <td width="70px">{{ panel.unidad }}</td>
+                        <td width="100px">{{ panel.valor_unitario }}</td>
+                        <td width="100px">{{ panel.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica paneles solares</li>
+        {% endif %}
+        
+        
+        {%if inversores %}
+            <li>Lista de inversores </li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50px">Item</th>
+                    <th width="300px">Descripcion</th>
+                    <th width="70px">Cantidad</th>
+                    <th width="70px" >Unidad</th>
+                    <th width="100px">Valor Unitario</th>
+                    <th width="100px">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for inversor in inversores %}
+                    <tr>
+                        <td width="50px" class="count">{{inversor.index }}</td>
+                        <td width="300px">{{inversor.descripcion }}</td>
+                        <td width="70px">{{ inversor.cantidad }}</td>
+                        <td width="70px">{{ inversor.unidad }}</td>
+                        <td width="100px">{{ inversor.valor_unitario }}</td>
+                        <td width="100px">{{ inversor.valor_total}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <li>No aplica inversores</li>
+        {% endif %}
+        <br>
+        <br>
+        <hr>
+        
+        <p align="right">Costo Total:{{total.value}}</p>
+    </div>
+</div>
+
+
+</body>
+</html>

@@ -17,9 +17,10 @@ def render_to_pdf(template_src, context_dict={}):
     return HttpResponse(result.getvalue(), content_type='application/pdf')
  return HttpResponse("Error Rendering PDF", status=400)
  
- 
+
+#guarda el pfd 
 def render_to_file(path,params,file_name):
-  print params 
+  #print params 
   template = get_template(path)
   html = template.render(params)
   result = BytesIO()
