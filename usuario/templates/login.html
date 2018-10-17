@@ -9,22 +9,50 @@
   <!-- Animate.css -->
   <link href="{% static 'static/vendors/animate.css/animate.min.css' %}" rel="stylesheet">
   
-  
+  <style type="text/css">
+    body{
+      background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url("/static/static/images/Logo.png") !important;
+      
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+      background-size: contain !important;
+
+    }
+    h1{
+          color: green
+    }
+    
+    .login_content h1:before, .login_content h1:after {
+      height: 0px !important; 
+      text-shadow: 0px 0px  #fff !important;
+    }
+    .btn{
+      background: #36a229;
+      border: 1px solid #36a229;
+      color:#ffffff;
+    }
+    
+    .reset_pass{
+      color: #000000;
+      text-shadow: 0px 0px #fff;
+      font-weight: bold;
+    }
+  </style>
   
 {% endblock stylesheets %}
 
 {% block body_class %}login{% endblock body_class %}
 
 {% block body %}
-  <div>
+  <div class="content">
     <a class="hiddenanchor" id="signup"></a>
     <a class="hiddenanchor" id="signin"></a>
 
     <div class="login_wrapper">
       <div class="animate form login_form">
-        <section class="login_content">
+        <section class="login_content" >
           <form class="m-t" role="form" method="post" id='form_login'>
-              <h1>Login</h1>
+              <h1 >Cotizador Paneles Fotovoltaico</h1>
                 {% csrf_token %}
                 
                 <div class="form-group">
@@ -35,7 +63,7 @@
                 </div>
                 <div>
                     <button type="submit" class="btn btn-default ">Log in</button>
-                    <a class="reset_pass" href="{% url 'password_reset' %}"><small>Forgot password?</small></a>
+                    <a style="color:#000000" class="reset_pass" href="{% url 'password_reset' %}"><small>Forgot password?</small></a>
                 
                 </div>
                 <div class="clearfix"></div>
