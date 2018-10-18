@@ -314,6 +314,7 @@ def calibreconductorAC(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,dist
     corrienteCombinacionInversor=corrienteNominalInversor(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,isc_panel)
     calibreCombinacionInversor=buscarCalibreCondutor(corrienteCombinacionInversor)
     #hallar calibre para cada salida de inversor en cada campo FV
+    print camposFV
     for campoFV in camposFV:
         isalInversor=isalN(campoFV.modelo_panel_solar_2,tensionServicio)
         max_conductInversor=campoFV.salida_inversor.output.maximo_numero_de_conductores
@@ -323,9 +324,9 @@ def calibreconductorAC(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,dist
                                             calibre=calibreInversor,distancia=campoFV.salida_inversor.output.distancia_del_conductor_mas_largo)
         conductores.append(conductor)
         
-    conductores.append(CalibreConductor(tipo_conductor="THHN/THWN-2 CT" ,material_conductor="Cobre",
-                                            calibre=calibreCombinacionInversor,distancia=distanciaCombinacionInversor))
+    print conductores
     conductoresSeleccionado=buscarConductor(conductores)
+    print conductoresSeleccionado
     return conductoresSeleccionado
     
 

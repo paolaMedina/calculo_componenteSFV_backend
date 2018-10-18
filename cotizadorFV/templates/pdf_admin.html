@@ -68,6 +68,10 @@
             counter-increment: section;
             content:  counter(section);
         }
+        .lista{
+            font-size:15px;
+            font-weight: bold;
+        }
         
     </style>
 </head>
@@ -80,13 +84,13 @@
         <div class="card-header">
             <h3>Cotización - {{ today | date:"d/m/Y" }}</h3>
         </div>
-        <table width= "50%">
+        <table width= "70%">
             <td class="col-md-4">
-                <img width="200px" heigh="200px" src="{{ 'static/static/images/Logo.png' | get64 }}">
+                <img width="290px" heigh="290px" src="{{ 'static/static/images/Logo SE desktop.png' | get64 }}">
             </td>
             <td class=" col-md-8">
                 <p>NIT:900.966.848-9</p>
-                <p>Direc: Cll 1 No. 55B-107</p>
+                <p>Direc: Cll 1 No. 55B-107 Apto 202</p>
                 <p>Proyecto: {{proyecto}}</p>
                 <p>Potencia: {{potencia}}</p>
                 
@@ -96,7 +100,7 @@
         <br>
         
         {%if conductores %}
-            <li>Lista de Conductores</li>
+            <li class="lista">Lista de Conductores</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -128,7 +132,7 @@
         {% endif %}
         
         {%if canalizaciones %}
-            <li>Lista de canalizaciones</li>
+            <li class="lista">Lista de canalizaciones</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -161,7 +165,7 @@
         
         
         {%if conductoresDC %}
-            <li>Lista de conductores DC</li>
+            <li class="lista">Lista de conductores DC</li>
             <table class="table">
                 <thead>
                     <tr>
@@ -191,7 +195,7 @@
         {% endif %}
         
         {%if conductoresAC %}  
-            <li>Lista de conductores AC</li>
+            <li class="lista">Lista de conductores AC</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -221,7 +225,7 @@
         {% endif %}
         
         {%if itemsDpsDC %}
-            <li>Lista de items Dps DC</li>
+            <li class="lista">Lista de items Dps DC</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -252,7 +256,7 @@
         {% endif %}
         
         {%if itemInterruptorDC %}
-            <li>Lista de items Interruptor DC</li>
+            <li class="lista">Lista de items Interruptor DC</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -282,7 +286,7 @@
         {% endif %}
         
         {%if itemsDpsACSalida %}
-            <li>Lista de items Dps AC Salida</li>
+            <li class="lista">Lista de items Dps AC Salida</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -312,7 +316,7 @@
         {% endif %}
         
         {%if itemDpsACInyeccion %}
-            <li>Item Dps AC Inyeccion</li>
+            <li class="lista">Item Dps AC Inyeccion</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -343,7 +347,7 @@
         {% endif %}
         
         {%if fusibles %}
-            <li>Lista de fusibles</li>
+            <li class="lista">Lista de fusibles</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -373,7 +377,7 @@
         {% endif %}
         
         {%if interruptoresAutoSalidaInversor %}
-            <li>Lista de interruptores Automaticos de Salida Inversor</li>
+            <li class="lista">Lista de interruptores Automaticos de Salida Inversor</li>
             <table class="table">
                 <thead>
                 <tr>
@@ -403,7 +407,7 @@
         {% endif %}
         
         {%if interruptorAutoCombinador %}
-            <li>Lista de interruptor Automaticos Combinador </li>
+            <li class="lista">Lista de interruptor Automaticos Combinador </li>
             <table class="table">
                 <thead>
                 <tr>
@@ -434,7 +438,7 @@
         {% endif %}
         
         {%if CombinadorasFinal %}
-            <li>Lista de cajas combinadoras </li>
+            <li class="lista">Lista de cajas combinadoras </li>
             <table class="table">
                 <thead>
                 <tr>
@@ -465,7 +469,7 @@
         {% endif %}
         
         {%if paneles %}
-            <li>Lista de paneles solares </li>
+            <li class="lista">Lista de paneles solares </li>
             <table class="table">
                 <thead>
                 <tr>
@@ -496,7 +500,7 @@
         
         
         {%if inversores %}
-            <li>Lista de inversores </li>
+            <li class="lista">Lista de inversores </li>
             <table class="table">
                 <thead>
                 <tr>
@@ -526,7 +530,7 @@
         {% endif %}
         <br>
         <br>
-        <hr>
+        
         
         <p align="right">Costo Total:{{total.value}}</p>
     </div>

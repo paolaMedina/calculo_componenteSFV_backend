@@ -76,7 +76,7 @@ class deserializacion2 (APIView):
     authentication_classes = (CsrfExemptSessionAuthentication,)
     @csrf_exempt
     def post(self, request, format=None):
-        print request.data
+        #print request.data
         if( request.data.get('validated_data')):
             print "valido"
             generalFv = perfect_information_posted(request)
@@ -84,10 +84,8 @@ class deserializacion2 (APIView):
             #print data
             filename="cotizacion_"+data['proyecto']
             if (request.user.groups.all()[0].name=="administrador"):
-                print "admin"
                 file = render_to_file('pdf_admin.html', data,filename)
             else:
-                print "otro"
                 file = render_to_file('pdf.html', data,filename)
             return Response(status=200)
         else:
@@ -212,7 +210,7 @@ def lectura(generalFv):
         
         #calculo de conductores puesto a tierra AC
         conductorAC=calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,distanciaCombinacionInversor,isc_panel,generalFv.fvs,tensionServicio)
-        
+        print conductorAC
         
         #calculo de cajas combitorias 
         cajaCombinatoriaGeneral=seleccionCajaCombinatoria1(total_cadenas_paralelo,len(panelfv.mttps))#una caja combinatoria para todo sloo mppts
@@ -279,7 +277,7 @@ def viewSendPDF (request,filename):
     
     if request.method == "POST":
         destinatarios=request.POST['emails'].split(";")
-        print destinatarios
+        #print destinatarios
         send_email(destinatarios,filename)
         #contexto = {'pdf':"/media/cotizaciones/"+filename}
         return HttpResponseRedirect (reverse ('cotizadorFv:cotizacion'))
@@ -289,7 +287,7 @@ def send_email(destinatarios,filename):
     route="media/cotizaciones/"+filename+".pdf"
     file = open(route, "rb")
     filename=filename+".pdf"
-    print filename
+    #print filename
     msg = EmailMessage('Cotización calculadora fotovoltaica-Soler', '', 'angiepmc93@gmail.com',destinatarios)
     msg.content_subtype = "html"  
     msg.attach(filename, file.read() , 'application/pdf')
@@ -298,7 +296,7 @@ def send_email(destinatarios,filename):
 
 @csrf_exempt        
 def alonePdf(request):
-    print request
+    #print request
     if request.method == "POST":
         print "post"
         generalFv = request.data
