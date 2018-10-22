@@ -164,7 +164,7 @@ def lectura(generalFv):
         conductoresInversor.append(conductorInversor)
         
         #calculo de conductores puesto a tierra DC
-        conductoresDC.extend(calibreconductorDC(panelfv.mttps,isc_panel))
+        conductoresDC.extend([calibreconductorDC(panelfv.mttps,isc_panel)])
         
         inversoresSeleccionados.append(inversor)#acumulando los inversores seleccionados
         
