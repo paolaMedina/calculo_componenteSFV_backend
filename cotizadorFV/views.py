@@ -164,7 +164,7 @@ def lectura(generalFv):
         conductoresInversor.append(conductorInversor)
         
         #calculo de conductores puesto a tierra DC
-        conductoresDC.append(calibreconductorDC(panelfv.mttps,isc_panel))
+        conductoresDC.extend(calibreconductorDC(panelfv.mttps,isc_panel))
         
         inversoresSeleccionados.append(inversor)#acumulando los inversores seleccionados
         
@@ -210,7 +210,7 @@ def lectura(generalFv):
         
         #calculo de conductores puesto a tierra AC
         conductorAC=calibreconductorAC(sumaIsal,tem_amb,max_conductCombinacionInversor,distanciaCombinacionInversor,isc_panel,generalFv.fvs,tensionServicio)
-        print conductorAC
+        #print conductorAC
         
         #calculo de cajas combitorias 
         cajaCombinatoriaGeneral=seleccionCajaCombinatoria1(total_cadenas_paralelo,len(panelfv.mttps))#una caja combinatoria para todo sloo mppts
@@ -220,6 +220,7 @@ def lectura(generalFv):
    
     canalizaciones=calculoCanalizacion(generalFv.fvs, generalFv.combinacion_inversor)
     #con los items dps que se seleccionaron en cada mttp, se verifica si no existen mas de dos dps iguales, si los hay se unen 
+    
     ItemsDpsDCCombinados=combinarItems(itemsDpsDC_mppt)
     itemInterruptorDCCombinados=combinarItems(itemInterruptorDC)
     itemsDpsACSalidaCombinados=combinarItems(itemsDpsACSalida)
@@ -229,35 +230,117 @@ def lectura(generalFv):
     inversores=calculoInversores(inversoresSeleccionados)
     conductoresCombninacionInversor=CalculoConductorInversor(generalFv.combinacion_inversor.input,tipoServicio,sumaIsal,tem_amb,isc_panel,tensionServicio)
     conductores=calculoConductoresFinal(conductoresMttp,conductoresInversor,conductoresCombninacionInversor)
-    
-    #añadir un index a cada objeto
-    counter = Counter(1) 
-    total = Total() 
     #reducir tamaño de la potencia
     potencia=generalFv.potencia_de_planta_fv[:generalFv.potencia_de_planta_fv.find(".")+4]
-    data = {
-        'today': date.today(), 
-        'proyecto':generalFv.nombre_proyecto,
-        'potencia':potencia,
-        'conductores': add_Index_Cost(conductores, counter,total),
-        'canalizaciones': add_Index_Cost(canalizaciones,counter,total),
-        'conductoresDC': add_Index_Cost(conductoresDC,counter,total),
-        'conductoresAC':add_Index_Cost(conductorAC,counter,total),
-        'itemsDpsDC': add_Index_Cost(ItemsDpsDCCombinados,counter,total),
-        'itemInterruptorDC':add_Index_Cost(itemInterruptorDCCombinados,counter,total),
-        'itemsDpsACSalida':add_Index_Cost(itemsDpsACSalidaCombinados,counter,total),
-        'itemDpsACInyeccion':add_Index_Cost([itemDpsACInyeccion],counter,total),
-        'fusibles':add_Index_Cost(fusiblesCombinados,counter,total),
-        'interruptoresAutoSalidaInversor': add_Index_Cost(interruptoresAutoSalidaInversorCombinados,counter,total),
-        'interruptorAutoCombinador':add_Index_Cost([interruptoresAutoCombinador],counter,total),
-        'CombinadorasFinal': add_Index_Cost(cajasCombinadorasFinalCombinados,counter,total),
-        'paneles':add_Index_Cost(paneles_agrupados,counter,total),
-        'inversores':add_Index_Cost(inversores,counter,total),
-        'total':total
-        
-        }
+    
+    data=generateData(generalFv.nombre_proyecto,potencia,ItemsDpsDCCombinados,itemInterruptorDCCombinados,itemsDpsACSalidaCombinados,
+    fusiblesCombinados,interruptoresAutoSalidaInversorCombinados,cajasCombinadorasFinalCombinados,inversores,
+    conductores,canalizaciones,conductoresDC,conductorAC,paneles_agrupados,
+    interruptoresAutoCombinador,itemDpsACInyeccion)
+    
     return data
     
+    
+def generateData(nombre_proyecto,potencia,ItemsDpsDCCombinados,itemInterruptorDCCombinados,itemsDpsACSalidaCombinados,
+    fusiblesCombinados,interruptoresAutoSalidaInversorCombinados,cajasCombinadorasFinalCombinados,inversores,
+    conductores,canalizaciones,conductoresDC,conductorAC,paneles_agrupados,
+    interruptoresAutoCombinador,itemDpsACInyeccion):
+        
+        #añadir un index a cada objeto
+        counter = Counter(1) 
+        total = Total() 
+        
+        if (len(conductores)>0):
+            conductores=add_Index_Cost(conductores,counter,total)
+        else:
+            conductores=None
+        
+        if (len(canalizaciones)>0):
+            canalizaciones=add_Index_Cost(canalizaciones,counter,total)
+        else:
+            canalizaciones=None
+        
+        if (len(conductoresDC)>0):
+            conductoresDC=add_Index_Cost(conductoresDC,counter,total)
+        else:
+            conductoresDC=None
+        
+        if (len(conductorAC)>0):
+            conductorAC=add_Index_Cost(conductorAC,counter,total)
+        else:
+            conductorAC=None
+        
+        if (len(ItemsDpsDCCombinados)>0):
+            ItemsDpsDCCombinados=add_Index_Cost(ItemsDpsDCCombinados,counter,total)
+        else:
+            ItemsDpsDCCombinados=None
+        
+        if (len(itemInterruptorDCCombinados)>0):
+            itemInterruptorDCCombinados=add_Index_Cost(itemInterruptorDCCombinados,counter,total)
+        else:
+            itemInterruptorDCCombinados=None
+            
+        if (len(itemsDpsACSalidaCombinados)>0):
+            itemsDpsACSalidaCombinados=add_Index_Cost(itemsDpsACSalidaCombinados,counter,total)
+        else:
+            itemsDpsACSalidaCombinados=None
+            
+        if(itemDpsACInyeccion !=None):
+            itemDpsACInyeccion=add_Index_Cost([itemDpsACInyeccion],counter,total)
+        
+        if (len(fusiblesCombinados)>0):
+            fusiblesCombinados=add_Index_Cost(fusiblesCombinados,counter,total)
+        else:
+            fusiblesCombinados=None
+            
+        if (len(interruptoresAutoSalidaInversorCombinados)>0):
+            interruptoresAutoSalidaInversorCombinados=add_Index_Cost(interruptoresAutoSalidaInversorCombinados,counter,total)
+        else:
+            interruptoresAutoSalidaInversorCombinados=None
+        
+        if (interruptoresAutoCombinador !=None):
+            interruptoresAutoCombinador=add_Index_Cost([interruptoresAutoCombinador],counter,total)
+        
+        if (len(cajasCombinadorasFinalCombinados)>0):
+            cajasCombinadorasFinalCombinados=add_Index_Cost(cajasCombinadorasFinalCombinados,counter,total)
+        else:
+            cajasCombinadorasFinalCombinados=None
+            
+        if (len(paneles_agrupados)>0):
+            paneles_agrupados=add_Index_Cost(paneles_agrupados,counter,total)
+        else:
+            paneles_agrupados=None
+            
+        if (len(inversores)>0):
+            inversores=add_Index_Cost(inversores,counter,total)
+        else:
+            inversores=None
+            
+        data = {
+            'today': date.today(), 
+            'proyecto':nombre_proyecto,
+            'potencia':potencia,
+            'conductores': conductores, 
+            'canalizaciones': canalizaciones,
+            'conductoresDC': conductoresDC,
+            'conductoresAC':conductorAC,
+            'itemsDpsDC': ItemsDpsDCCombinados,
+            'itemInterruptorDC':itemInterruptorDCCombinados,
+            'itemsDpsACSalida':itemsDpsACSalidaCombinados,
+            'itemDpsACInyeccion':itemDpsACInyeccion,
+            'fusibles':fusiblesCombinados,
+            'interruptoresAutoSalidaInversor':interruptoresAutoSalidaInversorCombinados,
+            'interruptorAutoCombinador':interruptoresAutoCombinador,
+            'CombinadorasFinal': cajasCombinadorasFinalCombinados,
+            'paneles':paneles_agrupados,
+            'inversores':inversores,
+            'total':total
+            
+            }
+        return  data
+        
+    
+
 @login_required    
 def cotizador(request):
     return render(request, 'formulario.html')
@@ -325,8 +408,11 @@ class Counter:
         self.index += 1
 
 def add_Index_Cost(list, counter,total):
-    for element in list:
-        element.index = counter.index
-        counter.increment()
-        total.add(element.valor_total)
+    
+    if (len(list)>0):
+        for element in list:
+            
+            element.index = counter.index
+            counter.increment()
+            total.add(element.valor_total)
     return list

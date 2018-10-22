@@ -314,19 +314,20 @@ def calibreconductorAC(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,dist
     corrienteCombinacionInversor=corrienteNominalInversor(sumaIsal,tem_amb,num_max_conduct_CombinacionInversor,isc_panel)
     calibreCombinacionInversor=buscarCalibreCondutor(corrienteCombinacionInversor)
     #hallar calibre para cada salida de inversor en cada campo FV
-    print camposFV
+    #print camposFV
     for campoFV in camposFV:
         isalInversor=isalN(campoFV.modelo_panel_solar_2,tensionServicio)
         max_conductInversor=campoFV.salida_inversor.output.maximo_numero_de_conductores
         corrienteInversor=corrienteNominalInversor(isalInversor,tem_amb,max_conductInversor,isc_panel)
         calibreInversor=buscarCalibreCondutor(corrienteInversor)
         conductor=CalibreConductor(tipo_conductor="THHN/THWN-2 CT" ,material_conductor="Cobre",
-                                            calibre=calibreInversor,distancia=campoFV.salida_inversor.output.distancia_del_conductor_mas_largo)
+                                   calibre=calibreInversor,
+                                   distancia=campoFV.salida_inversor.output.distancia_del_conductor_mas_largo)
         conductores.append(conductor)
         
-    print conductores
+    #print conductores
     conductoresSeleccionado=buscarConductor(conductores)
-    print conductoresSeleccionado
+    #print conductoresSeleccionado
     return conductoresSeleccionado
     
 
@@ -373,12 +374,15 @@ def seleccionItemDpsDC(tensionMaximaMppt,lugar_instalacion, lugar_instalacion_op
     
 def combinarItems(items):
     lista=[]
+    #print items
     while (len(items) > 0):
         elemento=items.pop()#obtengo el primer elemento de la lista para evaluarlo con el resto de la lista
-        lista.append(duplicatesItems(items,elemento))
-        #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
-        items=[item  for item in items if(elemento[0]!=item[0])]    
-             
+        if (elemento !=None):
+            #print elemento
+            lista.append(duplicatesItems(items,elemento))
+            #esta  linea actualiza la lista sin repetidos(elimina los repetidos que ya se hallal encontrado en el paso anterior)   
+            items=[item  for item in items if(elemento[0]!=item[0])]    
+
     return lista
     
 def duplicatesItems(items,elemento):
@@ -440,6 +444,7 @@ def seleccionIMDC(corrienteMpp,tensionMaximaMppt):
         else:
             item=(interruptorTension.descripcion,1,interruptorTension.precio)
     else: item=None
+    #print item
     
     return item
    
